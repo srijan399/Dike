@@ -1,3 +1,9 @@
 [submodule "dike-contracts/lib/forge-std"]
 	path = dike-contracts/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "dike-contracts/lib/openzeppelin-foundry-upgrades"]
+	path = dike-contracts/lib/openzeppelin-foundry-upgrades
+	url = https://github.com/OpenZeppelin/openzeppelin-foundry-upgrades
+[submodule "dike-contracts/lib/openzeppelin-contracts"]
+	path = dike-contracts/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
