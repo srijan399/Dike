@@ -4,14 +4,34 @@ import { createConfig, http } from "wagmi";
 import { cookieStorage, createStorage } from "wagmi";
 import { getDefaultConfig } from "connectkit";
 import { sepolia } from "wagmi/chains";
+import { defineChain } from "viem";
+
+// Custom Sepolia chain with Infura RPC and Etherscan block explorer
+const customSepolia = defineChain({
+  ...sepolia,
+  rpcUrls: {
+    default: {
+      http: [`https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || 'YOUR_INFURA_PROJECT_ID'}`],
+    },
+    public: {
+      http: [`https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || 'YOUR_INFURA_PROJECT_ID'}`],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Etherscan',
+      url: 'https://sepolia.etherscan.io/',
+    },
+  },
+});
 
 // Create config outside of component to prevent re-initialization
 export const config = createConfig(
     getDefaultConfig({
         enableFamily: false,
-        chains: [sepolia],
+        chains: [customSepolia],
         transports: {
-            [sepolia.id]: http(),
+            [customSepolia.id]: http(`https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || 'YOUR_INFURA_PROJECT_ID'}`),
         },
         storage: createStorage({
             storage: cookieStorage,
