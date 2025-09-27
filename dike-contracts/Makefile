@@ -26,12 +26,12 @@ test:
 
 # Deploy to specified network
 deploy:
-	forge script script/DeployDike.s.sol:DeployDikeScript --rpc-url https://ethereum-sepolia-public.nodies.app --account default --via-ir
+	forge script script/DeployDike.s.sol:DeployDikeScript --rpc-url https://ethereum-sepolia-public.nodies.app --account default --broadcast --via-ir
 
 verify-sepolia:
-		forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch \
-			--etherscan-api-key $(ETHERSCAN_API_KEY) \
-			$$CONTRACT_ADDRESS src/Dike.sol:MultiversePrediction
+	forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch \
+		--etherscan-api-key $(ETHERSCAN_API_KEY) \
+		$(CONTRACT_ADDRESS) src/Dike.sol:MultiversePrediction
 
 # Deploy to local Anvil network
 deploy-anvil:
