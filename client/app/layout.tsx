@@ -46,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${orbitron.variable} ${jetbrainsMono.variable} antialiased relative min-h-screen bg-black overflow-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${orbitron.variable} ${jetbrainsMono.variable} antialiased relative min-h-screen bg-black overflow-x-hidden`}
       >
         <Providers>
           {/* Global Prism Background */}
