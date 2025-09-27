@@ -13,11 +13,109 @@ import {
     useWriteContract,
 } from "wagmi";
 import useCreatePrediction from "@/hooks/createOpportunity";
+import { useEffect, useState } from "react";
+import { Prediction } from "../interfaces/interface";
+import { allowanceAdmin, myAddress } from "../constants/address";
 
 export default function TestV2() {
     const { address } = useAccount();
     const { writeContractAsync } = useWriteContract();
     const createPrediction = useCreatePrediction();
+    const [activePredictions, setActivePredictions] = useState<Prediction[]>(
+        []
+    );
+
+    const { data: predictions, refetch: refetchPredictions } = useReadContract({
+        address: Dike_SEPOLIA_ADDRESS,
+        abi: DikeAbi,
+        functionName: "getActivePredictions",
+        args: [],
+    });
+
+    useEffect(() => {
+        if (predictions) {
+            setActivePredictions(predictions as Prediction[]);
+        }
+
+        console.log(predictions);
+    }, [predictions]);
+
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            const newPredictions = await refetchPredictions();
+            if (newPredictions?.data) {
+                setActivePredictions(newPredictions.data as Prediction[]);
+            }
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, [refetchPredictions]);
+
+    const [currentPrices, setCurrentPrices] = useState({});
+
+    const { data: currentPricesTokens, refetch: refetchCurrentPrices } =
+        useReadContract({
+            address: Dike_SEPOLIA_ADDRESS,
+            abi: DikeAbi,
+            functionName: "getCurrentPrices",
+            args: [1],
+        });
+
+    useEffect(() => {
+        if (currentPricesTokens) {
+            setCurrentPrices(
+                currentPricesTokens as { yesPrice: number; noPrice: number }
+            );
+        }
+
+        console.log(currentPricesTokens);
+    }, [currentPricesTokens]);
+
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            const newPredictions = await refetchCurrentPrices();
+            if (newPredictions?.data) {
+                setCurrentPrices(
+                    newPredictions.data as { yesPrice: number; noPrice: number }
+                );
+            }
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, [refetchCurrentPrices]);
+
+    const [allPredictions, setAllPredictions] = useState({});
+
+    const { data: allPredictionsTokens, refetch: refetchAllPredictions } =
+        useReadContract({
+            address: Dike_SEPOLIA_ADDRESS,
+            abi: DikeAbi,
+            functionName: "getAllPredictions",
+            args: [1],
+        });
+
+    useEffect(() => {
+        if (allPredictionsTokens) {
+            setAllPredictions(
+                allPredictionsTokens as { yesPrice: number; noPrice: number }
+            );
+        }
+
+        console.log(allPredictions);
+    }, [allPredictionsTokens]);
+
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            const newPredictions = await refetchAllPredictions();
+            if (newPredictions?.data) {
+                setAllPredictions(
+                    newPredictions.data as { yesPrice: number; noPrice: number }
+                );
+            }
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, [refetchAllPredictions]);
 
     const balance = useBalance({
         chainId: 11155111,
@@ -30,7 +128,7 @@ export default function TestV2() {
             address: PYUSD_SEPOLIA_ADDRESS,
             abi: PYUSD_ABI,
             functionName: "approve",
-            args: ["0x4b0fe8d4512f94771d6b04c0bcd7602a0c095c16", "1000000000"],
+            args: [Dike_SEPOLIA_ADDRESS, "1000000000"],
         });
         console.log(tx);
     };
@@ -39,10 +137,7 @@ export default function TestV2() {
         address: PYUSD_SEPOLIA_ADDRESS,
         abi: PYUSD_ABI,
         functionName: "allowance",
-        args: [
-            "0x05B3e60D51c5eDD49DE869bF74038c1323e2cA65",
-            "0x3B2272d912290DC26CCbf550eb49eF539D9CFC6a",
-        ],
+        args: [allowanceAdmin, myAddress],
     });
 
     const sendTokens = async () => {
@@ -50,11 +145,7 @@ export default function TestV2() {
             address: PYUSD_SEPOLIA_ADDRESS,
             abi: PYUSD_ABI,
             functionName: "transferFrom",
-            args: [
-                "0x3B2272d912290DC26CCbf550eb49eF539D9CFC6a",
-                "0x4b0fe8D4512F94771D6B04c0BCD7602A0c095C16",
-                "1000000",
-            ],
+            args: [myAddress, Dike_SEPOLIA_ADDRESS, "1000000"],
         });
         console.log(tx);
     };
@@ -62,13 +153,6 @@ export default function TestV2() {
     const createPred = async () => {
         await createPrediction();
     };
-
-    const { data: predictions, refetch: refetchPredictions } = useReadContract({
-        address: Dike_SEPOLIA_ADDRESS,
-        abi: DikeAbi,
-        functionName: "getActivePredictions",
-        args: [],
-    });
 
     return (
         <>
@@ -89,6 +173,14 @@ export default function TestV2() {
 
             <Button onClick={() => refetchPredictions()}>
                 Get Predictions
+            </Button>
+
+            <Button onClick={() => refetchCurrentPrices()}>
+                Get Current Prices
+            </Button>
+
+            <Button onClick={() => refetchAllPredictions}>
+                Fetch all predictions
             </Button>
         </>
     );

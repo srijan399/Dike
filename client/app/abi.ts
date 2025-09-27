@@ -57,8 +57,155 @@ export const DikeAbi = [
         outputs: [
             {
                 name: "activePredictions",
-                type: "uint256[]",
-                internalType: "uint256[]",
+                type: "tuple[]",
+                internalType: "struct MultiversePrediction.Prediction[]",
+                components: [
+                    {
+                        name: "id",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "creator",
+                        type: "address",
+                        internalType: "address",
+                    },
+                    {
+                        name: "title",
+                        type: "string",
+                        internalType: "string",
+                    },
+                    {
+                        name: "category",
+                        type: "string",
+                        internalType: "string",
+                    },
+                    {
+                        name: "metadata",
+                        type: "string",
+                        internalType: "string",
+                    },
+                    {
+                        name: "resolutionDate",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "initialLiquidity",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "yesLiquidity",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "noLiquidity",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "resolved",
+                        type: "bool",
+                        internalType: "bool",
+                    },
+                    {
+                        name: "outcome",
+                        type: "bool",
+                        internalType: "bool",
+                    },
+                    {
+                        name: "createdAt",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "active",
+                        type: "bool",
+                        internalType: "bool",
+                    },
+                ],
+            },
+        ],
+        stateMutability: "view",
+    },
+    {
+        type: "function",
+        name: "getAllPredictions",
+        inputs: [],
+        outputs: [
+            {
+                name: "allPredictions",
+                type: "tuple[]",
+                internalType: "struct MultiversePrediction.Prediction[]",
+                components: [
+                    {
+                        name: "id",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "creator",
+                        type: "address",
+                        internalType: "address",
+                    },
+                    {
+                        name: "title",
+                        type: "string",
+                        internalType: "string",
+                    },
+                    {
+                        name: "category",
+                        type: "string",
+                        internalType: "string",
+                    },
+                    {
+                        name: "metadata",
+                        type: "string",
+                        internalType: "string",
+                    },
+                    {
+                        name: "resolutionDate",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "initialLiquidity",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "yesLiquidity",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "noLiquidity",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "resolved",
+                        type: "bool",
+                        internalType: "bool",
+                    },
+                    {
+                        name: "outcome",
+                        type: "bool",
+                        internalType: "bool",
+                    },
+                    {
+                        name: "createdAt",
+                        type: "uint256",
+                        internalType: "uint256",
+                    },
+                    {
+                        name: "active",
+                        type: "bool",
+                        internalType: "bool",
+                    },
+                ],
             },
         ],
         stateMutability: "view",
@@ -1825,6 +1972,6 @@ export const PYUSD_ABI = [
 
 // Contract address
 export const Dike_SEPOLIA_ADDRESS =
-    "0x4b0fe8D4512F94771D6B04c0BCD7602A0c095C16";
+    "0x9CAf70428afaCf97675eB9696cB071B3A8AC78A9";
 export const PYUSD_SEPOLIA_ADDRESS =
     "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9";

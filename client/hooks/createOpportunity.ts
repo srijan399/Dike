@@ -20,7 +20,7 @@ const useCreatePrediction = () => {
                 "Title",
                 "Category",
                 "metadata",
-                1758996535,
+                1759996535,
                 parseUnits("10", 6),
             ],
         });

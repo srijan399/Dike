@@ -301,24 +301,41 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
     function getActivePredictions()
         external
         view
-        returns (uint256[] memory activePredictions)
+        returns (Prediction[] memory activePredictions)
     {
         uint256 activeCount = 0;
 
+        // First pass: count active predictions
         for (uint256 i = 1; i <= predictionCounter; i++) {
             if (predictions[i].active && !predictions[i].resolved) {
                 activeCount++;
             }
         }
 
-        activePredictions = new uint256[](activeCount);
+        // Initialize array with correct size
+        activePredictions = new Prediction[](activeCount);
         uint256 currentIndex = 0;
 
+        // Second pass: populate array with actual Prediction structs
         for (uint256 i = 1; i <= predictionCounter; i++) {
             if (predictions[i].active && !predictions[i].resolved) {
-                activePredictions[currentIndex] = i;
-                currentIndex++; // Increment current index
+                activePredictions[currentIndex] = predictions[i];
+                currentIndex++;
             }
+        }
+    }
+
+    function getAllPredictions()
+        external
+        view
+        returns (Prediction[] memory allPredictions)
+    {
+        // Initialize array with the total number of predictions created
+        allPredictions = new Prediction[](predictionCounter);
+
+        // Populate array with all predictions (including inactive/resolved ones)
+        for (uint256 i = 1; i <= predictionCounter; i++) {
+            allPredictions[i - 1] = predictions[i];
         }
     }
 
