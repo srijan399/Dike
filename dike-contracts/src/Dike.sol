@@ -10,6 +10,7 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
 
     uint256 public predictionCounter;
     uint256 public constant MINIMUM_LIQUIDITY = 10 * 10 ** 6;
+    uint256 public constant COLLATERAL_RATIO = 60;
 
     struct Prediction {
         uint256 id;
@@ -35,6 +36,8 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
         uint256 expectedVotes;
         uint256 timestamp;
         bool claimed;
+        bool isCollateralBased; // true if investment was made using collateral
+        uint256 parentPredictionId; // parent prediction if using collateral
     }
 
     struct UserChain {
@@ -43,11 +46,21 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
         uint256 totalClaimed;
     }
 
+    struct CollateralPosition {
+        uint256 parentPredictionId;
+        uint256 totalCollateralUsed;
+        uint256[] childPredictionIds;
+        bool liquidated;
+    }
+
     // Mappings
     mapping(uint256 => Prediction) public predictions;
     mapping(address => UserChain) public userChains;
     mapping(uint256 => Investment[]) public predictionInvestments;
     mapping(address => mapping(uint256 => Investment[])) public userInvestments; // user => predictionId => investments
+    mapping(address => mapping(uint256 => CollateralPosition))
+        public userCollateralPositions; // user => parentPredictionId => position
+    mapping(address => uint256[]) public userParentPredictions; // track which predictions have collateral positions
 
     // Events
     event PredictionCreated(
@@ -65,6 +78,20 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
         bool side,
         uint256 yesPrice,
         uint256 noPrice
+    );
+
+    event ChainExtended(
+        uint256 indexed parentPredictionId,
+        uint256 indexed childPredictionId,
+        address indexed investor,
+        uint256 collateralAmount
+    );
+
+    event PositionLiquidated(
+        uint256 indexed parentPredictionId,
+        address indexed user,
+        uint256[] childPredictionIds,
+        uint256 totalCollateralUsed
     );
 
     event PredictionResolved(uint256 indexed predictionId, bool outcome);
@@ -133,6 +160,7 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
 
     // ============ PREDICTION INVESTMENT ============
 
+    // start of chain
     function investInPrediction(
         uint256 _predictionId,
         uint256 _amount,
@@ -152,10 +180,8 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
 
         Prediction storage prediction = predictions[_predictionId];
 
-        // Calculate current prices
         (uint256 yesPrice, uint256 noPrice) = getCurrentPrices(_predictionId);
 
-        // Calculate expected votes based on current price
         uint256 expectedVotes = _side
             ? (_amount * 10 ** 18) / yesPrice
             : (_amount * 10 ** 18) / noPrice;
@@ -165,7 +191,6 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
             "Slippage tolerance exceeded"
         );
 
-        // Transfer investment amount
         require(
             pyUSD.transferFrom(msg.sender, address(this), _amount),
             "Transfer failed"
@@ -186,7 +211,9 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
             side: _side,
             expectedVotes: expectedVotes,
             timestamp: block.timestamp,
-            claimed: false
+            claimed: false,
+            isCollateralBased: false,
+            parentPredictionId: 0
         });
 
         // Store investment
@@ -221,6 +248,190 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
         );
     }
 
+    function extendChain(
+        uint256 _parentPredictionId,
+        uint256 _childPredictionId,
+        uint256 _collateralAmount,
+        bool _side,
+        uint256 _minExpectedVotes
+    ) external nonReentrant {
+        require(
+            predictions[_parentPredictionId].active,
+            "Parent prediction not active"
+        );
+        require(
+            predictions[_childPredictionId].active,
+            "Child prediction not active"
+        );
+        require(
+            !predictions[_childPredictionId].resolved,
+            "Child prediction resolved"
+        );
+        require(
+            block.timestamp < predictions[_childPredictionId].resolutionDate,
+            "Child prediction expired"
+        );
+        require(
+            _collateralAmount > 0,
+            "Collateral amount must be greater than 0"
+        );
+        require(
+            _parentPredictionId != _childPredictionId,
+            "Cannot extend to same prediction"
+        );
+
+        // Check available collateral
+        uint256 availableCollateral = getAvailableCollateral(
+            msg.sender,
+            _parentPredictionId
+        );
+        require(
+            availableCollateral >= _collateralAmount,
+            "Insufficient collateral available"
+        );
+
+        // Check liquidation status
+        require(
+            !isPositionLiquidatable(msg.sender, _parentPredictionId),
+            "Position is liquidatable"
+        );
+
+        Prediction storage childPrediction = predictions[_childPredictionId];
+
+        // Calculate current prices for slippage protection
+        (uint256 yesPrice, uint256 noPrice) = getCurrentPrices(
+            _childPredictionId
+        );
+
+        // Calculate expected votes
+        uint256 expectedVotes = _side
+            ? (_collateralAmount * 10 ** 18) / yesPrice
+            : (_collateralAmount * 10 ** 18) / noPrice;
+
+        require(
+            expectedVotes >= _minExpectedVotes,
+            "Slippage tolerance exceeded"
+        );
+
+        // Update child prediction liquidity (virtual collateral)
+        if (_side) {
+            childPrediction.yesLiquidity += _collateralAmount;
+        } else {
+            childPrediction.noLiquidity += _collateralAmount;
+        }
+
+        // Create investment record
+        Investment memory newInvestment = Investment({
+            predictionId: _childPredictionId,
+            investor: msg.sender,
+            amount: _collateralAmount,
+            side: _side,
+            expectedVotes: expectedVotes,
+            timestamp: block.timestamp,
+            claimed: false,
+            isCollateralBased: true,
+            parentPredictionId: _parentPredictionId
+        });
+
+        // Store investment
+        predictionInvestments[_childPredictionId].push(newInvestment);
+        userInvestments[msg.sender][_childPredictionId].push(newInvestment);
+
+        // Update collateral position
+        CollateralPosition storage position = userCollateralPositions[
+            msg.sender
+        ][_parentPredictionId];
+
+        // Initialize position if first time
+        if (position.parentPredictionId == 0) {
+            position.parentPredictionId = _parentPredictionId;
+            userParentPredictions[msg.sender].push(_parentPredictionId);
+        }
+
+        position.totalCollateralUsed += _collateralAmount;
+        position.childPredictionIds.push(_childPredictionId);
+
+        // Update user chain
+        UserChain storage userChain = userChains[msg.sender];
+        bool foundInChain = false;
+        for (uint256 i = 0; i < userChain.predictionIds.length; i++) {
+            if (userChain.predictionIds[i] == _childPredictionId) {
+                foundInChain = true;
+                break;
+            }
+        }
+
+        if (!foundInChain) {
+            userChain.predictionIds.push(_childPredictionId);
+        }
+
+        userChain.totalInvested += _collateralAmount;
+
+        emit InvestmentMade(
+            _childPredictionId,
+            msg.sender,
+            _collateralAmount,
+            _side,
+            yesPrice,
+            noPrice
+        );
+        emit ChainExtended(
+            _parentPredictionId,
+            _childPredictionId,
+            msg.sender,
+            _collateralAmount
+        );
+    }
+
+    // // ============ LIQUIDATION SYSTEM ============
+
+    function liquidatePosition(
+        address _user,
+        uint256 _parentPredictionId
+    ) external {
+        require(
+            isPositionLiquidatable(_user, _parentPredictionId),
+            "Position not liquidatable"
+        );
+
+        CollateralPosition storage position = userCollateralPositions[_user][
+            _parentPredictionId
+        ];
+        require(!position.liquidated, "Position already liquidated");
+
+        // Mark position as liquidated
+        position.liquidated = true;
+
+        // Close all child positions (mark as liquidated in practice)
+        uint256[] memory childIds = position.childPredictionIds;
+
+        emit PositionLiquidated(
+            _parentPredictionId,
+            _user,
+            childIds,
+            position.totalCollateralUsed
+        );
+    }
+
+    function isPositionLiquidatable(
+        address _user,
+        uint256 _parentPredictionId
+    ) public view returns (bool) {
+        CollateralPosition memory position = userCollateralPositions[_user][
+            _parentPredictionId
+        ];
+
+        if (position.parentPredictionId == 0 || position.liquidated) {
+            return false;
+        }
+
+        uint256 currentPositionValue = getCurrentPositionValue(
+            _user,
+            _parentPredictionId
+        );
+        return currentPositionValue < position.totalCollateralUsed;
+    }
+
     // ============ GETTER FUNCTIONS ============
 
     function getCurrentPrices(
@@ -237,6 +448,98 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
         yesPrice = (prediction.yesLiquidity * 10 ** 18) / totalLiquidity;
         noPrice = (prediction.noLiquidity * 10 ** 18) / totalLiquidity;
     }
+
+    function getCurrentPositionValue(
+        address _user,
+        uint256 _predictionId
+    ) public view returns (uint256) {
+        Investment[] memory investments = userInvestments[_user][_predictionId];
+        uint256 totalValue = 0;
+
+        (uint256 yesPrice, uint256 noPrice) = getCurrentPrices(_predictionId);
+
+        for (uint256 i = 0; i < investments.length; i++) {
+            if (!investments[i].isCollateralBased) {
+                uint256 currentPrice = investments[i].side ? yesPrice : noPrice;
+                uint256 positionValue = (investments[i].amount * currentPrice) /
+                    (10 ** 18);
+                totalValue += positionValue;
+            }
+        }
+
+        return totalValue;
+    }
+
+    function getAvailableCollateral(
+        address _user,
+        uint256 _parentPredictionId
+    ) public view returns (uint256) {
+        uint256 totalInvestment = getUserTotalInvestmentAmount(
+            _user,
+            _parentPredictionId
+        );
+        uint256 maxCollateral = (totalInvestment * COLLATERAL_RATIO) / 100;
+
+        CollateralPosition memory position = userCollateralPositions[_user][
+            _parentPredictionId
+        ];
+        uint256 usedCollateral = position.totalCollateralUsed;
+
+        if (maxCollateral > usedCollateral) {
+            return maxCollateral - usedCollateral;
+        }
+        return 0;
+    }
+
+    function getUserTotalInvestmentAmount(
+        address _user,
+        uint256 _predictionId
+    ) public view returns (uint256) {
+        Investment[] memory investments = userInvestments[_user][_predictionId];
+        uint256 total = 0;
+
+        for (uint256 i = 0; i < investments.length; i++) {
+            if (!investments[i].isCollateralBased) {
+                total += investments[i].amount;
+            }
+        }
+
+        return total;
+    }
+
+    // function getUserCollateralPosition(
+    //     address _user,
+    //     uint256 _parentPredictionId
+    // )
+    //     external
+    //     view
+    //     returns (
+    //         uint256 parentId,
+    //         uint256 totalUsed,
+    //         uint256[] memory childIds,
+    //         bool liquidated,
+    //         uint256 availableCollateral,
+    //         uint256 positionValue
+    //     )
+    // {
+    //     CollateralPosition memory position = userCollateralPositions[_user][
+    //         _parentPredictionId
+    //     ];
+    //     return (
+    //         position.parentPredictionId,
+    //         position.totalCollateralUsed,
+    //         position.childPredictionIds,
+    //         position.liquidated,
+    //         getAvailableCollateral(_user, _parentPredictionId),
+    //         getCurrentPositionValue(_user, _parentPredictionId)
+    //     );
+    // }
+
+    // function getUserParentPredictionIds(
+    //     address _user
+    // ) external view returns (uint256[] memory) {
+    //     return userParentPredictions[_user];
+    // }
 
     function getPrediction(
         uint256 _predictionId
@@ -305,18 +608,15 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
     {
         uint256 activeCount = 0;
 
-        // First pass: count active predictions
         for (uint256 i = 1; i <= predictionCounter; i++) {
             if (predictions[i].active && !predictions[i].resolved) {
                 activeCount++;
             }
         }
 
-        // Initialize array with correct size
         activePredictions = new Prediction[](activeCount);
         uint256 currentIndex = 0;
 
-        // Second pass: populate array with actual Prediction structs
         for (uint256 i = 1; i <= predictionCounter; i++) {
             if (predictions[i].active && !predictions[i].resolved) {
                 activePredictions[currentIndex] = predictions[i];
@@ -330,10 +630,8 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
         view
         returns (Prediction[] memory allPredictions)
     {
-        // Initialize array with the total number of predictions created
         allPredictions = new Prediction[](predictionCounter);
 
-        // Populate array with all predictions (including inactive/resolved ones)
         for (uint256 i = 1; i <= predictionCounter; i++) {
             allPredictions[i - 1] = predictions[i];
         }
