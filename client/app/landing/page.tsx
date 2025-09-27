@@ -1,33 +1,10 @@
-import GradientBlinds from "@/components/GradientBlinds";
+// Landing page uses the global background from layout
 
 export default function Home() {
     return (
-        <div className="relative min-h-screen bg-black overflow-hidden">
-            {/* Prism Background */}
-            <div className="absolute inset-0 z-0">
-                <GradientBlinds
-                    gradientColors={['#1e1b4b', '#312e81', '#3730a3', '#1e40af']}
-                    angle={45}
-                    noise={0.1}
-                    blindCount={20}
-                    blindMinWidth={80}
-                    spotlightRadius={0.5}
-                    spotlightSoftness={0.7}
-                    spotlightOpacity={0.4}
-                    mouseDampening={0.25}
-                    distortAmount={8}
-                    shineDirection="right"
-                    mixBlendMode="multiply"
-                />
-            </div>
-            
-            {/* Background overlay for better text readability */}
-            <div className="absolute inset-0 z-5 bg-black/40 backdrop-blur-[1px]"></div>
+        <div className="relative flex flex-col items-center justify-center min-h-screen p-8">
+            <div className="text-center max-w-4xl mx-auto space-y-16">
 
-            {/* Content Overlay */}
-            <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
-                <div className="text-center max-w-4xl mx-auto space-y-16">
-                    
                     {/* Main Title */}
                     <div className="space-y-8">
                         <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 leading-tight tracking-wider" style={{ fontFamily: 'var(--font-orbitron)' }}>
@@ -78,14 +55,12 @@ export default function Home() {
                                 backdropFilter: 'blur(12px)',
                             }}
                         >
-3                            ENTER PROTOCOL
+                            ENTER PROTOCOL
                         </button>
                         <p className="text-xs text-amber-400 uppercase tracking-widest" style={{ fontFamily: 'var(--font-jetbrains-mono)' }}>
                             High risk — Professional traders only
                         </p>
                     </div>
-
-                </div>
             </div>
         </div>
     );

@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter, Orbitron, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import GradientBlinds from "@/components/GradientBlinds";
+import Providers from "./_providers/provider";
+import { dikeTheme } from "@/lib/theme";
+import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,11 +44,37 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${orbitron.variable} ${jetbrainsMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${orbitron.variable} ${jetbrainsMono.variable} antialiased relative min-h-screen bg-black overflow-hidden`}
       >
-        {children}
+        <Providers>
+          {/* Global Prism Background */}
+          <div className="absolute inset-0 z-0">
+            <GradientBlinds
+              gradientColors={dikeTheme.gradientColors}
+              angle={dikeTheme.blinds.angle}
+              noise={dikeTheme.blinds.noise}
+              blindCount={dikeTheme.blinds.blindCount}
+              blindMinWidth={dikeTheme.blinds.blindMinWidth}
+              spotlightRadius={dikeTheme.blinds.spotlightRadius}
+              spotlightSoftness={dikeTheme.blinds.spotlightSoftness}
+              spotlightOpacity={dikeTheme.blinds.spotlightOpacity}
+              mouseDampening={dikeTheme.blinds.mouseDampening}
+              distortAmount={dikeTheme.blinds.distortAmount}
+              shineDirection={dikeTheme.blinds.shineDirection}
+              mixBlendMode={dikeTheme.blinds.mixBlendMode}
+            />
+          </div>
+          {/* Global readability overlay */}
+          <div className={`absolute inset-0 z-5 ${dikeTheme.backgroundOverlayClass}`}></div>
+
+          {/* App content */}
+          <div className="relative z-10 min-h-screen">
+            <Navbar />
+            {children}
+          </div>
+        </Providers>
       </body>
     </html>
   );
