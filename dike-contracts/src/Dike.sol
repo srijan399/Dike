@@ -305,8 +305,8 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
 
         // Calculate expected votes
         uint256 expectedVotes = _side
-            ? (_collateralAmount * 10 ** 18) / yesPrice
-            : (_collateralAmount * 10 ** 18) / noPrice;
+            ? (_collateralAmount * 10 ** 6) / yesPrice
+            : (_collateralAmount * 10 ** 6) / noPrice;
 
         require(
             expectedVotes >= _minExpectedVotes,
@@ -507,39 +507,39 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
         return total;
     }
 
-    // function getUserCollateralPosition(
-    //     address _user,
-    //     uint256 _parentPredictionId
-    // )
-    //     external
-    //     view
-    //     returns (
-    //         uint256 parentId,
-    //         uint256 totalUsed,
-    //         uint256[] memory childIds,
-    //         bool liquidated,
-    //         uint256 availableCollateral,
-    //         uint256 positionValue
-    //     )
-    // {
-    //     CollateralPosition memory position = userCollateralPositions[_user][
-    //         _parentPredictionId
-    //     ];
-    //     return (
-    //         position.parentPredictionId,
-    //         position.totalCollateralUsed,
-    //         position.childPredictionIds,
-    //         position.liquidated,
-    //         getAvailableCollateral(_user, _parentPredictionId),
-    //         getCurrentPositionValue(_user, _parentPredictionId)
-    //     );
-    // }
+    function getUserCollateralPosition(
+        address _user,
+        uint256 _parentPredictionId
+    )
+        external
+        view
+        returns (
+            uint256 parentId,
+            uint256 totalUsed,
+            uint256[] memory childIds,
+            bool liquidated,
+            uint256 availableCollateral,
+            uint256 positionValue
+        )
+    {
+        CollateralPosition memory position = userCollateralPositions[_user][
+            _parentPredictionId
+        ];
+        return (
+            position.parentPredictionId,
+            position.totalCollateralUsed,
+            position.childPredictionIds,
+            position.liquidated,
+            getAvailableCollateral(_user, _parentPredictionId),
+            getCurrentPositionValue(_user, _parentPredictionId)
+        );
+    }
 
-    // function getUserParentPredictionIds(
-    //     address _user
-    // ) external view returns (uint256[] memory) {
-    //     return userParentPredictions[_user];
-    // }
+    function getUserParentPredictionIds(
+        address _user
+    ) external view returns (uint256[] memory) {
+        return userParentPredictions[_user];
+    }
 
     function getPrediction(
         uint256 _predictionId

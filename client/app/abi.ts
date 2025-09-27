@@ -598,6 +598,55 @@ export const DikeAbi = [
     },
     {
         type: "function",
+        name: "getUserCollateralPosition",
+        inputs: [
+            {
+                name: "_user",
+                type: "address",
+                internalType: "address",
+            },
+            {
+                name: "_parentPredictionId",
+                type: "uint256",
+                internalType: "uint256",
+            },
+        ],
+        outputs: [
+            {
+                name: "parentId",
+                type: "uint256",
+                internalType: "uint256",
+            },
+            {
+                name: "totalUsed",
+                type: "uint256",
+                internalType: "uint256",
+            },
+            {
+                name: "childIds",
+                type: "uint256[]",
+                internalType: "uint256[]",
+            },
+            {
+                name: "liquidated",
+                type: "bool",
+                internalType: "bool",
+            },
+            {
+                name: "availableCollateral",
+                type: "uint256",
+                internalType: "uint256",
+            },
+            {
+                name: "positionValue",
+                type: "uint256",
+                internalType: "uint256",
+            },
+        ],
+        stateMutability: "view",
+    },
+    {
+        type: "function",
         name: "getUserInvestmentsInPrediction",
         inputs: [
             {
@@ -665,6 +714,19 @@ export const DikeAbi = [
                 ],
             },
         ],
+        stateMutability: "view",
+    },
+    {
+        type: "function",
+        name: "getUserParentPredictionIds",
+        inputs: [
+            {
+                name: "_user",
+                type: "address",
+                internalType: "address",
+            },
+        ],
+        outputs: [{ name: "", type: "uint256[]", internalType: "uint256[]" }],
         stateMutability: "view",
     },
     {
@@ -2232,6 +2294,277 @@ export const PYUSD_ABI = [
 
 // Contract address
 export const Dike_SEPOLIA_ADDRESS =
-    "0x570d7Ac5F1398417DA489141253cFd077051892a";
+    "0xE35Dc463AF714C0AFB96086B05F96F1f9DEfb556";
 export const PYUSD_SEPOLIA_ADDRESS =
     "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9";
+
+// Swap contract (Sepolia)
+export const SWAP_SEPOLIA_ADDRESS =
+    "0x4717b94751322b70Fb497f0c3CD8Cc835C93900C";
+
+// Minimal ABI for our Swap contract functions used by the UI
+export const Swap_ABI = [
+    {
+        inputs: [
+            { internalType: "address", name: "pythContract", type: "address" },
+            { internalType: "address", name: "pyUsdToken", type: "address" },
+        ],
+        stateMutability: "nonpayable",
+        type: "constructor",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: "address",
+                name: "manager",
+                type: "address",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "ethAmount",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "pyusdAmount",
+                type: "uint256",
+            },
+        ],
+        name: "LiquidityAdded",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: "address",
+                name: "account",
+                type: "address",
+            },
+            {
+                indexed: false,
+                internalType: "bool",
+                name: "approved",
+                type: "bool",
+            },
+        ],
+        name: "LiquidityManagerUpdated",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: "address",
+                name: "previousOwner",
+                type: "address",
+            },
+            {
+                indexed: true,
+                internalType: "address",
+                name: "newOwner",
+                type: "address",
+            },
+        ],
+        name: "OwnershipTransferred",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: "address",
+                name: "user",
+                type: "address",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "ethIn",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "pyusdOut",
+                type: "uint256",
+            },
+            {
+                indexed: true,
+                internalType: "address",
+                name: "to",
+                type: "address",
+            },
+        ],
+        name: "SwapEthForPyUsd",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: "address",
+                name: "user",
+                type: "address",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "pyusdIn",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "ethOut",
+                type: "uint256",
+            },
+            {
+                indexed: true,
+                internalType: "address",
+                name: "to",
+                type: "address",
+            },
+        ],
+        name: "SwapPyUsdForEth",
+        type: "event",
+    },
+    {
+        inputs: [],
+        name: "ETH_USD_PRICE_ID",
+        outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "addLiquidityEth",
+        outputs: [],
+        stateMutability: "payable",
+        type: "function",
+    },
+    {
+        inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
+        name: "addLiquidityPyUsd",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "getEthUsd",
+        outputs: [
+            { internalType: "int64", name: "price", type: "int64" },
+            { internalType: "uint64", name: "conf", type: "uint64" },
+            { internalType: "int32", name: "expo", type: "int32" },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "getReserves",
+        outputs: [
+            { internalType: "uint256", name: "ethReserveWei", type: "uint256" },
+            { internalType: "uint256", name: "pyusdReserve", type: "uint256" },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [{ internalType: "address", name: "", type: "address" }],
+        name: "isLiquidityManager",
+        outputs: [{ internalType: "bool", name: "", type: "bool" }],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "owner",
+        outputs: [{ internalType: "address", name: "", type: "address" }],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "pyUSD",
+        outputs: [
+            { internalType: "contract IERC20", name: "", type: "address" },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "pyth",
+        outputs: [
+            { internalType: "contract IPyth", name: "", type: "address" },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "pyusdDecimals",
+        outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "renounceOwnership",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            { internalType: "address", name: "account", type: "address" },
+            { internalType: "bool", name: "approved", type: "bool" },
+        ],
+        name: "setLiquidityManager",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            { internalType: "uint256", name: "minPyUsdOut", type: "uint256" },
+            { internalType: "address", name: "to", type: "address" },
+        ],
+        name: "swapEthForPyUsd",
+        outputs: [{ internalType: "uint256", name: "pyOut", type: "uint256" }],
+        stateMutability: "payable",
+        type: "function",
+    },
+    {
+        inputs: [
+            { internalType: "uint256", name: "amountPyUsd", type: "uint256" },
+            { internalType: "uint256", name: "minEthOut", type: "uint256" },
+            { internalType: "address payable", name: "to", type: "address" },
+        ],
+        name: "swapPyUsdForEth",
+        outputs: [
+            { internalType: "uint256", name: "ethOutWei", type: "uint256" },
+        ],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            { internalType: "address", name: "newOwner", type: "address" },
+        ],
+        name: "transferOwnership",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+];

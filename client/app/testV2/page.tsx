@@ -16,6 +16,7 @@ import useCreatePrediction from "@/hooks/createOpportunity";
 import { useEffect, useState } from "react";
 import { Prediction } from "../interfaces/interface";
 import { allowanceAdmin, myAddress } from "../constants/address";
+import { parseUnits } from "viem";
 
 export default function TestV2() {
     const { address } = useAccount();
@@ -160,6 +161,16 @@ export default function TestV2() {
         });
     };
 
+    const extend = async () => {
+        const tx = await writeContractAsync({
+            address: Dike_SEPOLIA_ADDRESS,
+            abi: DikeAbi,
+            functionName: "extendChain",
+            args: [1, 2, parseUnits("3", 1), true, parseUnits("10", 1)],
+        });
+        console.log(tx);
+    };
+
     return (
         <>
             <div>TestV2</div>
@@ -188,6 +199,8 @@ export default function TestV2() {
             <Button onClick={() => refetchAllPredictions}>
                 Fetch all predictions
             </Button>
+
+            <Button onClick={() => extend()}>Extend</Button>
         </>
     );
 }
