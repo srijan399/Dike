@@ -12,7 +12,7 @@ contract DeployDikeScript is Script {
         0x6c3ea9036406852006290770BEdFcAbA0e23A0e8;
     address public constant PYUSD_SEPOLIA =
         0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9;
-    address public constant PYUSD_ANVIL = address(0); // Will be deployed as mock token
+    address public constant PYUSD_ANVIL = address(0);
 
     function setUp() public {}
 
