@@ -60,6 +60,16 @@ export default function CreatePredictionPage() {
   const [sourceUrl, setSourceUrl] = useState<string>('');
   const [rules, setRules] = useState<string>('');
 
+  // Multi-step form state
+  const [currentStep, setCurrentStep] = useState<number>(0);
+  
+  const steps = [
+    { id: 'basic', title: 'Basic Details', description: 'Title and core information' },
+    { id: 'media', title: 'Media & Details', description: 'Image, description, and metadata' },
+    { id: 'settings', title: 'Market Settings', description: 'Liquidity and resolution details' },
+    { id: 'review', title: 'Review & Submit', description: 'Final review and submission' }
+  ];
+
   // Helper functions
   const formatPyUSD = (value: bigint | undefined): string => {
     if (!value) return '0.00 PyUSD';
@@ -256,6 +266,9 @@ export default function CreatePredictionPage() {
       setSourceUrl('');
       setRules('');
       
+      // Reset to first step
+      setCurrentStep(0);
+      
       setSuccess('🎉 Prediction market created successfully with IPFS metadata!');
     } catch (error) {
       console.error('Create prediction error:', error);
@@ -269,6 +282,50 @@ export default function CreatePredictionPage() {
 
   const isFormValid = formData.title && formData.resolutionDate && formData.initialLiquidity && 
                      new Date(formData.resolutionDate) > new Date();
+
+  // Step navigation functions
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+      setError('');
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+      setError('');
+    }
+  };
+
+  const goToStep = (stepIndex: number) => {
+    if (stepIndex >= 0 && stepIndex < steps.length) {
+      setCurrentStep(stepIndex);
+      setError('');
+    }
+  };
+
+  // Step validation functions
+  const isStepValid = (stepIndex: number): boolean => {
+    switch (stepIndex) {
+      case 0: // Basic Details
+        return formData.title.trim().length > 0 && formData.category.trim().length > 0;
+      case 1: // Media & Details
+        return true; // Optional fields
+      case 2: // Market Settings
+        return Boolean(formData.resolutionDate) && Boolean(formData.initialLiquidity) && 
+               new Date(formData.resolutionDate) > new Date() &&
+               !hasInsufficientBalance() && !hasInsufficientLiquidity();
+      case 3: // Review & Submit
+        return Boolean(isFormValid) && !needsApproval();
+      default:
+        return false;
+    }
+  };
+
+  const canProceedToNextStep = (): boolean => {
+    return isStepValid(currentStep);
+  };
 
   if (!isConnected) {
     return (
@@ -301,332 +358,439 @@ export default function CreatePredictionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      {/* Header */}
-      
+    <div className="min-h-screen bg-gray-950">
+      <div className="max-w-5xl mx-auto px-6 py-12">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-white mb-4">Create Prediction Market</h1>
+          <p className="text-gray-400 text-lg">Design your prediction market in a few simple steps</p>
+        </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Account Info Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            <Card className="border-white bg-black shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-white text-lg">Account Info</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <p className="text-sm text-blue-300 mb-1">PyUSD Balance</p>
-                  <p className="text-2xl font-bold text-white">
-                    {formatPyUSD(balance?.value)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-blue-300 mb-1">Network</p>
-                  <Badge variant="outline" className="border-white text-blue-300 bg-blue-600/20">
-                    Sepolia Testnet
-                  </Badge>
-                </div>
-                {minimumLiquidity ? (
+        <div className="grid lg:grid-cols-4 gap-8">
+          {/* Progress Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="space-y-6">
+              {/* Step Progress */}
+              <Card className="border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-white text-lg">Progress</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {steps.map((step, index) => (
+                    <div key={step.id} className="flex items-start space-x-3">
+                      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
+                        index === currentStep 
+                          ? 'bg-blue-600 text-white' 
+                          : index < currentStep 
+                            ? 'bg-green-600 text-white' 
+                            : 'bg-gray-700 text-gray-400'
+                      }`}>
+                        {index < currentStep ? (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          index + 1
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className={`text-sm font-medium ${
+                          index === currentStep ? 'text-white' : index < currentStep ? 'text-green-400' : 'text-gray-400'
+                        }`}>
+                          {step.title}
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">{step.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Account Info */}
+              <Card className="border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-white text-lg">Account</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
                   <div>
-                    <p className="text-sm text-blue-300 mb-1">Minimum Liquidity</p>
-                    <p className="text-sm font-medium text-white">
-                      {formatUnits(minimumLiquidity as bigint, 6)} PyUSD
-                    </p>
+                    <p className="text-sm text-gray-400">Balance</p>
+                    <p className="text-lg font-semibold text-white">{formatPyUSD(balance?.value)}</p>
                   </div>
-                ) : null}
-                <div>
-                  <p className="text-sm text-blue-300 mb-1">Current Allowance</p>
-                  <p className="text-xs font-medium text-white">
-                    {allowance ? formatUnits(allowance as bigint, 6) : '0'} PyUSD
-                  </p>
-                  <Button
-                    onClick={() => refetchAllowance()}
-                    className="mt-1 text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 h-6"
-                  >
-                    Refresh
-                  </Button>
-                </div>
-                <div>
-                  <p className="text-sm text-blue-300 mb-1">Debug Info</p>
-                  <p className="text-xs text-gray-400">
-                    Needs Approval: {needsApproval() ? 'Yes' : 'No'}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Form Valid: {isFormValid ? 'Yes' : 'No'}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Success/Error Messages */}
-            {(error || ipfsError) && (
-              <Card className="border-white bg-red-900/20">
-                <CardContent className="pt-4">
-                  <p className="text-red-300 text-sm">{error || ipfsError}</p>
+                  <div>
+                    <p className="text-sm text-gray-400">Network</p>
+                    <Badge variant="outline" className="border-gray-600 text-gray-300 bg-gray-800/50">
+                      Sepolia
+                    </Badge>
+                  </div>
+                  {minimumLiquidity ? (
+                    <div>
+                      <p className="text-sm text-gray-400">Min. Liquidity</p>
+                      <p className="text-sm text-gray-300">{formatUnits(minimumLiquidity as bigint, 6)} PyUSD</p>
+                    </div>
+                  ) : null}
                 </CardContent>
               </Card>
-            )}
 
-            {success && (
-              <Card className="border-white bg-green-900/20">
-                <CardContent className="pt-4">
-                  <p className="text-green-300 text-sm">{success}</p>
-                </CardContent>
-              </Card>
-            )}
+              {/* Messages */}
+              {(error || ipfsError) && (
+                <Card className="border-red-800 bg-red-900/20 backdrop-blur-sm">
+                  <CardContent className="pt-4">
+                    <p className="text-red-300 text-sm">{error || ipfsError}</p>
+                  </CardContent>
+                </Card>
+              )}
+
+              {success && (
+                <Card className="border-green-800 bg-green-900/20 backdrop-blur-sm">
+                  <CardContent className="pt-4">
+                    <p className="text-green-300 text-sm">{success}</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
           </div>
 
           {/* Main Form */}
-          <div className="lg:col-span-2">
-            <Card className="border-white bg-black shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-white text-xl">Prediction Details</CardTitle>
-                <CardDescription className="text-blue-300">
-                  Fill in the details for your prediction market
-                </CardDescription>
+          <div className="lg:col-span-3">
+            <Card className="border-gray-800 bg-gray-900/50 backdrop-blur-sm min-h-[600px]">
+              <CardHeader className="border-b border-gray-800">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-white text-2xl">{steps[currentStep].title}</CardTitle>
+                    <CardDescription className="text-gray-400 mt-1">
+                      {steps[currentStep].description}
+                    </CardDescription>
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    Step {currentStep + 1} of {steps.length}
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-6">
-                    {/* Image Upload Section */}
-                    <div>
-                      <label className="block text-sm font-medium text-blue-300 mb-2">
-                        Market Image
-                      </label>
-                      <div className="space-y-4">
-                        {!imagePreview ? (
-                          <div className="border-2 border-dashed border-white bg-gray-800 rounded-lg p-6 text-center">
-                            <svg className="mx-auto h-12 w-12 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 48 48">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" />
-                            </svg>
-                            <div className="mt-4">
-                              <label htmlFor="image-upload" className="cursor-pointer">
-                                <span className="text-blue-300 hover:text-blue-200">Upload an image</span>
-                                <input
-                                  id="image-upload"
-                                  type="file"
-                                  accept="image/*"
-                                  onChange={handleImageSelect}
-                                  className="hidden"
-                                />
-                              </label>
-                              <p className="text-xs text-gray-400 mt-1">PNG, JPG, GIF up to 10MB</p>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="relative">
-                            <img
-                              src={imagePreview}
-                              alt="Preview"
-                              className="w-full h-48 object-cover rounded-lg border border-white"
-                            />
-                            <button
-                              type="button"
-                              onClick={removeImage}
-                              className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-blue-300 mb-2">
-                          Prediction Title *
-                        </label>
-                        <Input
-                          name="title"
-                          value={formData.title}
-                          onChange={handleInputChange}
-                          placeholder="Will Bitcoin reach $100k by end of 2024?"
-                          className="border-white bg-gray-800 text-white placeholder:text-blue-300/60 focus:border-blue-400 focus:ring-blue-400"
-                          required
-                        />
-                      </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-blue-300 mb-2">
-                        Category
-                      </label>
-                      <Input
-                        name="category"
-                        value={formData.category}
-                        onChange={handleInputChange}
-                        placeholder="Cryptocurrency"
-                        className="border-white bg-gray-800 text-white placeholder:text-blue-300/60 focus:border-blue-400 focus:ring-blue-400"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-blue-300 mb-2">
-                        Initial Liquidity (PyUSD) *
-                      </label>
-                      <Input
-                        name="initialLiquidity"
-                        type="number"
-                        value={formData.initialLiquidity}
-                        onChange={handleInputChange}
-                        placeholder="10"
-                        min="1"
-                        step="0.01"
-                        className="border-white bg-gray-800 text-white placeholder:text-blue-300/60 focus:border-blue-400 focus:ring-blue-400"
-                        required
-                      />
-                      {hasInsufficientBalance() && (
-                        <p className="text-red-300 text-sm mt-1">Insufficient PyUSD balance</p>
-                      )}
-                      {hasInsufficientLiquidity() && minimumLiquidity ? (
-                        <p className="text-amber-300 text-sm mt-1">
-                          Minimum liquidity: {formatUnits(minimumLiquidity as bigint, 6)} PyUSD
-                        </p>
-                      ) : null}
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-blue-300 mb-2">
-                        Resolution Date *
-                      </label>
-                      <Input
-                        name="resolutionDate"
-                        type="datetime-local"
-                        value={formData.resolutionDate}
-                        onChange={handleInputChange}
-                        min={new Date().toISOString().slice(0, 16)}
-                        className="border-white bg-gray-800 text-white focus:border-blue-400 focus:ring-blue-400"
-                        required
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-blue-300 mb-2">
-                        Description
-                      </label>
-                      <textarea
-                        name="metadata"
-                        value={formData.metadata}
-                        onChange={handleInputChange}
-                        placeholder="Additional details about the prediction..."
-                        rows={3}
-                        className="w-full px-3 py-2 border border-white bg-gray-800 rounded-md text-white placeholder:text-blue-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 resize-none"
-                      />
-                    </div>
-
-                    {/* Tags Section */}
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-blue-300 mb-2">
-                        Tags
-                      </label>
-                      <div className="space-y-2">
-                        <div className="flex gap-2">
+              
+              <CardContent className="p-8">
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* Step Content */}
+                  <div className="min-h-[400px]">
+                    {currentStep === 0 && (
+                      <div className="space-y-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-3">
+                            Prediction Title *
+                          </label>
                           <Input
-                            value={currentTag}
-                            onChange={(e) => setCurrentTag(e.target.value)}
-                            onKeyPress={handleTagKeyPress}
-                            placeholder="Add a tag (press Enter)"
-                            className="border-white bg-gray-800 text-white placeholder:text-blue-300/60 focus:border-blue-400 focus:ring-blue-400"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleInputChange}
+                            placeholder="Will Bitcoin reach $100k by end of 2024?"
+                            className="h-12 border-gray-700 bg-gray-800/50 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20"
+                            required
                           />
-                          <Button
-                            type="button"
-                            onClick={addTag}
-                            className="bg-blue-600 hover:bg-blue-700 text-white border border-white px-4"
-                          >
-                            Add
-                          </Button>
                         </div>
-                        {tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {tags.map((tag, index) => (
-                              <span
-                                key={index}
-                                className="inline-flex items-center px-2 py-1 bg-blue-600/20 border border-blue-400 text-blue-300 text-sm rounded-md"
-                              >
-                                {tag}
-                                <button
-                                  type="button"
-                                  onClick={() => removeTag(tag)}
-                                  className="ml-2 text-blue-300 hover:text-white"
-                                >
-                                  ×
-                                </button>
-                              </span>
-                            ))}
-                          </div>
-                        )}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-3">
+                            Category *
+                          </label>
+                          <Input
+                            name="category"
+                            value={formData.category}
+                            onChange={handleInputChange}
+                            placeholder="Cryptocurrency, Sports, Politics, etc."
+                            className="h-12 border-gray-700 bg-gray-800/50 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-3">
+                            Description
+                          </label>
+                          <textarea
+                            name="metadata"
+                            value={formData.metadata}
+                            onChange={handleInputChange}
+                            placeholder="Provide additional context and details about your prediction..."
+                            rows={4}
+                            className="w-full px-4 py-3 border border-gray-700 bg-gray-800/50 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none"
+                          />
+                        </div>
                       </div>
-                    </div>
-
-                    {/* Source URL */}
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-blue-300 mb-2">
-                        Source URL (optional)
-                      </label>
-                      <Input
-                        value={sourceUrl}
-                        onChange={(e) => setSourceUrl(e.target.value)}
-                        placeholder="https://example.com/source"
-                        className="border-white bg-gray-800 text-white placeholder:text-blue-300/60 focus:border-blue-400 focus:ring-blue-400"
-                      />
-                    </div>
-
-                    {/* Rules */}
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-blue-300 mb-2">
-                        Resolution Rules (optional)
-                      </label>
-                      <textarea
-                        value={rules}
-                        onChange={(e) => setRules(e.target.value)}
-                        placeholder="Specific rules for how this prediction will be resolved..."
-                        rows={3}
-                        className="w-full px-3 py-2 border border-white bg-gray-800 rounded-md text-white placeholder:text-blue-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 resize-none"
-                      />
-                    </div>
-                  </div>
-                  </div>
-
-                  <div className="border-t border-white pt-6 space-y-4">
-                    {needsApproval() && (
-                      <Button
-                        type="button"
-                        onClick={handleApproval}
-                        disabled={isApprovalPending}
-                        className="w-full bg-orange-600 hover:bg-orange-700 text-white border border-white"
-                      >
-                        {isApprovalPending ? (
-                          <div className="flex items-center space-x-2">
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                            <span>Approving PyUSD...</span>
-                          </div>
-                        ) : (
-                          'Approve PyUSD Spending'
-                        )}
-                      </Button>
                     )}
 
+                    {currentStep === 1 && (
+                      <div className="space-y-6">
+                        {/* Image Upload */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-3">
+                            Market Image
+                          </label>
+                          {!imagePreview ? (
+                            <div className="border-2 border-dashed border-gray-700 bg-gray-800/30 rounded-xl p-8 text-center hover:border-gray-600 transition-colors">
+                              <svg className="mx-auto h-16 w-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" />
+                              </svg>
+                              <div className="mt-6">
+                                <label htmlFor="image-upload" className="cursor-pointer">
+                                  <span className="text-blue-400 hover:text-blue-300 font-medium">Upload an image</span>
+                                  <input
+                                    id="image-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageSelect}
+                                    className="hidden"
+                                  />
+                                </label>
+                                <p className="text-sm text-gray-500 mt-2">PNG, JPG, GIF up to 10MB</p>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="relative">
+                              <img
+                                src={imagePreview}
+                                alt="Preview"
+                                className="w-full h-64 object-cover rounded-xl border border-gray-700"
+                              />
+                              <button
+                                type="button"
+                                onClick={removeImage}
+                                className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white rounded-full p-2 transition-colors"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Tags */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-3">
+                            Tags
+                          </label>
+                          <div className="space-y-3">
+                            <div className="flex gap-3">
+                              <Input
+                                value={currentTag}
+                                onChange={(e) => setCurrentTag(e.target.value)}
+                                onKeyPress={handleTagKeyPress}
+                                placeholder="Add a tag and press Enter"
+                                className="h-12 border-gray-700 bg-gray-800/50 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20"
+                              />
+                              <Button
+                                type="button"
+                                onClick={addTag}
+                                className="h-12 bg-blue-600 hover:bg-blue-700 text-white px-6"
+                              >
+                                Add
+                              </Button>
+                            </div>
+                            {tags.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {tags.map((tag, index) => (
+                                  <span
+                                    key={index}
+                                    className="inline-flex items-center px-3 py-1 bg-blue-600/20 border border-blue-500/30 text-blue-300 text-sm rounded-full"
+                                  >
+                                    {tag}
+                                    <button
+                                      type="button"
+                                      onClick={() => removeTag(tag)}
+                                      className="ml-2 text-blue-400 hover:text-white"
+                                    >
+                                      ×
+                                    </button>
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Source URL */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-3">
+                            Source URL (optional)
+                          </label>
+                          <Input
+                            value={sourceUrl}
+                            onChange={(e) => setSourceUrl(e.target.value)}
+                            placeholder="https://example.com/source"
+                            className="h-12 border-gray-700 bg-gray-800/50 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20"
+                          />
+                        </div>
+
+                        {/* Rules */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-3">
+                            Resolution Rules (optional)
+                          </label>
+                          <textarea
+                            value={rules}
+                            onChange={(e) => setRules(e.target.value)}
+                            placeholder="Specific rules for how this prediction will be resolved..."
+                            rows={3}
+                            className="w-full px-4 py-3 border border-gray-700 bg-gray-800/50 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {currentStep === 2 && (
+                      <div className="space-y-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-3">
+                            Initial Liquidity (PyUSD) *
+                          </label>
+                          <Input
+                            name="initialLiquidity"
+                            type="number"
+                            value={formData.initialLiquidity}
+                            onChange={handleInputChange}
+                            placeholder="10"
+                            min="1"
+                            step="0.01"
+                            className="h-12 border-gray-700 bg-gray-800/50 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500/20"
+                            required
+                          />
+                          {hasInsufficientBalance() && (
+                            <p className="text-red-400 text-sm mt-2">Insufficient PyUSD balance</p>
+                          )}
+                          {hasInsufficientLiquidity() && minimumLiquidity ? (
+                            <p className="text-amber-400 text-sm mt-2">
+                              Minimum liquidity: {formatUnits(minimumLiquidity as bigint, 6)} PyUSD
+                            </p>
+                          ) : null}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-3">
+                            Resolution Date *
+                          </label>
+                          <Input
+                            name="resolutionDate"
+                            type="datetime-local"
+                            value={formData.resolutionDate}
+                            onChange={handleInputChange}
+                            min={new Date().toISOString().slice(0, 16)}
+                            className="h-12 border-gray-700 bg-gray-800/50 text-white focus:border-blue-500 focus:ring-blue-500/20"
+                            required
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {currentStep === 3 && (
+                      <div className="space-y-6">
+                        <div className="bg-gray-800/30 rounded-xl p-6 space-y-4">
+                          <h3 className="text-lg font-medium text-white">Review Your Prediction</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <p className="text-gray-400">Title</p>
+                              <p className="text-white font-medium">{formData.title}</p>
+                            </div>
+                            <div>
+                              <p className="text-gray-400">Category</p>
+                              <p className="text-white">{formData.category}</p>
+                            </div>
+                            <div>
+                              <p className="text-gray-400">Initial Liquidity</p>
+                              <p className="text-white">{formData.initialLiquidity} PyUSD</p>
+                            </div>
+                            <div>
+                              <p className="text-gray-400">Resolution Date</p>
+                              <p className="text-white">
+                                {formData.resolutionDate ? new Date(formData.resolutionDate).toLocaleString() : 'Not set'}
+                              </p>
+                            </div>
+                            {formData.metadata && (
+                              <div className="md:col-span-2">
+                                <p className="text-gray-400">Description</p>
+                                <p className="text-white">{formData.metadata}</p>
+                              </div>
+                            )}
+                          </div>
+                          {tags.length > 0 && (
+                            <div>
+                              <p className="text-gray-400 mb-2">Tags</p>
+                              <div className="flex flex-wrap gap-2">
+                                {tags.map((tag, index) => (
+                                  <span key={index} className="px-3 py-1 bg-blue-600/20 border border-blue-500/30 text-blue-300 text-sm rounded-full">
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {needsApproval() && (
+                          <div className="bg-orange-900/20 border border-orange-800 rounded-xl p-6">
+                            <h4 className="text-orange-300 font-medium mb-3">Approval Required</h4>
+                            <p className="text-gray-300 text-sm mb-4">You need to approve PyUSD spending before creating the prediction.</p>
+                            <Button
+                              type="button"
+                              onClick={handleApproval}
+                              disabled={isApprovalPending}
+                              className="bg-orange-600 hover:bg-orange-700 text-white"
+                            >
+                              {isApprovalPending ? (
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                  <span>Approving...</span>
+                                </div>
+                              ) : (
+                                'Approve PyUSD Spending'
+                              )}
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Navigation */}
+                  <div className="flex items-center justify-between pt-6 border-t border-gray-800">
                     <Button
-                      type="submit"
-                      disabled={!isFormValid || isCreatePending || isUploadingToIPFS || needsApproval() || hasInsufficientBalance() || hasInsufficientLiquidity()}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 border border-white"
+                      type="button"
+                      onClick={prevStep}
+                      disabled={currentStep === 0}
+                      variant="outline"
+                      className="border-gray-600 text-gray-300 hover:bg-gray-800"
                     >
-                      {isUploadingToIPFS ? (
-                        <div className="flex items-center space-x-2">
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                          <span>Uploading to IPFS... {uploadProgress}%</span>
-                        </div>
-                      ) : isCreatePending ? (
-                        <div className="flex items-center space-x-2">
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                          <span>Creating Prediction...</span>
-                        </div>
-                      ) : (
-                        'Create Prediction Market'
-                      )}
+                      Previous
                     </Button>
+
+                    <div className="flex space-x-3">
+                      {currentStep < steps.length - 1 ? (
+                        <Button
+                          type="button"
+                          onClick={nextStep}
+                          disabled={!canProceedToNextStep()}
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-8"
+                        >
+                          Next
+                        </Button>
+                      ) : (
+                        <Button
+                          type="submit"
+                          disabled={!isFormValid || isCreatePending || isUploadingToIPFS || needsApproval() || hasInsufficientBalance() || hasInsufficientLiquidity()}
+                          className="bg-green-600 hover:bg-green-700 text-white px-8"
+                        >
+                          {isUploadingToIPFS ? (
+                            <div className="flex items-center space-x-2">
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                              <span>Uploading... {uploadProgress}%</span>
+                            </div>
+                          ) : isCreatePending ? (
+                            <div className="flex items-center space-x-2">
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                              <span>Creating...</span>
+                            </div>
+                          ) : (
+                            'Create Prediction Market'
+                          )}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </form>
               </CardContent>
