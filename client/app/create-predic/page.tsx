@@ -36,9 +36,13 @@ export default function CreatePredictionPage() {
   const {
     createMetadata,
     validateFileInput,
+    testConnection,
     isUploading: isUploadingToIPFS,
     uploadProgress,
-    error: ipfsError
+    error: ipfsError,
+    isPinataReady,
+    pinataStatus,
+    connectionStatus
   } = useIPFS();
 
   // State
@@ -224,10 +228,10 @@ export default function CreatePredictionPage() {
       setError('');
       setSuccess('');
       
-      // Create metadata with IPFS
+      // Create metadata with Pinata IPFS
       let metadataHash = '';
       if (selectedImage || formData.metadata || tags.length > 0 || sourceUrl || rules) {
-        setSuccess('📤 Uploading metadata to IPFS...');
+        setSuccess('📤 Uploading metadata to Pinata IPFS...');
         
         metadataHash = await createMetadata(selectedImage, {
           title: formData.title,
@@ -238,7 +242,7 @@ export default function CreatePredictionPage() {
           rules: rules || undefined,
         });
         
-        setSuccess('✅ Metadata uploaded to IPFS! Creating prediction...');
+        setSuccess('✅ Metadata uploaded to Pinata IPFS! Creating prediction...');
       }
       
       // Create prediction with IPFS metadata hash
@@ -269,11 +273,11 @@ export default function CreatePredictionPage() {
       // Reset to first step
       setCurrentStep(0);
       
-      setSuccess('🎉 Prediction market created successfully with IPFS metadata!');
+      setSuccess('🎉 Prediction market created successfully with Pinata IPFS metadata!');
     } catch (error) {
       console.error('Create prediction error:', error);
-      if (error instanceof Error && error.message.includes('IPFS')) {
-        setError(`IPFS Error: ${error.message}`);
+      if (error instanceof Error && (error.message.includes('IPFS') || error.message.includes('Pinata'))) {
+        setError(`Pinata IPFS Error: ${error.message}`);
       } else {
         setError('Failed to create prediction. Please try again.');
       }
@@ -428,6 +432,51 @@ export default function CreatePredictionPage() {
                       <p className="text-sm text-gray-300">{formatUnits(minimumLiquidity as bigint, 6)} PyUSD</p>
                     </div>
                   ) : null}
+                </CardContent>
+              </Card>
+
+              {/* Pinata IPFS Status */}
+              <Card className="border-gray-800 bg-gray-900/50 backdrop-blur-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-white text-lg">IPFS Status</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-400">Pinata Service</p>
+                    <Badge 
+                      variant="outline" 
+                      className={`${
+                        connectionStatus === 'success' 
+                          ? 'border-green-600 text-green-300 bg-green-800/20'
+                          : connectionStatus === 'testing'
+                          ? 'border-yellow-600 text-yellow-300 bg-yellow-800/20'
+                          : 'border-red-600 text-red-300 bg-red-800/20'
+                      }`}
+                    >
+                      {connectionStatus === 'success' && 'Connected'}
+                      {connectionStatus === 'testing' && 'Testing...'}
+                      {connectionStatus === 'failed' && 'Failed'}
+                      {connectionStatus === 'unknown' && 'Unknown'}
+                    </Badge>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">
+                      API Key: {pinataStatus.hasApiKey ? '✓' : '✗'} | 
+                      Secret: {pinataStatus.hasSecretKey ? '✓' : '✗'}
+                    </p>
+                  </div>
+                  {pinataStatus.configured && (
+                    <Button
+                      type="button"
+                      onClick={testConnection}
+                      disabled={connectionStatus === 'testing'}
+                      variant="outline"
+                      size="sm"
+                      className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
+                    >
+                      {connectionStatus === 'testing' ? 'Testing...' : 'Test Connection'}
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
 

@@ -1,17 +1,35 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Setup
+
+### Pinata IPFS Configuration
+
+This project uses Pinata for IPFS storage. You'll need to set up the following environment variables:
+
+1. Sign up at [Pinata.cloud](https://pinata.cloud)
+2. Create API keys in your Pinata dashboard
+3. Create a `.env.local` file in the client directory with:
+
+```env
+NEXT_PUBLIC_PINATA_API_KEY=your_pinata_api_key_here
+NEXT_PUBLIC_PINATA_SECRET_API_KEY=your_pinata_secret_api_key_here
+```
+
+**Important**: Make sure your Pinata API key has upload permissions enabled.
+
 ## Getting Started
 
-First, run the development server:
+First, install dependencies and run the development server:
 
 ```bash
+npm install
 npm run dev
 # or
-yarn dev
+yarn install && yarn dev
 # or
-pnpm dev
+pnpm install && pnpm dev
 # or
-bun dev
+bun install && bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

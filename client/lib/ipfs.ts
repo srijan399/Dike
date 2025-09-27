@@ -1,14 +1,12 @@
-// Modern IPFS implementation using fetch API and multiple gateways
+// Pinata IPFS implementation using their API (matching NFT marketplace format)
+import axios from 'axios';
 
 const PINATA_API_KEY = process.env.NEXT_PUBLIC_PINATA_API_KEY || '';
 const PINATA_SECRET_API_KEY = process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY || '';
 
-// IPFS Gateway URLs
-const IPFS_GATEWAYS = [
-  'https://ipfs.io/ipfs',
-  'https://gateway.pinata.cloud/ipfs',
-  'https://cloudflare-ipfs.com/ipfs',
-];
+// Pinata API endpoints
+const PINATA_API_URL = 'https://api.pinata.cloud';
+const PINATA_GATEWAY_URL = 'https://gateway.pinata.cloud/ipfs';
 
 export interface MarketMetadata {
   title: string;
@@ -29,163 +27,160 @@ export interface UploadResult {
 }
 
 /**
- * Upload a file to IPFS using Pinata or public gateway
+ * Upload a file to IPFS using Pinata
  * @param file - File object to upload
  * @returns Promise<UploadResult>
  */
 export async function uploadFileToIPFS(file: File): Promise<UploadResult> {
   try {
-    // Try Pinata first if API keys are available
-    if (PINATA_API_KEY && PINATA_SECRET_API_KEY) {
-      return await uploadToPinata(file);
+    // Validate API keys
+    if (!PINATA_API_KEY || !PINATA_SECRET_API_KEY) {
+      throw new Error('Pinata API keys are not configured. Please set NEXT_PUBLIC_PINATA_API_KEY and NEXT_PUBLIC_PINATA_SECRET_API_KEY environment variables.');
     }
     
-    // Fallback to public IPFS gateway (limited functionality)
-    return await uploadToPublicGateway(file);
+    return await uploadToPinata(file);
   } catch (error) {
-    console.error('Error uploading file to IPFS:', error);
-    throw new Error('Failed to upload file to IPFS');
+    console.error('Error uploading file to Pinata IPFS:', error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Failed to upload file to Pinata IPFS');
   }
 }
 
 /**
- * Upload file to Pinata IPFS service
+ * Upload file to Pinata IPFS service (using axios like NFT marketplace)
  */
 async function uploadToPinata(file: File): Promise<UploadResult> {
   const formData = new FormData();
   formData.append('file', file);
   
-  const metadata = JSON.stringify({
-    name: file.name,
-    keyvalues: {
-      uploadedBy: 'dike-protocol',
-      timestamp: Date.now().toString(),
+  try {
+    const res = await axios.post(`${PINATA_API_URL}/pinning/pinFileToIPFS`, formData, {
+      headers: {
+        'pinata_api_key': PINATA_API_KEY,
+        'pinata_secret_api_key': PINATA_SECRET_API_KEY,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    return {
+      hash: res.data.IpfsHash,
+      url: `${PINATA_GATEWAY_URL}/${res.data.IpfsHash}`,
+      size: res.data.PinSize,
+    };
+  } catch (error: any) {
+    console.error('Pinata API Error:', {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      error: error.response?.data,
+      hasApiKey: !!PINATA_API_KEY,
+      hasSecretKey: !!PINATA_SECRET_API_KEY,
+    });
+    
+    // Provide more specific error messages
+    if (error.response?.status === 401) {
+      throw new Error('Pinata authentication failed. Please check your API keys.');
+    } else if (error.response?.status === 403) {
+      throw new Error('Pinata access forbidden. Please verify your API key has upload permissions.');
+    } else if (error.response?.status === 413) {
+      throw new Error('File too large for Pinata upload.');
+    } else {
+      throw new Error(`Pinata upload failed: ${error.message}`);
     }
-  });
-  formData.append('pinataMetadata', metadata);
-
-  const options = JSON.stringify({
-    cidVersion: 0,
-  });
-  formData.append('pinataOptions', options);
-
-  const response = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
-    method: 'POST',
-    headers: {
-      'pinata_api_key': PINATA_API_KEY,
-      'pinata_secret_api_key': PINATA_SECRET_API_KEY,
-    },
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error(`Pinata upload failed: ${response.statusText}`);
   }
-
-  const result = await response.json();
-  
-  return {
-    hash: result.IpfsHash,
-    url: `https://gateway.pinata.cloud/ipfs/${result.IpfsHash}`,
-    size: result.PinSize,
-  };
 }
 
 /**
- * Upload to public IPFS gateway (simplified approach)
+ * Upload JSON metadata to Pinata IPFS (using axios like NFT marketplace)
  */
-async function uploadToPublicGateway(file: File): Promise<UploadResult> {
-  // This is a simplified mock implementation
-  // In a real scenario, you would need a proper IPFS node or service
-  
-  // For demo purposes, we'll create a fake hash based on file content
-  const arrayBuffer = await file.arrayBuffer();
-  const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  const fakeHash = `Qm${hashHex.substring(0, 44)}`; // Mock IPFS hash format
-  
-  // Store in localStorage for demo (in real app, this would be uploaded to IPFS)
-  localStorage.setItem(`ipfs_${fakeHash}`, await fileToBase64(file));
-  
-  return {
-    hash: fakeHash,
-    url: `https://ipfs.io/ipfs/${fakeHash}`,
-    size: file.size,
-  };
+async function uploadJSONToPinata(jsonData: any, filename: string): Promise<UploadResult> {
+  try {
+    const res = await axios.post(`${PINATA_API_URL}/pinning/pinJSONToIPFS`, jsonData, {
+      headers: {
+        'pinata_api_key': PINATA_API_KEY,
+        'pinata_secret_api_key': PINATA_SECRET_API_KEY,
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    return {
+      hash: res.data.IpfsHash,
+      url: `${PINATA_GATEWAY_URL}/${res.data.IpfsHash}`,
+      size: JSON.stringify(jsonData).length,
+    };
+  } catch (error: any) {
+    console.error('Pinata JSON API Error:', {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      error: error.response?.data,
+      hasApiKey: !!PINATA_API_KEY,
+      hasSecretKey: !!PINATA_SECRET_API_KEY,
+    });
+    
+    // Provide more specific error messages
+    if (error.response?.status === 401) {
+      throw new Error('Pinata authentication failed. Please check your API keys.');
+    } else if (error.response?.status === 403) {
+      throw new Error('Pinata access forbidden. Please verify your API key has upload permissions.');
+    } else if (error.response?.status === 413) {
+      throw new Error('Metadata too large for Pinata upload.');
+    } else {
+      throw new Error(`Pinata JSON upload failed: ${error.message}`);
+    }
+  }
 }
 
 /**
- * Convert file to base64 string
- */
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = error => reject(error);
-  });
-}
-
-/**
- * Upload JSON metadata to IPFS
+ * Upload JSON metadata to IPFS using Pinata's JSON endpoint
  * @param metadata - Metadata object to upload
  * @returns Promise<UploadResult>
  */
 export async function uploadMetadataToIPFS(metadata: MarketMetadata): Promise<UploadResult> {
   try {
-    const metadataString = JSON.stringify(metadata, null, 2);
-    const blob = new Blob([metadataString], { type: 'application/json' });
-    const file = new File([blob], 'metadata.json', { type: 'application/json' });
+    // Validate API keys
+    if (!PINATA_API_KEY || !PINATA_SECRET_API_KEY) {
+      throw new Error('Pinata API keys are not configured. Please set NEXT_PUBLIC_PINATA_API_KEY and NEXT_PUBLIC_PINATA_SECRET_API_KEY environment variables.');
+    }
     
-    return await uploadFileToIPFS(file);
+    return await uploadJSONToPinata(metadata, `metadata-${metadata.title.toLowerCase().replace(/\s+/g, '-')}.json`);
   } catch (error) {
-    console.error('Error uploading metadata to IPFS:', error);
-    throw new Error('Failed to upload metadata to IPFS');
+    console.error('Error uploading metadata to Pinata IPFS:', error);
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('Failed to upload metadata to Pinata IPFS');
   }
 }
 
 /**
- * Retrieve metadata from IPFS
+ * Retrieve metadata from IPFS using Pinata gateway (using axios like NFT marketplace)
  * @param hash - IPFS hash of the metadata
  * @returns Promise<MarketMetadata>
  */
 export async function getMetadataFromIPFS(hash: string): Promise<MarketMetadata> {
   try {
-    // Try multiple gateways for reliability
-    for (const gateway of IPFS_GATEWAYS) {
-      try {
-        const url = `${gateway}/${hash}`;
-        const response = await fetch(url, {
-          headers: {
-            'Accept': 'application/json',
-          },
-        });
-        
-        if (response.ok) {
-          const data = await response.text();
-          return JSON.parse(data) as MarketMetadata;
-        }
-      } catch (gatewayError) {
-        console.warn(`Failed to fetch from gateway ${gateway}:`, gatewayError);
-      }
+    const url = `${PINATA_GATEWAY_URL}/${hash}`;
+    const res = await axios.get(url, {
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+    
+    const metadata = res.data as MarketMetadata;
+    
+    // Validate metadata structure
+    if (!metadata.title || !metadata.category || !metadata.description) {
+      throw new Error('Invalid metadata structure received from IPFS');
     }
     
-    // Fallback to localStorage for demo hashes
-    const localData = localStorage.getItem(`ipfs_${hash}`);
-    if (localData) {
-      // If it's a base64 data URL, extract the JSON content
-      if (localData.startsWith('data:application/json')) {
-        const base64Data = localData.split(',')[1];
-        const jsonString = atob(base64Data);
-        return JSON.parse(jsonString) as MarketMetadata;
-      }
+    return metadata;
+  } catch (error: any) {
+    console.error('Error retrieving metadata from Pinata IPFS:', error);
+    if (error.response?.status === 404) {
+      throw new Error('Metadata not found on IPFS');
     }
-    
-    throw new Error('Failed to retrieve metadata from any IPFS gateway');
-  } catch (error) {
-    console.error('Error retrieving metadata from IPFS:', error);
-    throw new Error('Failed to retrieve metadata from IPFS');
+    throw new Error(`Failed to retrieve metadata from Pinata IPFS: ${error.message}`);
   }
 }
 
@@ -233,23 +228,66 @@ export async function createMarketMetadata(
 }
 
 /**
- * Get IPFS gateway URL for a hash
+ * Get Pinata IPFS gateway URL for a hash
  * @param hash - IPFS hash
- * @param gateway - Gateway URL (default: first available)
- * @returns string - Full URL
+ * @returns string - Full Pinata gateway URL
  */
-export function getIPFSUrl(hash: string, gateway?: string): string {
-  const selectedGateway = gateway || IPFS_GATEWAYS[0];
-  
-  // Check if it's a demo hash stored locally
-  if (hash.startsWith('Qm') && localStorage.getItem(`ipfs_${hash}`)) {
-    const localData = localStorage.getItem(`ipfs_${hash}`);
-    if (localData && localData.startsWith('data:')) {
-      return localData; // Return the data URL directly for demo
+export function getIPFSUrl(hash: string): string {
+  return `${PINATA_GATEWAY_URL}/${hash}`;
+}
+
+/**
+ * Check if Pinata API keys are configured
+ * @returns boolean
+ */
+export function isPinataConfigured(): boolean {
+  return !!(PINATA_API_KEY && PINATA_SECRET_API_KEY);
+}
+
+/**
+ * Test Pinata API connection (using axios like NFT marketplace)
+ * @returns Promise<boolean>
+ */
+export async function testPinataConnection(): Promise<{ success: boolean; error?: string }> {
+  try {
+    if (!isPinataConfigured()) {
+      return { success: false, error: 'Pinata API keys not configured' };
     }
+
+    const res = await axios.get(`${PINATA_API_URL}/data/testAuthentication`, {
+      headers: {
+        'pinata_api_key': PINATA_API_KEY,
+        'pinata_secret_api_key': PINATA_SECRET_API_KEY,
+      },
+    });
+
+    if (res.status === 200) {
+      return { success: true };
+    } else {
+      return { success: false, error: `Authentication failed: ${res.status} ${res.statusText}` };
+    }
+  } catch (error: any) {
+    return { 
+      success: false, 
+      error: error.response?.data?.error || error.message || 'Unknown error testing Pinata connection'
+    };
   }
-  
-  return `${selectedGateway}/${hash}`;
+}
+
+/**
+ * Get Pinata API key status (for debugging)
+ * @returns object with key status
+ */
+export function getPinataStatus(): { 
+  hasApiKey: boolean; 
+  hasSecretKey: boolean; 
+  configured: boolean;
+} {
+  return {
+    hasApiKey: !!PINATA_API_KEY,
+    hasSecretKey: !!PINATA_SECRET_API_KEY,
+    configured: isPinataConfigured(),
+  };
 }
 
 /**
