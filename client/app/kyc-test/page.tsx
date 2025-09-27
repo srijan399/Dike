@@ -10,7 +10,7 @@ export default function KYCTestPage() {
             Self Identity Verification
           </h1>
           <p className="text-lg text-gray-600 mb-6">
-            Verify your identity using Self's decentralized identity system
+            Verify your identity using Self&apos;s decentralized identity system
           </p>
           <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
