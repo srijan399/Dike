@@ -30,7 +30,7 @@ export default function TestV2() {
             address: PYUSD_SEPOLIA_ADDRESS,
             abi: PYUSD_ABI,
             functionName: "approve",
-            args: [address, "100000000"],
+            args: ["0x4b0fe8d4512f94771d6b04c0bcd7602a0c095c16", "1000000000"],
         });
         console.log(tx);
     };
@@ -63,6 +63,13 @@ export default function TestV2() {
         await createPrediction();
     };
 
+    const { data: predictions, refetch: refetchPredictions } = useReadContract({
+        address: Dike_SEPOLIA_ADDRESS,
+        abi: DikeAbi,
+        functionName: "getActivePredictions",
+        args: [],
+    });
+
     return (
         <>
             <div>TestV2</div>
@@ -79,6 +86,10 @@ export default function TestV2() {
             <Button onClick={() => sendTokens()}>Send Tokens</Button>
 
             <Button onClick={() => createPred()}>Create Prediction</Button>
+
+            <Button onClick={() => refetchPredictions()}>
+                Get Predictions
+            </Button>
         </>
     );
 }
