@@ -13,3 +13,6 @@ docs/
 # Dotenv file
 .env
 notepad.txt
+
+node_modules/
+package-lock.json
