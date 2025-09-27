@@ -29,7 +29,11 @@ test:
 
 # Deploy Dike to specified network
 deploy:
-	forge script script/DeployDike.s.sol:DeployDikeScript --rpc-url https://ethereum-sepolia-public.nodies.app --account default --broadcast --via-ir
+	forge script script/DeployDike.s.sol:DeployDikeScript --rpc-url https://eth-sepolia.g.alchemy.com/v2/IsiYA3L8QTZAaZm0_JNTt6qgw1yLehws --account default --broadcast --via-ir
+
+deploySri:
+	forge script script/DeployDike.s.sol:DeployDikeScript --rpc-url https://sepolia.infura.io/v3/1ea5690df9404cc282f3644cb559e6cd --account pvt --broadcast --via-ir
+
 
 # Deploy FullDike to specified network
 deploy-full:
