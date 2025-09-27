@@ -25,6 +25,7 @@ const customSepolia = defineChain({
   },
 });
 
+// Create config outside of component to prevent re-initialization
 export const config = createConfig(
     getDefaultConfig({
         enableFamily: false,
@@ -36,14 +37,15 @@ export const config = createConfig(
             storage: cookieStorage,
         }),
 
-        walletConnectProjectId:
-            process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ||
-            "default_project_id",
+        // Required API Keys
+        walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "default_project_id",
 
         // Required App Info
-        appName: "Dike",
+        appName: "Nova Protocol",
 
         // Optional App Info
         appDescription: "Autonomous Decentralized on-chain insurance platform",
+        // appUrl: "https://family.co", // your app's url
+        // appIcon: "https://family.co/logo.png",
     })
 );

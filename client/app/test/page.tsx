@@ -6,7 +6,7 @@ import { DikeAbi, PYUSD_ABI } from "../abi";
 import { useAccount } from "wagmi";
 
 // Contract address
-const Dike_SEPOLIA_ADDRESS = "0x5Fe9A48aaD87824d0DCa6A4A0107d435853fd9a3";
+const Dike_SEPOLIA_ADDRESS = "0x4b0fe8D4512F94771D6B04c0BCD7602A0c095C16";
 const PYUSD_SEPOLIA_ADDRESS = "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9"; // PyUSD on Sepolia
 
 interface TestResult {

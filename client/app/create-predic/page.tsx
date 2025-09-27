@@ -1,297 +1,186 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useAccount, useWriteContract, useReadContract, useWaitForTransactionReceipt } from 'wagmi';
-import { parseUnits, formatUnits } from 'viem';
+import React, { useState } from 'react';
+import { formatUnits, parseUnits } from 'viem';
+import { useAccount, useDisconnect } from 'wagmi';
 import { ConnectKitButton } from 'connectkit';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import abi from '../abi';
-
-// Contract addresses
-const CONTRACT_ADDRESS = '0x5Fe9A48aaD87824d0DCa6A4A0107d435853fd9a3' as const;
-const PYUSD_ADDRESS = '0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9' as const;
-
-// PyUSD ABI for approval and transfer
-const PYUSD_ABI = [
-  {
-    inputs: [
-      { name: "spender", type: "address" },
-      { name: "amount", type: "uint256" }
-    ],
-    name: "approve",
-    outputs: [{ name: "", type: "bool" }],
-    stateMutability: "nonpayable",
-    type: "function"
-  },
-  {
-    inputs: [
-      { name: "owner", type: "address" },
-      { name: "spender", type: "address" }
-    ],
-    name: "allowance",
-    outputs: [{ name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function"
-  },
-  {
-    inputs: [{ name: "account", type: "address" }],
-    name: "balanceOf",
-    outputs: [{ name: "", type: "uint256" }],
-    stateMutability: "view",
-    type: "function"
-  }
-] as const;
-
-interface Prediction {
-  id: bigint;
-  creator: string;
-  title: string;
-  category: string;
-  metadata: string;
-  resolutionDate: bigint;
-  initialLiquidity: bigint;
-  yesLiquidity: bigint;
-  noLiquidity: bigint;
-  resolved: boolean;
-  outcome: boolean;
-  createdAt: bigint;
-  active: boolean;
-}
-
-interface FormData {
-  title: string;
-  category: string;
-  metadata: string;
-  resolutionDate: string;
-  initialLiquidity: string;
-}
+import useCreatePrediction, {
+  useApproveToken,
+  usePyUSDBalance,
+  useAllowance,
+  useMinimumLiquidity,
+  useActivePredictions,
+  useCurrentPrices,
+  useSendTokens,
+  PredictionFormData,
+  Prediction
+} from '@/hooks/createOpportunity';
+import useIPFS from '@/hooks/useIPFS';
 
 export default function CreatePredictionPage() {
   const { address, isConnected } = useAccount();
-  const [formData, setFormData] = useState<FormData>({
+  const { disconnect } = useDisconnect();
+  
+  // Hooks
+  const { createPrediction, isCreatePending } = useCreatePrediction();
+  const { approve, approveWallet, isApprovalPending } = useApproveToken();
+  const { balance, isLoading: balanceLoading, refetch: refetchBalance } = usePyUSDBalance();
+  const { allowance, refetch: refetchAllowance } = useAllowance();
+  const { minimumLiquidity } = useMinimumLiquidity();
+  const { activePredictions, refetchPredictions } = useActivePredictions();
+  const { sendTokens } = useSendTokens();
+  const {
+    createMetadata,
+    validateFileInput,
+    isUploading: isUploadingToIPFS,
+    uploadProgress,
+    error: ipfsError
+  } = useIPFS();
+
+  // State
+  const [formData, setFormData] = useState<PredictionFormData>({
     title: '',
     category: '',
     metadata: '',
     resolutionDate: '',
     initialLiquidity: '10'
   });
-  const [isCreating, setIsCreating] = useState(false);
-  const [needsApproval, setNeedsApproval] = useState(false);
-  const [predictions, setPredictions] = useState<Prediction[]>([]);
-
-  // Contract write hooks
-  const { writeContract: writeCreatePrediction, data: createTxHash, isPending: isCreatePending } = useWriteContract();
-  const { writeContract: writeApproval, data: approvalTxHash, isPending: isApprovalPending } = useWriteContract();
-
-  // Transaction receipt hooks
-  const { isLoading: isCreateTxLoading, isSuccess: isCreateTxSuccess } = useWaitForTransactionReceipt({
-    hash: createTxHash,
-  });
-  const { isLoading: isApprovalTxLoading, isSuccess: isApprovalTxSuccess } = useWaitForTransactionReceipt({
-    hash: approvalTxHash,
-  });
-
-  // Read contract hooks - Get user's prediction chain
-  const { data: userChainData, refetch: refetchUserChain } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi,
-    functionName: 'getUserChain',
-    args: address ? [address] : undefined,
-  });
-
-  // Also get all active predictions for reference
-  const { data: activePredictionIds, refetch: refetchActivePredictions } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi,
-    functionName: 'getActivePredictions',
-  });
-
-  const { data: pyUSDBalance, error: balanceError, isLoading: balanceLoading } = useReadContract({
-    address: PYUSD_ADDRESS,
-    abi: PYUSD_ABI,
-    functionName: 'balanceOf',
-    args: address ? [address] : undefined,
-  });
-
-  // Console log the balance for debugging
-  useEffect(() => {
-    console.log('=== PyUSD Balance Debug ===');
-    console.log('Connected Address:', address);
-    console.log('Is Connected:', isConnected);
-    console.log('PyUSD Contract Address:', PYUSD_ADDRESS);
-    console.log('Balance Loading:', balanceLoading);
-    console.log('Balance Error:', balanceError);
-    console.log('PyUSD Balance Raw:', pyUSDBalance);
-    console.log('PyUSD Balance Type:', typeof pyUSDBalance);
-    console.log('PyUSD Balance String:', pyUSDBalance?.toString());
-    if (pyUSDBalance) {
-      console.log('PyUSD Balance Formatted:', formatPyUSD(pyUSDBalance as bigint));
-    }
-    console.log('Args passed to contract:', address ? [address] : undefined);
-    console.log('========================');
-  }, [pyUSDBalance, address, isConnected, balanceError, balanceLoading]);
-
-  const { data: allowance, refetch: refetchAllowance } = useReadContract({
-    address: PYUSD_ADDRESS,
-    abi: PYUSD_ABI,
-    functionName: 'allowance',
-    args: address ? [address, CONTRACT_ADDRESS] : undefined,
-  });
-
-  // Console log allowance details for debugging
-  useEffect(() => {
-    console.log('=== Allowance Debug ===');
-    console.log('Current Allowance Raw:', allowance);
-    console.log('Current Allowance String:', allowance?.toString());
-    console.log('Required Amount:', formData.initialLiquidity);
-    if (allowance && formData.initialLiquidity) {
-      try {
-        const requiredAmount = parseUnits(formData.initialLiquidity, 6);
-        console.log('Required Amount (Wei):', requiredAmount.toString());
-        console.log('Current Allowance >= Required:', BigInt(allowance.toString()) >= requiredAmount);
-        console.log('Needs Approval:', BigInt(allowance.toString()) < requiredAmount);
-      } catch (error) {
-        console.log('Error parsing amounts:', error);
-      }
-    }
-    console.log('======================');
-  }, [allowance, formData.initialLiquidity]);
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
+  
+  // IPFS and image state
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
+  const [currentTag, setCurrentTag] = useState<string>('');
+  const [sourceUrl, setSourceUrl] = useState<string>('');
+  const [rules, setRules] = useState<string>('');
 
   // Helper functions
-  const formatPyUSD = (value: bigint | string | number | undefined): string => {
-    if (value === undefined || value === null) {
-      return '0.00 PyUSD';
-    }
+  const formatPyUSD = (value: bigint | undefined): string => {
+    if (!value) return '0.00 PyUSD';
     try {
-      const formatted = formatUnits(BigInt(value.toString()), 6);
+      const formatted = formatUnits(value, 6);
       return `${parseFloat(formatted).toFixed(2)} PyUSD`;
     } catch (error) {
-      return `${value.toString()} (raw)`;
+      return '0.00 PyUSD';
     }
   };
 
-  const formatDate = (timestamp: bigint): string => {
-    return new Date(Number(timestamp) * 1000).toLocaleDateString();
+  const formatDate = (timestamp: number): string => {
+    return new Date(timestamp * 1000).toLocaleDateString();
   };
 
-  // Load predictions created by the user
-  const loadUserPredictions = async () => {
-    if (!userChainData || !Array.isArray(userChainData) || !Array.isArray(userChainData[0]) || userChainData[0].length === 0) {
-      setPredictions([]);
+  // Image handling functions
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file
+    const validation = validateFileInput(file);
+    if (!validation.isValid) {
+      setError(validation.error || 'Invalid file');
       return;
     }
 
-    const userPredictionIds = userChainData[0]; // First element is the array of prediction IDs
-    console.log('User prediction IDs:', userPredictionIds.map((id: bigint) => id.toString()));
-
-    const predictionPromises = userPredictionIds.map(async (id: bigint) => {
-      try {
-        // Use getPrediction contract function directly
-        const prediction = await fetch('/api/prediction', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            predictionId: id.toString(),
-            useContractCall: true // Flag to use getPrediction contract function
-          })
-        });
-        
-        if (!prediction.ok) {
-          console.error(`Failed to fetch prediction ${id}`);
-          return null;
-        }
-        
-        const predictionData = await prediction.json();
-        
-        // Filter to show only predictions created by the current user
-        if (predictionData.creator.toLowerCase() === address?.toLowerCase()) {
-          return predictionData;
-        }
-        
-        return null;
-      } catch (error) {
-        console.error(`Error loading prediction ${id}:`, error);
-        return null;
-      }
-    });
-
-    const loadedPredictions = await Promise.all(predictionPromises);
-    const userPredictions = loadedPredictions.filter((p): p is Prediction => p !== null);
+    setSelectedImage(file);
     
-    console.log('Loaded user predictions:', userPredictions.length);
-    setPredictions(userPredictions);
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setImagePreview(event.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+    setError('');
   };
 
-  // Effects
-  useEffect(() => {
-    if (userChainData) {
-      loadUserPredictions();
-    }
-  }, [userChainData, address]);
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+  };
 
-  useEffect(() => {
-    if (isCreateTxSuccess) {
-      console.log('Create prediction transaction successful');
-      // Refetch user chain data after successful prediction creation
-      refetchUserChain();
-      refetchActivePredictions();
-      // Reset form
-      setFormData(prev => ({ ...prev, title: '' }));
-      setFormData(prev => ({ ...prev, metadata: '' }));
-      setFormData(prev => ({ ...prev, initialLiquidity: '10' }));
-      setFormData(prev => ({ ...prev, resolutionDate: '' }));
-      setFormData(prev => ({ ...prev, initialLiquidity: '10' }));
+  // Tag handling functions
+  const addTag = () => {
+    if (currentTag.trim() && !tags.includes(currentTag.trim())) {
+      setTags([...tags, currentTag.trim()]);
+      setCurrentTag('');
     }
-  }, [isCreateTxSuccess]);
+  };
 
-  useEffect(() => {
-    if (isApprovalTxSuccess) {
-      refetchAllowance();
-      setNeedsApproval(false);
-    }
-  }, [isApprovalTxSuccess]);
+  const removeTag = (tagToRemove: string) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
+  };
 
-  // Check if approval is needed
-  useEffect(() => {
-    if (allowance && formData.initialLiquidity) {
-      try {
-        const requiredAmount = parseUnits(formData.initialLiquidity, 6);
-        setNeedsApproval(BigInt(allowance.toString()) < requiredAmount);
-      } catch (error) {
-        setNeedsApproval(true);
-      }
+  const handleTagKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addTag();
     }
-  }, [allowance, formData.initialLiquidity]);
+  };
 
   // Form handlers
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    setError('');
+    setSuccess('');
+  };
+
+  const needsApproval = (): boolean => {
+    if (!allowance || !formData.initialLiquidity) return true;
+    try {
+      const requiredAmount = parseUnits(formData.initialLiquidity, 6);
+      return (allowance as bigint) < requiredAmount;
+    } catch {
+      return true;
+    }
+  };
+
+  const hasInsufficientBalance = (): boolean => {
+    if (!balance?.value || !formData.initialLiquidity) return false;
+    try {
+      const requiredAmount = parseUnits(formData.initialLiquidity, 6);
+      return balance.value < requiredAmount;
+    } catch {
+      return false;
+    }
+  };
+
+  const hasInsufficientLiquidity = (): boolean => {
+    if (!minimumLiquidity || !formData.initialLiquidity) return false;
+    try {
+      const liquidityAmount = parseUnits(formData.initialLiquidity, 6);
+      return liquidityAmount < (minimumLiquidity as bigint);
+    } catch {
+      return false;
+    }
   };
 
   const handleApproval = async () => {
     if (!formData.initialLiquidity) return;
     
     try {
-      const amount = parseUnits(formData.initialLiquidity, 6);
-      console.log('=== Approval Debug ===');
-      console.log('Approving amount:', amount.toString());
-      console.log('Spender (Contract):', CONTRACT_ADDRESS);
-      console.log('PyUSD Contract:', PYUSD_ADDRESS);
-      console.log('User Address:', address);
-      console.log('=====================');
+      setError('');
+      setSuccess('');
+      console.log('Starting approval process...');
       
-      writeApproval({
-        address: PYUSD_ADDRESS,
-        abi: PYUSD_ABI,
-        functionName: 'approve',
-        args: [CONTRACT_ADDRESS, amount],
-      });
+      const tx = await approve(formData.initialLiquidity);
+      console.log('Approval transaction submitted:', tx);
+      
+      // Wait a bit for the transaction to be mined
+      setTimeout(async () => {
+        await refetchAllowance();
+        console.log('Allowance refetched');
+      }, 2000);
+      
+      setSuccess('PyUSD spending approved successfully!');
     } catch (error) {
-      console.error('Approval error:', error);
+      console.error('Approval failed:', error);
+      setError('Approval failed. Please try again.');
     }
   };
 
@@ -299,66 +188,112 @@ export default function CreatePredictionPage() {
     e.preventDefault();
     if (!isConnected || !formData.title || !formData.resolutionDate || !formData.initialLiquidity) return;
 
-    console.log('=== Create Prediction Debug ===');
-    console.log('Needs Approval:', needsApproval);
-    console.log('Current Allowance:', allowance?.toString());
-    console.log('Required Amount:', formData.initialLiquidity);
-    
-    // Check if we need approval first
-    if (needsApproval) {
-      console.log('❌ Approval required first - stopping submission');
+    // Validation
+    if (hasInsufficientLiquidity()) {
+      const minLiquidityFormatted = formatUnits(minimumLiquidity! as bigint, 6);
+      setError(`Initial liquidity must be at least ${minLiquidityFormatted} PyUSD`);
       return;
     }
 
-    console.log('✅ Proceeding with prediction creation');
-    setIsCreating(true);
+    if (hasInsufficientBalance()) {
+      setError('Insufficient PyUSD balance');
+      return;
+    }
+
+    if (needsApproval()) {
+      setError('Please approve PyUSD spending first');
+      return;
+    }
+
+    if (new Date(formData.resolutionDate) <= new Date()) {
+      setError('Resolution date must be in the future');
+      return;
+    }
 
     try {
-      const resolutionTimestamp = Math.floor(new Date(formData.resolutionDate).getTime() / 1000);
-      const liquidityAmount = parseUnits(formData.initialLiquidity, 6);
-
-      console.log('=== Contract Call Parameters ===');
-      console.log('Title:', formData.title);
-      console.log('Category:', formData.category || 'General');
-      console.log('Metadata:', formData.metadata || '');
-      console.log('Resolution Timestamp:', resolutionTimestamp);
-      console.log('Liquidity Amount (Wei):', liquidityAmount.toString());
-      console.log('Contract Address:', CONTRACT_ADDRESS);
-      console.log('================================');
-
-      writeCreatePrediction({
-        address: CONTRACT_ADDRESS,
-        abi,
-        functionName: 'createPrediction',
-        args: [
-          formData.title,
-          formData.category || 'General',
-          formData.metadata || '',
-          BigInt(resolutionTimestamp),
-          liquidityAmount,
-        ],
+      setError('');
+      setSuccess('');
+      
+      // Create metadata with IPFS
+      let metadataHash = '';
+      if (selectedImage || formData.metadata || tags.length > 0 || sourceUrl || rules) {
+        setSuccess('📤 Uploading metadata to IPFS...');
+        
+        metadataHash = await createMetadata(selectedImage, {
+          title: formData.title,
+          category: formData.category || 'General',
+          description: formData.metadata || '',
+          tags: tags.length > 0 ? tags : undefined,
+          sourceUrl: sourceUrl || undefined,
+          rules: rules || undefined,
+        });
+        
+        setSuccess('✅ Metadata uploaded to IPFS! Creating prediction...');
+      }
+      
+      // Create prediction with IPFS metadata hash
+      const updatedFormData = {
+        ...formData,
+        metadata: metadataHash || formData.metadata || ''
+      };
+      
+      await createPrediction(updatedFormData);
+      
+      // Reset form on success
+      setFormData({
+        title: '',
+        category: '',
+        metadata: '',
+        resolutionDate: '',
+        initialLiquidity: '10'
       });
+      
+      // Reset IPFS-related state
+      setSelectedImage(null);
+      setImagePreview(null);
+      setTags([]);
+      setCurrentTag('');
+      setSourceUrl('');
+      setRules('');
+      
+      setSuccess('🎉 Prediction market created successfully with IPFS metadata!');
     } catch (error) {
       console.error('Create prediction error:', error);
-      setIsCreating(false);
+      if (error instanceof Error && error.message.includes('IPFS')) {
+        setError(`IPFS Error: ${error.message}`);
+      } else {
+        setError('Failed to create prediction. Please try again.');
+      }
     }
   };
 
-  // Validation
   const isFormValid = formData.title && formData.resolutionDate && formData.initialLiquidity && 
                      new Date(formData.resolutionDate) > new Date();
 
-  const hasInsufficientBalance = pyUSDBalance && formData.initialLiquidity ? 
-    BigInt(pyUSDBalance.toString()) < parseUnits(formData.initialLiquidity, 6) : false;
-
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-          <CardContent className="pt-6 text-center">
-            <h1 className="text-2xl font-bold text-white mb-4">Connect Your Wallet</h1>
-            <p className="text-slate-300 mb-6">Connect your wallet to create and view predictions</p>
-            <ConnectKitButton />
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md bg-black border-white shadow-xl">
+          <CardContent className="pt-6 text-center space-y-6">
+            <div className="space-y-4">
+              <div className="w-16 h-16 bg-blue-600 rounded-lg mx-auto flex items-center justify-center">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                </svg>
+              </div>
+              <h1 className="text-3xl font-bold text-white">Create Prediction</h1>
+              <p className="text-blue-300 text-lg">Connect your wallet to start creating prediction markets</p>
+            </div>
+            <ConnectKitButton.Custom>
+              {({ show }) => (
+                <Button 
+                  onClick={show} 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200 border border-white"
+                >
+                  Connect Wallet
+                </Button>
+              )}
+            </ConnectKitButton.Custom>
           </CardContent>
         </Card>
       </div>
@@ -366,190 +301,337 @@ export default function CreatePredictionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 p-4">
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-white">Prediction Market</h1>
-          <p className="text-slate-300 text-lg">Create and explore decentralized predictions</p>
-          <div className="flex justify-center">
-            <ConnectKitButton />
-          </div>
-        </div>
+    <div className="min-h-screen bg-gray-900">
+      {/* Header */}
+      
 
-        {/* Balance Info */}
-        <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-          <CardContent className="pt-6">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-slate-300">Your PyUSD Balance</p>
-                <p className="text-2xl font-bold text-white">
-                  {formatPyUSD(pyUSDBalance as bigint | undefined)}
-                </p>
-              </div>
-              <Badge variant="outline" className="border-blue-400 text-blue-400">
-                Sepolia Testnet
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Create Prediction Form */}
-          <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-white">Create New Prediction</CardTitle>
-              <CardDescription className="text-slate-300">
-                Create a new prediction market with initial liquidity
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white">Title *</label>
-                  <Input
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    placeholder="Will Bitcoin reach $100k by end of 2024?"
-                    className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
-                    required
-                  />
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Account Info Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            <Card className="border-white bg-black shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-white text-lg">Account Info</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm text-blue-300 mb-1">PyUSD Balance</p>
+                  <p className="text-2xl font-bold text-white">
+                    {formatPyUSD(balance?.value)}
+                  </p>
                 </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white">Category</label>
-                  <Input
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    placeholder="Cryptocurrency, Sports, Politics, etc."
-                    className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
-                  />
+                <div>
+                  <p className="text-sm text-blue-300 mb-1">Network</p>
+                  <Badge variant="outline" className="border-white text-blue-300 bg-blue-600/20">
+                    Sepolia Testnet
+                  </Badge>
                 </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white">Description</label>
-                  <textarea
-                    name="metadata"
-                    value={formData.metadata}
-                    onChange={handleInputChange}
-                    placeholder="Additional details about the prediction..."
-                    className="w-full h-20 px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-md text-white placeholder:text-slate-400 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white">Resolution Date *</label>
-                  <Input
-                    name="resolutionDate"
-                    type="datetime-local"
-                    value={formData.resolutionDate}
-                    onChange={handleInputChange}
-                    min={new Date().toISOString().slice(0, 16)}
-                    className="bg-slate-700/50 border-slate-600 text-white"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-white">Initial Liquidity (PyUSD) *</label>
-                  <Input
-                    name="initialLiquidity"
-                    type="number"
-                    value={formData.initialLiquidity}
-                    onChange={handleInputChange}
-                    placeholder="10"
-                    min="1"
-                    step="0.01"
-                    className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
-                    required
-                  />
-                  {hasInsufficientBalance && (
-                    <p className="text-red-400 text-sm">Insufficient PyUSD balance</p>
-                  )}
-                </div>
-
-                {needsApproval && (
+                {minimumLiquidity ? (
+                  <div>
+                    <p className="text-sm text-blue-300 mb-1">Minimum Liquidity</p>
+                    <p className="text-sm font-medium text-white">
+                      {formatUnits(minimumLiquidity as bigint, 6)} PyUSD
+                    </p>
+                  </div>
+                ) : null}
+                <div>
+                  <p className="text-sm text-blue-300 mb-1">Current Allowance</p>
+                  <p className="text-xs font-medium text-white">
+                    {allowance ? formatUnits(allowance as bigint, 6) : '0'} PyUSD
+                  </p>
                   <Button
-                    type="button"
-                    onClick={handleApproval}
-                    disabled={isApprovalPending || isApprovalTxLoading}
-                    className="w-full bg-yellow-600 hover:bg-yellow-700 text-white"
+                    onClick={() => refetchAllowance()}
+                    className="mt-1 text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 h-6"
                   >
-                    {isApprovalPending || isApprovalTxLoading ? 'Approving...' : 'Approve PyUSD'}
+                    Refresh
                   </Button>
-                )}
+                </div>
+                <div>
+                  <p className="text-sm text-blue-300 mb-1">Debug Info</p>
+                  <p className="text-xs text-gray-400">
+                    Needs Approval: {needsApproval() ? 'Yes' : 'No'}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Form Valid: {isFormValid ? 'Yes' : 'No'}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
 
-                <Button
-                  type="submit"
-                  disabled={!isFormValid || isCreating || isCreatePending || isCreateTxLoading || needsApproval || hasInsufficientBalance}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
-                >
-                  {isCreating || isCreatePending || isCreateTxLoading ? 'Creating...' : 'Create Prediction'}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+            {/* Success/Error Messages */}
+            {(error || ipfsError) && (
+              <Card className="border-white bg-red-900/20">
+                <CardContent className="pt-4">
+                  <p className="text-red-300 text-sm">{error || ipfsError}</p>
+                </CardContent>
+              </Card>
+            )}
 
-          {/* Active Predictions */}
-          <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-white">Active Predictions</CardTitle>
-              <CardDescription className="text-slate-300">
-                Current prediction markets available for trading
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {predictions.length === 0 ? (
-                  <p className="text-slate-400 text-center py-8">No active predictions found</p>
-                ) : (
-                  predictions.map((prediction) => (
-                    <div
-                      key={prediction.id.toString()}
-                      className="p-4 bg-slate-700/30 rounded-lg border border-slate-600 space-y-2"
-                    >
-                      <div className="flex justify-between items-start">
-                        <h3 className="font-semibold text-white text-sm leading-tight">
-                          {prediction.title}
-                        </h3>
-                        <Badge variant="outline" className="border-green-400 text-green-400 text-xs">
-                          Active
-                        </Badge>
-                      </div>
-                      
-                      {prediction.category && (
-                        <Badge variant="secondary" className="text-xs">
-                          {prediction.category}
-                        </Badge>
-                      )}
-                      
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div>
-                          <p className="text-slate-400">Yes Liquidity</p>
-                          <p className="text-green-400 font-medium">
-                            {formatPyUSD(prediction.yesLiquidity)}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-slate-400">No Liquidity</p>
-                          <p className="text-red-400 font-medium">
-                            {formatPyUSD(prediction.noLiquidity)}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="text-xs text-slate-400">
-                        <p>Resolves: {formatDate(prediction.resolutionDate)}</p>
-                        <p>Created: {formatDate(prediction.createdAt)}</p>
+            {success && (
+              <Card className="border-white bg-green-900/20">
+                <CardContent className="pt-4">
+                  <p className="text-green-300 text-sm">{success}</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Main Form */}
+          <div className="lg:col-span-2">
+            <Card className="border-white bg-black shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-white text-xl">Prediction Details</CardTitle>
+                <CardDescription className="text-blue-300">
+                  Fill in the details for your prediction market
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-6">
+                    {/* Image Upload Section */}
+                    <div>
+                      <label className="block text-sm font-medium text-blue-300 mb-2">
+                        Market Image
+                      </label>
+                      <div className="space-y-4">
+                        {!imagePreview ? (
+                          <div className="border-2 border-dashed border-white bg-gray-800 rounded-lg p-6 text-center">
+                            <svg className="mx-auto h-12 w-12 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" />
+                            </svg>
+                            <div className="mt-4">
+                              <label htmlFor="image-upload" className="cursor-pointer">
+                                <span className="text-blue-300 hover:text-blue-200">Upload an image</span>
+                                <input
+                                  id="image-upload"
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleImageSelect}
+                                  className="hidden"
+                                />
+                              </label>
+                              <p className="text-xs text-gray-400 mt-1">PNG, JPG, GIF up to 10MB</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="relative">
+                            <img
+                              src={imagePreview}
+                              alt="Preview"
+                              className="w-full h-48 object-cover rounded-lg border border-white"
+                            />
+                            <button
+                              type="button"
+                              onClick={removeImage}
+                              className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="md:col-span-2">
+                        <label className="block text-sm font-medium text-blue-300 mb-2">
+                          Prediction Title *
+                        </label>
+                        <Input
+                          name="title"
+                          value={formData.title}
+                          onChange={handleInputChange}
+                          placeholder="Will Bitcoin reach $100k by end of 2024?"
+                          className="border-white bg-gray-800 text-white placeholder:text-blue-300/60 focus:border-blue-400 focus:ring-blue-400"
+                          required
+                        />
+                      </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-blue-300 mb-2">
+                        Category
+                      </label>
+                      <Input
+                        name="category"
+                        value={formData.category}
+                        onChange={handleInputChange}
+                        placeholder="Cryptocurrency"
+                        className="border-white bg-gray-800 text-white placeholder:text-blue-300/60 focus:border-blue-400 focus:ring-blue-400"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-blue-300 mb-2">
+                        Initial Liquidity (PyUSD) *
+                      </label>
+                      <Input
+                        name="initialLiquidity"
+                        type="number"
+                        value={formData.initialLiquidity}
+                        onChange={handleInputChange}
+                        placeholder="10"
+                        min="1"
+                        step="0.01"
+                        className="border-white bg-gray-800 text-white placeholder:text-blue-300/60 focus:border-blue-400 focus:ring-blue-400"
+                        required
+                      />
+                      {hasInsufficientBalance() && (
+                        <p className="text-red-300 text-sm mt-1">Insufficient PyUSD balance</p>
+                      )}
+                      {hasInsufficientLiquidity() && minimumLiquidity ? (
+                        <p className="text-amber-300 text-sm mt-1">
+                          Minimum liquidity: {formatUnits(minimumLiquidity as bigint, 6)} PyUSD
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-blue-300 mb-2">
+                        Resolution Date *
+                      </label>
+                      <Input
+                        name="resolutionDate"
+                        type="datetime-local"
+                        value={formData.resolutionDate}
+                        onChange={handleInputChange}
+                        min={new Date().toISOString().slice(0, 16)}
+                        className="border-white bg-gray-800 text-white focus:border-blue-400 focus:ring-blue-400"
+                        required
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-blue-300 mb-2">
+                        Description
+                      </label>
+                      <textarea
+                        name="metadata"
+                        value={formData.metadata}
+                        onChange={handleInputChange}
+                        placeholder="Additional details about the prediction..."
+                        rows={3}
+                        className="w-full px-3 py-2 border border-white bg-gray-800 rounded-md text-white placeholder:text-blue-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 resize-none"
+                      />
+                    </div>
+
+                    {/* Tags Section */}
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-blue-300 mb-2">
+                        Tags
+                      </label>
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <Input
+                            value={currentTag}
+                            onChange={(e) => setCurrentTag(e.target.value)}
+                            onKeyPress={handleTagKeyPress}
+                            placeholder="Add a tag (press Enter)"
+                            className="border-white bg-gray-800 text-white placeholder:text-blue-300/60 focus:border-blue-400 focus:ring-blue-400"
+                          />
+                          <Button
+                            type="button"
+                            onClick={addTag}
+                            className="bg-blue-600 hover:bg-blue-700 text-white border border-white px-4"
+                          >
+                            Add
+                          </Button>
+                        </div>
+                        {tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {tags.map((tag, index) => (
+                              <span
+                                key={index}
+                                className="inline-flex items-center px-2 py-1 bg-blue-600/20 border border-blue-400 text-blue-300 text-sm rounded-md"
+                              >
+                                {tag}
+                                <button
+                                  type="button"
+                                  onClick={() => removeTag(tag)}
+                                  className="ml-2 text-blue-300 hover:text-white"
+                                >
+                                  ×
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Source URL */}
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-blue-300 mb-2">
+                        Source URL (optional)
+                      </label>
+                      <Input
+                        value={sourceUrl}
+                        onChange={(e) => setSourceUrl(e.target.value)}
+                        placeholder="https://example.com/source"
+                        className="border-white bg-gray-800 text-white placeholder:text-blue-300/60 focus:border-blue-400 focus:ring-blue-400"
+                      />
+                    </div>
+
+                    {/* Rules */}
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-blue-300 mb-2">
+                        Resolution Rules (optional)
+                      </label>
+                      <textarea
+                        value={rules}
+                        onChange={(e) => setRules(e.target.value)}
+                        placeholder="Specific rules for how this prediction will be resolved..."
+                        rows={3}
+                        className="w-full px-3 py-2 border border-white bg-gray-800 rounded-md text-white placeholder:text-blue-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 resize-none"
+                      />
+                    </div>
+                  </div>
+                  </div>
+
+                  <div className="border-t border-white pt-6 space-y-4">
+                    {needsApproval() && (
+                      <Button
+                        type="button"
+                        onClick={handleApproval}
+                        disabled={isApprovalPending}
+                        className="w-full bg-orange-600 hover:bg-orange-700 text-white border border-white"
+                      >
+                        {isApprovalPending ? (
+                          <div className="flex items-center space-x-2">
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            <span>Approving PyUSD...</span>
+                          </div>
+                        ) : (
+                          'Approve PyUSD Spending'
+                        )}
+                      </Button>
+                    )}
+
+                    <Button
+                      type="submit"
+                      disabled={!isFormValid || isCreatePending || isUploadingToIPFS || needsApproval() || hasInsufficientBalance() || hasInsufficientLiquidity()}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 border border-white"
+                    >
+                      {isUploadingToIPFS ? (
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          <span>Uploading to IPFS... {uploadProgress}%</span>
+                        </div>
+                      ) : isCreatePending ? (
+                        <div className="flex items-center space-x-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          <span>Creating Prediction...</span>
+                        </div>
+                      ) : (
+                        'Create Prediction Market'
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
