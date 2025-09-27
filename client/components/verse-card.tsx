@@ -47,43 +47,50 @@ export function VerseCard({ verse, onClick }: VerseCardProps) {
 
     return (
         <Card
-            className="verse-card cursor-pointer float-animation group"
+            className="verse-card cursor-pointer float-animation group relative overflow-hidden"
             onClick={onClick}
             style={{ animationDelay: `${Math.random() * 2}s` }}
         >
-            <CardHeader className="pb-3">
+            {/* Glassmorphic background with enhanced blur and transparency */}
+            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-cyan-500/5 rounded-lg"></div>
+            </div>
+            
+            {/* Subtle outer glow effect */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 via-cyan-400/20 to-purple-500/20 rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+            <CardHeader className="pb-3 relative z-10">
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="text-2xl">{verse.icon}</div>
                         <Globe className="w-4 h-4 text-primary/60" />
                     </div>
-                    <Badge className={`text-xs ${getStatusColor(verse.status)} flex items-center gap-1`}>
+                    <Badge className={`text-xs ${getStatusColor(verse.status)} flex items-center gap-1 backdrop-blur-sm bg-white/10 border-white/20`}>
                         {getStatusIcon(verse.status)}
                         {verse.status}
                     </Badge>
                 </div>
-                <CardTitle className="text-lg leading-tight text-balance group-hover:text-primary transition-colors">
+                <CardTitle className="text-lg leading-tight text-balance group-hover:text-primary transition-colors text-white/90 group-hover:text-cyan-300">
                     {verse.title}
                 </CardTitle>
-                <p className="text-xs text-muted-foreground text-pretty">{verse.universeDescription}</p>
+                <p className="text-xs text-white/60 text-pretty">{verse.universeDescription}</p>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 relative z-10">
                 <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Ownership</span>
-                    <span className="font-semibold text-primary">{verse.ownership}%</span>
+                    <span className="text-sm text-white/60">Ownership</span>
+                    <span className="font-semibold text-cyan-300">{verse.ownership}%</span>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Total Value</span>
-                    <span className="font-semibold text-accent">${verse.totalValue.toLocaleString()}</span>
+                    <span className="text-sm text-white/60">Total Value</span>
+                    <span className="font-semibold text-blue-300">${verse.totalValue.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Opportunities</span>
-                    <span className="font-semibold">{verse.opportunities}</span>
+                    <span className="text-sm text-white/60">Opportunities</span>
+                    <span className="font-semibold text-white/90">{verse.opportunities}</span>
                 </div>
 
-                <div className="w-full bg-secondary rounded-full h-2 mt-3">
+                <div className="w-full bg-white/10 backdrop-blur-sm rounded-full h-2 mt-3 border border-white/20">
                     <div
-                        className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-500 pulse-neon"
+                        className="bg-gradient-to-r from-cyan-400 to-blue-500 h-2 rounded-full transition-all duration-500 pulse-neon shadow-lg shadow-cyan-500/30"
                         style={{ width: `${verse.ownership}%` }}
                     />
                 </div>

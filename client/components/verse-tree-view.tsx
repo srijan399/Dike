@@ -228,7 +228,7 @@ export function VerseTreeView({ verseId, onBack }: VerseTreeViewProps) {
     const neg = selectedOpportunity?.valuation?.negative ?? (1 - pos)
 
     return (
-        <div className="space-y-6">
+    <div className="space-y-6 overflow-visible">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -253,7 +253,7 @@ export function VerseTreeView({ verseId, onBack }: VerseTreeViewProps) {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Tree Visualization */}
                 <div className="lg:col-span-2">
-                    <Card className="verse-card h-[600px]">
+                    <Card className="verse-card glass-card border-border/40 h-[600px]">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Globe className="w-5 h-5 text-primary" />
@@ -323,13 +323,13 @@ export function VerseTreeView({ verseId, onBack }: VerseTreeViewProps) {
                                 {verseData.opportunities.map((opportunity) => (
                                     <div
                                         key={`label-${opportunity.id}`}
-                                        className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                                        className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none backdrop-blur-sm"
                                         style={{
                                             left: `${(opportunity.x / 800) * 100}%`,
-                                            top: `${((opportunity.y + 40) / 500) * 100}%`,
+                                            top: `${((opportunity.y + 50) / 500) * 100}%`,
                                         }}
                                     >
-                                        <div className="bg-card/90 backdrop-blur-sm border border-border rounded-lg px-2 py-1 text-xs text-center max-w-28">
+                                        <div className="glass-chip rounded-lg px-2 py-1 text-xs text-center max-w-28">
                                             {opportunity.title}
                                         </div>
                                     </div>
@@ -342,7 +342,7 @@ export function VerseTreeView({ verseId, onBack }: VerseTreeViewProps) {
                 {/* Opportunity Details Panel */}
                 <div className="flex flex-col gap-4 h-[600px]">
                     {selectedOpportunity && (
-                        <Card className="verse-card">
+                        <Card className="verse-card glass-card border-border/40">
                             <CardHeader>
                                 <CardTitle className="text-lg">Prediction</CardTitle>
                             </CardHeader>
@@ -373,7 +373,7 @@ export function VerseTreeView({ verseId, onBack }: VerseTreeViewProps) {
                     {/* Spacer to push the timeline card to the bottom and increase spacing */}
                     <div className="flex-1" />
                     {/* Timeline */}
-                    <Card className="verse-card">
+                    <Card className="verse-card glass-card border-border/40">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <TrendingUp className="w-5 h-5 text-chart-4" />
