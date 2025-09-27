@@ -20,7 +20,7 @@ import { allowanceAdmin, myAddress } from "../constants/address";
 export default function TestV2() {
     const { address } = useAccount();
     const { writeContractAsync } = useWriteContract();
-    const createPrediction = useCreatePrediction();
+    const { createPrediction: createPredictionFn } = useCreatePrediction();
     const [activePredictions, setActivePredictions] = useState<Prediction[]>(
         []
     );
@@ -151,7 +151,13 @@ export default function TestV2() {
     };
 
     const createPred = async () => {
-        await createPrediction();
+        await createPredictionFn({
+            title: "Test Prediction",
+            category: "General",
+            metadata: "",
+            resolutionDate: new Date(Date.now() + 3600 * 1000).toISOString(),
+            initialLiquidity: "1000000",
+        });
     };
 
     return (
