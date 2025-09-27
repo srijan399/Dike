@@ -8,8 +8,11 @@ help:
 	@echo "  install    - Install dependencies"
 	@echo "  build      - Build contracts"
 	@echo "  test       - Run tests"
-	@echo "  deploy     - Deploy contracts (requires NETWORK and PRIVATE_KEY env vars)"
+	@echo "  deploy     - Deploy Dike contracts (requires NETWORK and PRIVATE_KEY env vars)"
+	@echo "  deploy-full - Deploy FullDike contracts (requires NETWORK and PRIVATE_KEY env vars)"
 	@echo "  deploy-anvil - Deploy to local Anvil network"
+	@echo "  verify-sepolia - Verify Dike contract on Sepolia"
+	@echo "  verify-full-sepolia - Verify FullDike contract on Sepolia"
 	@echo "  clean      - Clean build artifacts"
 
 # Install dependencies
@@ -24,14 +27,23 @@ build:
 test:
 	forge test
 
-# Deploy to specified network
+# Deploy Dike to specified network
 deploy:
 	forge script script/DeployDike.s.sol:DeployDikeScript --rpc-url https://ethereum-sepolia-public.nodies.app --account default --broadcast --via-ir
+
+# Deploy FullDike to specified network
+deploy-full:
+	forge script script/DeployFullDike.s.sol:DeployFullDikeScript --rpc-url https://ethereum-sepolia-public.nodies.app --account default --broadcast --via-ir
 
 verify-sepolia:
 	forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch \
 		--etherscan-api-key $(ETHERSCAN_API_KEY) \
 		$(CONTRACT_ADDRESS) src/Dike.sol:MultiversePrediction
+
+verify-full-sepolia:
+	forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch \
+		--etherscan-api-key $(ETHERSCAN_API_KEY) \
+		$(CONTRACT_ADDRESS) src/FullDike.sol:FullDike
 
 # Deploy to local Anvil network
 deploy-anvil:
