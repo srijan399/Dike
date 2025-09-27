@@ -12,10 +12,12 @@ import {
     useReadContract,
     useWriteContract,
 } from "wagmi";
+import useCreatePrediction from "@/hooks/createOpportunity";
 
 export default function TestV2() {
     const { address } = useAccount();
     const { writeContractAsync } = useWriteContract();
+    const createPrediction = useCreatePrediction();
 
     const balance = useBalance({
         chainId: 11155111,
@@ -57,6 +59,10 @@ export default function TestV2() {
         console.log(tx);
     };
 
+    const createPred = async () => {
+        await createPrediction();
+    };
+
     return (
         <>
             <div>TestV2</div>
@@ -71,6 +77,8 @@ export default function TestV2() {
             <Button onClick={() => approveWallet()}>Approve Wallet</Button>
 
             <Button onClick={() => sendTokens()}>Send Tokens</Button>
+
+            <Button onClick={() => createPred()}>Create Prediction</Button>
         </>
     );
 }
