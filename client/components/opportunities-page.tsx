@@ -4,15 +4,18 @@ import { useEffect, useMemo, useState } from "react"
 import { useReadContract } from "wagmi"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { OpportunityCard } from "@/components/opportunity-card"
 import { BranchingModal } from "@/components/branching-modal"
 import { PredictionDetailsModal } from "@/components/prediction-details-modal"
+import { ChainVisualization } from "@/components/chain-visualization"
 import type { Prediction } from "@/app/interfaces/interface"
 import usePyUsdBalance from "@/hooks/usePyUsdBalance"
+import { useUserChain } from "@/hooks/useChain"
 import { DikeAbi, Dike_SEPOLIA_ADDRESS } from "@/app/abi"
-import { Search, RefreshCw } from "lucide-react"
+import { Search, RefreshCw, Link as LinkIcon, BarChart3 } from "lucide-react"
 
 type OpportunityUI = {
     id: string
@@ -38,11 +41,7 @@ type IPFSMetadata = {
     version?: string
 }
 
-const mockActiveVerses = [
-    { id: "1", name: "Tech Disruption 2025", balance: "1,250 MULTI", branches: 3 },
-    { id: "2", name: "Crypto Bull Run", balance: "890 MULTI", branches: 2 },
-    { id: "3", name: "Political Shifts", balance: "2,100 MULTI", branches: 5 },
-]
+// Removed mock data - now using real chain data from useUserChain hook
 
 export function OpportunitiesPage() {
     const [searchQuery, setSearchQuery] = useState("")
@@ -52,7 +51,9 @@ export function OpportunitiesPage() {
     const [showBranchingModal, setShowBranchingModal] = useState(false)
     const [showDetailsModal, setShowDetailsModal] = useState(false)
     const [selectedPrediction, setSelectedPrediction] = useState<Prediction | null>(null)
+    const [showChains, setShowChains] = useState(false)
     const { data: pyusdBalance, isLoading: isPyusdLoading } = usePyUsdBalance()
+    const { chainData, isLoading: isChainLoading } = useUserChain()
 
     const { data: allPredictionsData, isLoading: isPredLoading, isFetching: isPredFetching, refetch: refetchAllPredictions } =
         useReadContract({ address: Dike_SEPOLIA_ADDRESS, abi: DikeAbi, functionName: "getAllPredictions" })
@@ -218,6 +219,23 @@ export function OpportunitiesPage() {
                             <Button
                                 variant="outline"
                                 className="bg-transparent"
+                                onClick={() => setShowChains(!showChains)}
+                                title="Toggle chain view"
+                            >
+                                <span className="inline-flex items-center gap-1 text-xs">
+                                    <LinkIcon className="w-3 h-3" /> 
+                                    {showChains ? 'Hide Chains' : 'Show Chains'}
+                                    {chainData && chainData.predictionIds.length > 0 && (
+                                        <Badge variant="secondary" className="ml-1 text-xs">
+                                            {chainData.predictionIds.length}
+                                        </Badge>
+                                    )}
+                                </span>
+                            </Button>
+
+                            <Button
+                                variant="outline"
+                                className="bg-transparent"
                                 onClick={() => refetchAllPredictions()}
                                 disabled={isPredFetching}
                                 title="Refresh predictions"
@@ -275,10 +293,15 @@ export function OpportunitiesPage() {
                             <Card className="galaxy-border">
                                 <div>
                                     <CardHeader className="pb-2">
-                                        <CardTitle className="text-sm font-medium text-muted-foreground">Your Verses</CardTitle>
+                                        <CardTitle className="text-sm font-medium text-muted-foreground">Your Chains</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold text-chart-4">{mockActiveVerses.length}</div>
+                                        <div className="text-2xl font-bold text-chart-4">
+                                            {isChainLoading 
+                                                ? "Loading..." 
+                                                : chainData?.predictionIds.length || 0
+                                            }
+                                        </div>
                                     </CardContent>
                                 </div>
                             </Card>
@@ -300,6 +323,21 @@ export function OpportunitiesPage() {
                                 </div>
                             </Card>
                         </div>
+
+                        {/* Chain Visualization Section */}
+                        {showChains && (
+                            <div className="mb-8">
+                                <ChainVisualization 
+                                    onSelectPrediction={(predictionId) => {
+                                        const pred = predictions.find((p) => String(p.id) === predictionId)
+                                        if (pred) {
+                                            setSelectedPrediction(pred)
+                                            setShowDetailsModal(true)
+                                        }
+                                    }}
+                                />
+                            </div>
+                        )}
 
                         {isPredLoading && !predictions.length ? (
                             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -325,7 +363,7 @@ export function OpportunitiesPage() {
                                             setSelectedOpportunity(opp)
                                             setShowBranchingModal(true)
                                         }}
-                                        hasActiveVerses={mockActiveVerses.length > 0}
+                                        hasActiveVerses={true}
                                     />
                                 ))}
                             </div>
@@ -354,13 +392,13 @@ export function OpportunitiesPage() {
             {showBranchingModal && selectedOpportunity && (
                 <BranchingModal
                     opportunity={selectedOpportunity}
-                    activeVerses={mockActiveVerses}
                     onClose={() => {
                         setShowBranchingModal(false)
                         setSelectedOpportunity(null)
                     }}
-                    onConfirm={(verseId) => {
-                        console.log("Branching opportunity", selectedOpportunity.id, "from verse", verseId)
+                    onConfirm={(parentPredictionId, collateralAmount) => {
+                        console.log("Branching opportunity", selectedOpportunity.id, "from parent", parentPredictionId, "with collateral", collateralAmount)
+                        // TODO: Implement actual chain extension logic here
                         setShowBranchingModal(false)
                         setSelectedOpportunity(null)
                     }}
