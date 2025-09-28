@@ -6,10 +6,13 @@ import { SELF_CONFIG, FRONTEND_DISCLOSURES } from "@/lib/self-config";
 
 export default function Verify() {
   const [selfApp, setSelfApp] = useState<any | null>(null);
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
   useEffect(() => {
-    const userId = address;
+    if (!address || !isConnected) {
+      setSelfApp(null);
+      return;
+    }
 
     const app = new SelfAppBuilder({
       version: 2,
@@ -17,7 +20,7 @@ export default function Verify() {
       scope: SELF_CONFIG.SCOPE,
       endpoint: SELF_CONFIG.ENDPOINT,
       logoBase64: "https://i.postimg.cc/mrmVf9hm/self.png",
-      userId: userId,
+      userId: address,
       endpointType: "staging_celo",
       userIdType: SELF_CONFIG.USER_ID_TYPE,
       userDefinedData: "Hello from the Docs!!",
@@ -25,7 +28,7 @@ export default function Verify() {
     }).build();
 
     setSelfApp(app);
-  }, []);
+  }, [address, isConnected]);
 
   const handleSuccessfulVerification = () => {
     console.log("Verified!");
@@ -33,7 +36,19 @@ export default function Verify() {
 
   return (
     <div>
-      {selfApp ? (
+      {!isConnected ? (
+        <div className="text-center p-8 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-yellow-800 font-medium">
+            Please connect your wallet to generate the verification QR code
+          </p>
+        </div>
+      ) : !address ? (
+        <div className="text-center p-8 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-800 font-medium">
+            Unable to get wallet address. Please try reconnecting your wallet.
+          </p>
+        </div>
+      ) : selfApp ? (
         <SelfQRcodeWrapper
           selfApp={selfApp}
           onSuccess={handleSuccessfulVerification}
@@ -42,8 +57,8 @@ export default function Verify() {
           }}
         />
       ) : (
-        <div>
-          <p>Loading QR Code...</p>
+        <div className="text-center p-8">
+          <p className="text-gray-600">Loading QR Code...</p>
         </div>
       )}
     </div>
