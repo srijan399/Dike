@@ -40,7 +40,7 @@ export default function Verify() {
       scope: SELF_CONFIG.SCOPE,
       endpoint: SELF_CONFIG.ENDPOINT,
       logoBase64: "https://i.postimg.cc/mrmVf9hm/self.png",
-      userId: formattedAddress,
+      userId: formattedAddress.toLowerCase(),
       endpointType: "staging_celo",
       userIdType: SELF_CONFIG.USER_ID_TYPE,
       userDefinedData: "Hello from the Docs!!",

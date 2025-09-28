@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Search, User, Wallet, Settings, TrendingUp, Globe, Zap, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,6 +8,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { VerseCard } from "@/components/verse-card"
 import { VerseTreeView } from "@/components/verse-tree-view"
 import { StatsOverview } from "@/components/stats-overview"
+import useOpportunitiesTree from "@/hooks/useOpportunitiesTree"
+import { useRouter } from "next/navigation"
 
 const mockVerses = [
     {
@@ -55,6 +57,15 @@ const mockVerses = [
 export default function MultiverseDashboard() {
     const [selectedVerse, setSelectedVerse] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState("")
+    const router = useRouter()
+    const { verses, isLoading } = useOpportunitiesTree()
+
+    const filteredVerses = useMemo(() => {
+        const q = searchQuery.toLowerCase()
+        return (verses || []).filter(v =>
+            v.title.toLowerCase().includes(q) || v.universeDescription.toLowerCase().includes(q)
+        )
+    }, [verses, searchQuery])
 
     return (
         <div className="relative min-h-screen">
@@ -78,8 +89,12 @@ export default function MultiverseDashboard() {
 
                             {/* Verse Cards Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                {mockVerses.map((verse) => (
-                                    <VerseCard key={verse.id} verse={verse} onClick={() => setSelectedVerse(verse.id)} />
+                                {(isLoading ? [] : filteredVerses).map((verse, idx) => (
+                                    <VerseCard
+                                        key={verse.id}
+                                        verse={verse as any}
+                                        onClick={() => router.push(`/chains/${verse.id}`)}
+                                    />
                                 ))}
                             </div>
                         </div>
