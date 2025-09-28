@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
         const feedUrl = GOOGLE_NEWS_RSS(query);
         const feed = await parser.parseURL(feedUrl);
 
-        const topItems = (feed.items || []).slice(0, 10).map((item) => {
+        const topItems = (feed.items || []).slice(0, 10).map((item: any) => {
             return {
                 title: item.title || '',
                 contentSnippet: (item as any).contentSnippet || item.contentSnippet || '',
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 3) Ask LLM to judge whether the resolution is fair/true/honest given the snippets
-        const evidenceText = topItems.map((i, idx) => {
+        const evidenceText = topItems.map((i: any, idx: any) => {
             return `#${idx + 1} Title: ${i.title}\nSnippet: ${i.contentSnippet}\nLink: ${i.link}`;
         }).join('\n\n');
 
