@@ -58,7 +58,7 @@ export default function Navbar() {
     ];
 
     return (
-        <header ref={navRef} className="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
+        <header ref={navRef} className="sticky top-4 left-4 right-4 z-50 max-w-7xl mx-auto">
             {/* Floating glassmorphic container with blue hue */}
             <div className="relative">
                 {/* Outer glow effect */}

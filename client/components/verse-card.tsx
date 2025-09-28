@@ -4,17 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, Clock, CheckCircle, Globe } from "lucide-react"
 
+interface VerseMeta {
+    id: string
+    title: string
+    ownership: number
+    totalValue: number
+    icon: string
+    status: "active" | "resolving" | "pending"
+    opportunities: number
+    universeDescription: string
+}
+
 interface VerseCardProps {
-    verse: {
-        id: string
-        title: string
-        ownership: number
-        totalValue: number
-        icon: string
-        status: "active" | "resolving" | "pending"
-        opportunities: number
-        universeDescription: string
-    }
+    verse: VerseMeta
     onClick: () => void
 }
 
@@ -58,7 +60,7 @@ export function VerseCard({ verse, onClick }: VerseCardProps) {
             
             {/* Subtle outer glow effect */}
             <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 via-cyan-400/20 to-purple-500/20 rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-            <CardHeader className="pb-3 relative z-10">
+            <CardHeader className="px-5 pt-5 pb-3 relative z-10">
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2 mb-2">
                         <div className="text-2xl">{verse.icon}</div>
@@ -69,16 +71,20 @@ export function VerseCard({ verse, onClick }: VerseCardProps) {
                         {verse.status}
                     </Badge>
                 </div>
-                <CardTitle className="text-lg leading-tight text-balance group-hover:text-primary transition-colors text-white/90 group-hover:text-cyan-300">
+                <CardTitle
+                    className="text-base sm:text-lg leading-tight text-balance break-words group-hover:text-primary transition-colors text-white/90 group-hover:text-cyan-300"
+                    style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
+                >
                     {verse.title}
                 </CardTitle>
-                <p className="text-xs text-white/60 text-pretty">{verse.universeDescription}</p>
+                <p
+                    className="text-xs text-white/60 text-pretty break-words"
+                    style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
+                >
+                    {verse.universeDescription}
+                </p>
             </CardHeader>
-            <CardContent className="space-y-3 relative z-10">
-                <div className="flex justify-between items-center">
-                    <span className="text-sm text-white/60">Ownership</span>
-                    <span className="font-semibold text-cyan-300">{verse.ownership}%</span>
-                </div>
+            <CardContent className="px-5 pb-5 space-y-3 relative z-10">
                 <div className="flex justify-between items-center">
                     <span className="text-sm text-white/60">Total Value</span>
                     <span className="font-semibold text-blue-300">${verse.totalValue.toLocaleString()}</span>

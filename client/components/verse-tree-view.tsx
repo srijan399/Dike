@@ -1,14 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { ArrowLeft, Zap, TrendingUp, DollarSign, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import type { ChainTree } from "@/hooks/useOpportunitiesTree"
 
 interface VerseTreeViewProps {
     verseId: string
     onBack: () => void
+    tree?: ChainTree
 }
 
 const mockTreeData = {
@@ -207,9 +209,47 @@ const mockTreeData = {
     },
 }
 
-export function VerseTreeView({ verseId, onBack }: VerseTreeViewProps) {
+export function VerseTreeView({ verseId, onBack, tree }: VerseTreeViewProps) {
     const [selectedNode, setSelectedNode] = useState<string | null>("root")
-    const verseData = mockTreeData[verseId as keyof typeof mockTreeData]
+
+    // If dynamic tree provided, map it to a local structure with positions
+    const dynamicVerseData = useMemo(() => {
+        if (!tree) return null
+        const width = 800
+        const height = 500
+        const rootX = 400
+        const rootY = 100
+        const children = tree.nodes.filter((n) => n.id !== tree.parentId)
+        const span = 600
+        const left = 100
+        const step = children.length > 1 ? span / (children.length - 1) : 0
+        const nodesWithPos = tree.nodes.map((n, idx) => {
+            const isRoot = n.id === tree.parentId
+            const x = isRoot ? rootX : left + step * children.findIndex((c) => c.id === n.id)
+            const y = isRoot ? rootY : 250
+            const nodeType: "root" | "opportunity" | "sub-opportunity" = isRoot ? "root" : "opportunity"
+            return {
+                id: n.id,
+                title: n.title,
+                type: nodeType,
+                ownership: n.ownership,
+                value: n.value,
+                x,
+                y,
+                description: n.description || "",
+                valuation: n.valuation,
+            }
+        })
+        return {
+            title: tree.title,
+            icon: "🔮",
+            description: tree.description || "",
+            opportunities: nodesWithPos,
+            edges: tree.edges,
+        }
+    }, [tree])
+
+    const verseData = dynamicVerseData || mockTreeData[verseId as keyof typeof mockTreeData]
 
     if (!verseData) {
         return (
@@ -223,7 +263,7 @@ export function VerseTreeView({ verseId, onBack }: VerseTreeViewProps) {
         )
     }
 
-    const selectedOpportunity = verseData.opportunities.find((opp) => opp.id === selectedNode)
+    const selectedOpportunity = verseData.opportunities.find((opp: any) => opp.id === selectedNode)
     const pos = selectedOpportunity?.valuation?.positive ?? 0.5
     const neg = selectedOpportunity?.valuation?.negative ?? (1 - pos)
 
@@ -272,9 +312,9 @@ export function VerseTreeView({ verseId, onBack }: VerseTreeViewProps) {
                                         </linearGradient>
                                     </defs>
 
-                                    {verseData.opportunities.map((opportunity) => {
+                                    {verseData.opportunities.map((opportunity: any) => {
                                         if (opportunity.type === "root") return null
-                                        const rootNode = verseData.opportunities.find((opp) => opp.type === "root")
+                                            const rootNode = verseData.opportunities.find((opp: any) => opp.type === "root")
                                         if (!rootNode) return null
 
                                         return (
@@ -292,7 +332,7 @@ export function VerseTreeView({ verseId, onBack }: VerseTreeViewProps) {
                                     })}
 
                                     {/* Node circles */}
-                                    {verseData.opportunities.map((opportunity) => (
+                                        {verseData.opportunities.map((opportunity: any) => (
                                         <g key={opportunity.id}>
                                             <circle
                                                 cx={opportunity.x}
@@ -313,14 +353,13 @@ export function VerseTreeView({ verseId, onBack }: VerseTreeViewProps) {
                                                 textAnchor="middle"
                                                 className="fill-foreground text-xs font-medium pointer-events-none"
                                             >
-                                                {opportunity.ownership > 0 ? `${opportunity.ownership}%` : "0%"}
                                             </text>
                                         </g>
                                     ))}
                                 </svg>
 
                                 {/* Floating labels */}
-                                {verseData.opportunities.map((opportunity) => (
+                                    {verseData.opportunities.map((opportunity: any) => (
                                     <div
                                         key={`label-${opportunity.id}`}
                                         className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-none backdrop-blur-sm"
