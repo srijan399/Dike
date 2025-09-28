@@ -14,13 +14,33 @@ export default function Verify() {
       return;
     }
 
+    // Ensure address is properly formatted
+    const formattedAddress = address.startsWith("0x")
+      ? address
+      : `0x${address}`;
+
+    console.log("Original address:", address);
+    console.log("Formatted address:", formattedAddress);
+
+    // Validate address format (should be 42 characters including 0x)
+    if (formattedAddress.length !== 42) {
+      console.error(
+        "Invalid address format:",
+        formattedAddress,
+        "Length:",
+        formattedAddress.length
+      );
+      setSelfApp(null);
+      return;
+    }
+
     const app = new SelfAppBuilder({
       version: 2,
       appName: process.env.NEXT_PUBLIC_SELF_APP_NAME || "Dike",
       scope: SELF_CONFIG.SCOPE,
       endpoint: SELF_CONFIG.ENDPOINT,
       logoBase64: "https://i.postimg.cc/mrmVf9hm/self.png",
-      userId: address,
+      userId: formattedAddress.toLowerCase(),
       endpointType: "staging_celo",
       userIdType: SELF_CONFIG.USER_ID_TYPE,
       userDefinedData: "Hello from the Docs!!",
@@ -50,6 +70,7 @@ export default function Verify() {
         </div>
       ) : selfApp ? (
         <SelfQRcodeWrapper
+          key={address} // Force re-render when address changes
           selfApp={selfApp}
           onSuccess={handleSuccessfulVerification}
           onError={() => {
