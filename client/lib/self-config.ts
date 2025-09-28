@@ -2,7 +2,7 @@ import { AttestationId, ATTESTATION_ID } from '@selfxyz/core';
 
 // Configuration constants
 export const SELF_CONFIG = {
-  SCOPE: process.env.NEXT_PUBLIC_SELF_SCOPE || 'self-docs',
+  SCOPE: process.env.NEXT_PUBLIC_SELF_SCOPE || 'dike',
   ENDPOINT: process.env.NEXT_PUBLIC_SELF_ENDPOINT || 'http://localhost:3000',
   MINIMUM_AGE: 18,
   EXCLUDED_COUNTRIES: ['IRN', 'PRK', 'RUS', 'SYR', 'CUB'] as const, // Iran, North Korea, Russia, Syria, Cuba
