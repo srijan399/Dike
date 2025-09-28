@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "rss-parser": "^3.13.0",
+    "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-progress": "^1.1.7",
     "@radix-ui/react-select": "^2.2.6",
