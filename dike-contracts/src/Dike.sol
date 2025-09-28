@@ -53,6 +53,15 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
         bool liquidated;
     }
 
+    // Chain visualization helper struct
+    struct ChainView {
+        address user;
+        uint256 parentPredictionId;
+        uint256[] childPredictionIds;
+        uint256 totalCollateralUsed;
+        bool liquidated;
+    }
+
     // Mappings
     mapping(uint256 => Prediction) public predictions;
     mapping(address => UserChain) public userChains;
@@ -61,6 +70,7 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
     mapping(address => mapping(uint256 => CollateralPosition))
         public userCollateralPositions; // user => parentPredictionId => position
     mapping(address => uint256[]) public userParentPredictions; // track which predictions have collateral positions
+    mapping(uint256 => address[]) public parentIdToUsers; // parent prediction => users who created chains from this parent
 
     // Events
     event PredictionCreated(
@@ -305,8 +315,8 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
 
         // Calculate expected votes
         uint256 expectedVotes = _side
-            ? (_collateralAmount * 10 ** 18) / yesPrice
-            : (_collateralAmount * 10 ** 18) / noPrice;
+            ? (_collateralAmount) / yesPrice
+            : (_collateralAmount) / noPrice;
 
         require(
             expectedVotes >= _minExpectedVotes,
@@ -346,6 +356,7 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
         if (position.parentPredictionId == 0) {
             position.parentPredictionId = _parentPredictionId;
             userParentPredictions[msg.sender].push(_parentPredictionId);
+            parentIdToUsers[_parentPredictionId].push(msg.sender);
         }
 
         position.totalCollateralUsed += _collateralAmount;
@@ -507,39 +518,58 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
         return total;
     }
 
-    // function getUserCollateralPosition(
-    //     address _user,
-    //     uint256 _parentPredictionId
-    // )
-    //     external
-    //     view
-    //     returns (
-    //         uint256 parentId,
-    //         uint256 totalUsed,
-    //         uint256[] memory childIds,
-    //         bool liquidated,
-    //         uint256 availableCollateral,
-    //         uint256 positionValue
-    //     )
-    // {
-    //     CollateralPosition memory position = userCollateralPositions[_user][
-    //         _parentPredictionId
-    //     ];
-    //     return (
-    //         position.parentPredictionId,
-    //         position.totalCollateralUsed,
-    //         position.childPredictionIds,
-    //         position.liquidated,
-    //         getAvailableCollateral(_user, _parentPredictionId),
-    //         getCurrentPositionValue(_user, _parentPredictionId)
-    //     );
-    // }
+    function getUserCollateralPosition(
+        address _user,
+        uint256 _parentPredictionId
+    )
+        external
+        view
+        returns (
+            uint256 parentId,
+            uint256 totalUsed,
+            uint256[] memory childIds,
+            bool liquidated,
+            uint256 availableCollateral,
+            uint256 positionValue
+        )
+    {
+        CollateralPosition memory position = userCollateralPositions[_user][
+            _parentPredictionId
+        ];
+        return (
+            position.parentPredictionId,
+            position.totalCollateralUsed,
+            position.childPredictionIds,
+            position.liquidated,
+            getAvailableCollateral(_user, _parentPredictionId),
+            getCurrentPositionValue(_user, _parentPredictionId)
+        );
+    }
 
-    // function getUserParentPredictionIds(
-    //     address _user
-    // ) external view returns (uint256[] memory) {
-    //     return userParentPredictions[_user];
-    // }
+    function getUserParentPredictionIds(
+        address _user
+    ) external view returns (uint256[] memory) {
+        return userParentPredictions[_user];
+    }
+
+    function getUserChains(
+        address _user
+    ) external view returns (ChainView[] memory chains) {
+        uint256[] memory parentIds = userParentPredictions[_user];
+        chains = new ChainView[](parentIds.length);
+        for (uint256 i = 0; i < parentIds.length; i++) {
+            CollateralPosition memory pos = userCollateralPositions[_user][
+                parentIds[i]
+            ];
+            chains[i] = ChainView({
+                user: _user,
+                parentPredictionId: parentIds[i],
+                childPredictionIds: pos.childPredictionIds,
+                totalCollateralUsed: pos.totalCollateralUsed,
+                liquidated: pos.liquidated
+            });
+        }
+    }
 
     function getPrediction(
         uint256 _predictionId
@@ -560,6 +590,25 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
     {
         prediction = predictions[_predictionId];
         (yesPrice, noPrice) = getCurrentPrices(_predictionId);
+    }
+
+    function getChainsByParent(
+        uint256 _parentPredictionId
+    ) external view returns (ChainView[] memory chains) {
+        address[] memory users = parentIdToUsers[_parentPredictionId];
+        chains = new ChainView[](users.length);
+        for (uint256 i = 0; i < users.length; i++) {
+            CollateralPosition memory pos = userCollateralPositions[users[i]][
+                _parentPredictionId
+            ];
+            chains[i] = ChainView({
+                user: users[i],
+                parentPredictionId: _parentPredictionId,
+                childPredictionIds: pos.childPredictionIds,
+                totalCollateralUsed: pos.totalCollateralUsed,
+                liquidated: pos.liquidated
+            });
+        }
     }
 
     function getUserChain(
@@ -655,6 +704,17 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
                 noAmount += investments[i].amount;
             }
         }
+    }
+
+    function getMyTotalInvestmentInPrediction(
+        uint256 _predictionId
+    )
+        external
+        view
+        returns (uint256 totalAmount, uint256 yesAmount, uint256 noAmount)
+    {
+        (totalAmount, yesAmount, noAmount) = this
+            .getUserTotalInvestmentInPrediction(msg.sender, _predictionId);
     }
 
     // ============ ADMIN FUNCTIONS ============

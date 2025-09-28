@@ -16,6 +16,7 @@ import useCreatePrediction from "@/hooks/createOpportunity";
 import { useEffect, useState } from "react";
 import { Prediction } from "../interfaces/interface";
 import { allowanceAdmin, myAddress } from "../constants/address";
+import { parseUnits } from "viem";
 
 export default function TestV2() {
     const { address } = useAccount();
@@ -160,9 +161,26 @@ export default function TestV2() {
         });
     };
 
+    // const yesPrice = currentPrices?.yesPrice;
+    // const collateralAmount = parseUnits("3", 6);
+    // const expectedVotes = (collateralAmount * BigInt(10 ** 6)) / yesPrice;
+
+    // const minExpectedVotes = (expectedVotes * BigInt(90)) / BigInt(100);
+    // console.log(minExpectedVotes);
+
+    const extend = async () => {
+        const tx = await writeContractAsync({
+            address: Dike_SEPOLIA_ADDRESS,
+            abi: DikeAbi,
+            functionName: "extendChain",
+            args: [1, 2, parseUnits("3", 1), true, BigInt(0)],
+        });
+        console.log(tx);
+    };
+
     return (
         <>
-            <div>TestV2</div>
+            <div className="mb-20">TestV2</div>
             <Button onClick={() => console.log(balance.data)}>
                 Check Balance
             </Button>
@@ -188,6 +206,8 @@ export default function TestV2() {
             <Button onClick={() => refetchAllPredictions}>
                 Fetch all predictions
             </Button>
+
+            <Button onClick={() => extend()}>Extend</Button>
         </>
     );
 }
