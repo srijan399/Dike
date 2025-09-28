@@ -19,6 +19,9 @@ export default function Verify() {
       ? address
       : `0x${address}`;
 
+    console.log("Original address:", address);
+    console.log("Formatted address:", formattedAddress);
+
     // Validate address format (should be 42 characters including 0x)
     if (formattedAddress.length !== 42) {
       console.error(
@@ -30,8 +33,6 @@ export default function Verify() {
       setSelfApp(null);
       return;
     }
-
-    console.log("Creating Self app with address:", formattedAddress);
 
     const app = new SelfAppBuilder({
       version: 2,
@@ -69,6 +70,7 @@ export default function Verify() {
         </div>
       ) : selfApp ? (
         <SelfQRcodeWrapper
+          key={address} // Force re-render when address changes
           selfApp={selfApp}
           onSuccess={handleSuccessfulVerification}
           onError={() => {
