@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ConnectKitButton } from "connectkit";
 import { useState, useEffect, useRef } from "react";
-import { ChevronDown, Menu, X, TrendingUp, Users, Wallet, TestTube, BarChart3, User, Plus, Activity } from "lucide-react";
+import { ChevronDown, Menu, X, Wallet, BarChart3, User, Activity } from "lucide-react";
 
 export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -30,14 +30,10 @@ export default function Navbar() {
 
     const navigationItems = [
         {
-            label: "Markets",
-            href: "/markets",
-            icon: <TrendingUp className="w-4 h-4" />,
-            hasDropdown: true,
-            dropdownItems: [
-                { label: "All Markets", href: "/markets", icon: <BarChart3 className="w-4 h-4" /> },
-                { label: "Create Prediction", href: "/create-predic", icon: <Plus className="w-4 h-4" /> }
-            ]
+            label: "Investment",
+            href: "/predictions",
+            icon: <Activity className="w-4 h-4" />,
+            hasDropdown: false,
         },
         {
             label: "Trading",
