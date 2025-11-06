@@ -2,6 +2,7 @@
 ### ETHGlobal New Delhi 2025 — Winner & Finalist Presentation on Stage  
 > A capital-efficient, chainable prediction market primitive built upon a novel concept.
 
+We are at [1.26.32](https://www.youtube.com/live/ysOI1vzhddw?si=gkNWvUsSQLdYgzPe&t=5192) :)
 ---
 
 ## 🚀 Overview
