@@ -3,13 +3,59 @@ pragma solidity ^0.8.28;
 
 import {Test} from "forge-std/Test.sol";
 import {Swap} from "../src/Swap.sol";
-import {MockPyth} from "@pythnetwork/pyth-sdk-solidity/MockPyth.sol";
-import {PythStructs} from "@pythnetwork/pyth-sdk-solidity/PythStructs.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+/// @title Mock Chainlink AggregatorV3Interface
+contract MockChainlinkAggregator {
+    int256 public price;
+    uint256 public updatedAt;
+    uint8 public constant decimals = 8;
+
+    function setPrice(int256 _price) external {
+        price = _price;
+        updatedAt = block.timestamp;
+    }
+
+    function latestRoundData()
+        external
+        view
+        returns (
+            uint80 roundId,
+            int256 answer,
+            uint256 startedAt,
+            uint256 updatedTimestamp,
+            uint80 answeredInRound
+        )
+    {
+        return (1, price, block.timestamp, updatedAt, 1);
+    }
+
+    function getRoundData(uint80)
+        external
+        view
+        returns (
+            uint80 roundId,
+            int256 answer,
+            uint256 startedAt,
+            uint256 updatedTimestamp,
+            uint80 answeredInRound
+        )
+    {
+        return (1, price, block.timestamp, updatedAt, 1);
+    }
+
+    function description() external pure returns (string memory) {
+        return "BNB/USD";
+    }
+
+    function version() external pure returns (uint256) {
+        return 1;
+    }
+}
+
 contract ERC20Mock is IERC20 {
-    string public name = "PYUSD";
-    string public symbol = "PYUSD";
+    string public name = "USDC";
+    string public symbol = "USDC";
     uint8 public decimals = 6;
     uint256 public totalSupply;
     mapping(address => uint256) public balanceOf;
@@ -49,48 +95,66 @@ contract ERC20Mock is IERC20 {
 
 contract SwapTest is Test {
     Swap private swap;
-    MockPyth private mockPyth;
-    ERC20Mock private pyusd;
-
-    bytes32 constant ETH_USD_PRICE_ID = 0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace;
+    MockChainlinkAggregator private mockAggregator;
+    ERC20Mock private usdc;
 
     function setUp() public {
-        // validTimePeriod = 2 minutes, singleUpdateFeeInWei = 1 wei
-        mockPyth = new MockPyth(120, 1);
-        pyusd = new ERC20Mock();
-        swap = new Swap(address(mockPyth), address(pyusd));
+        mockAggregator = new MockChainlinkAggregator();
+        usdc = new ERC20Mock();
+        swap = new Swap(address(mockAggregator), address(usdc));
+        
+        // Set initial BNB/USD price: $3000 (with 8 decimals = 3000e8)
+        mockAggregator.setPrice(3000e8);
     }
 
-    function test_getEthUsd_returns_price_after_update() public {
-        // Build update data and push to MockPyth
-        int64 price = 3000e8; // 3000.00 with expo = -8
-        uint64 conf = 50_00000000; // 0.5 with expo = -8
-        int32 expo = -8;
-        uint64 publishTime = uint64(block.timestamp);
-        uint64 prevPublishTime = publishTime; // avoid underflow in early blocks
+    function test_getBnbUsd_returns_price() public {
+        // Set price to $3500
+        mockAggregator.setPrice(3500e8);
+        
+        (int256 price, uint256 updatedAt) = swap.getBnbUsd();
 
-        bytes memory update = mockPyth.createPriceFeedUpdateData(
-            ETH_USD_PRICE_ID,
-            price,
-            conf,
-            expo,
-            price,
-            conf,
-            publishTime,
-            prevPublishTime
-        );
+        assertEq(price, 3500e8, "price mismatch");
+        assertEq(updatedAt, block.timestamp, "timestamp mismatch");
+    }
 
-        bytes[] memory updates = new bytes[](1);
-        updates[0] = update;
+    function test_getBnbUsd_reverts_on_stale_price() public {
+        // Set price and move time forward beyond MAX_PRICE_AGE
+        mockAggregator.setPrice(3000e8);
+        vm.warp(block.timestamp + 25 hours);
 
-        mockPyth.updatePriceFeeds{value: mockPyth.getUpdateFee(updates)}(updates);
+        vm.expectRevert("Price too stale");
+        swap.getBnbUsd();
+    }
 
-        // Read using unsafe method
-        (int64 p, uint64 c, int32 e) = swap.getEthUsd();
+    function test_swapBnbForUsdc() public {
+        // Setup: Give contract some USDC liquidity
+        usdc.mint(address(swap), 1000000e6); // 1M USDC
+        
+        // User sends 1 BNB (1e18 wei) at $3000/BNB
+        // Expected USDC: (1e18 * 3000e8) / (1e8 * 1e18) * 1e6 = 3000e6
+        uint256 minUsdcOut = 2990e6; // Allow some slippage
+        
+        vm.deal(address(this), 1e18);
+        uint256 usdcOut = swap.swapBnbForUsdc{value: 1e18}(minUsdcOut, address(this));
+        
+        assertGe(usdcOut, minUsdcOut, "insufficient USDC output");
+        assertEq(usdc.balanceOf(address(this)), usdcOut, "USDC not transferred");
+    }
 
-        assertEq(p, price, "price mismatch");
-        assertEq(c, conf, "conf mismatch");
-        assertEq(e, expo, "expo mismatch");
+    function test_swapUsdcForBnb() public {
+        // Setup: Give contract some BNB liquidity
+        vm.deal(address(swap), 10e18); // 10 BNB
+        
+        // User sends 3000 USDC (3000e6) at $3000/BNB
+        // Expected BNB: (3000e6 * 1e18 * 1e8) / (1e6 * 3000e8) = 1e18
+        usdc.mint(address(this), 3000e6);
+        usdc.approve(address(swap), 3000e6);
+        
+        uint256 minBnbOut = 0.99e18; // Allow some slippage
+        uint256 bnbOut = swap.swapUsdcForBnb(3000e6, minBnbOut, payable(address(this)));
+        
+        assertGe(bnbOut, minBnbOut, "insufficient BNB output");
+        assertEq(address(this).balance, bnbOut, "BNB not transferred");
     }
 }
 

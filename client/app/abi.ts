@@ -2298,16 +2298,20 @@ export const Dike_SEPOLIA_ADDRESS =
 export const PYUSD_SEPOLIA_ADDRESS =
     "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9";
 
-// Swap contract (Sepolia)
-export const SWAP_SEPOLIA_ADDRESS =
-    "0x4717b94751322b70Fb497f0c3CD8Cc835C93900C";
+// USDC on BNB Chain Testnet
+export const USDC_BNB_TESTNET_ADDRESS =
+    "0x64544969ed7EBf5f083679233325356EbE738930";
+
+// Swap contract (BNB Chain Testnet)
+export const SWAP_BNB_TESTNET_ADDRESS =
+    "0x4717b94751322b70Fb497f0c3CD8Cc835C93900C"; // Update after deployment
 
 // Minimal ABI for our Swap contract functions used by the UI
 export const Swap_ABI = [
     {
         inputs: [
-            { internalType: "address", name: "pythContract", type: "address" },
-            { internalType: "address", name: "pyUsdToken", type: "address" },
+            { internalType: "address", name: "chainlinkPriceFeed", type: "address" },
+            { internalType: "address", name: "usdcToken", type: "address" },
         ],
         stateMutability: "nonpayable",
         type: "constructor",
@@ -2324,13 +2328,13 @@ export const Swap_ABI = [
             {
                 indexed: false,
                 internalType: "uint256",
-                name: "ethAmount",
+                name: "bnbAmount",
                 type: "uint256",
             },
             {
                 indexed: false,
                 internalType: "uint256",
-                name: "pyusdAmount",
+                name: "usdcAmount",
                 type: "uint256",
             },
         ],
@@ -2387,13 +2391,13 @@ export const Swap_ABI = [
             {
                 indexed: false,
                 internalType: "uint256",
-                name: "ethIn",
+                name: "bnbIn",
                 type: "uint256",
             },
             {
                 indexed: false,
                 internalType: "uint256",
-                name: "pyusdOut",
+                name: "usdcOut",
                 type: "uint256",
             },
             {
@@ -2403,7 +2407,7 @@ export const Swap_ABI = [
                 type: "address",
             },
         ],
-        name: "SwapEthForPyUsd",
+        name: "SwapBnbForUsdc",
         type: "event",
     },
     {
@@ -2418,13 +2422,13 @@ export const Swap_ABI = [
             {
                 indexed: false,
                 internalType: "uint256",
-                name: "pyusdIn",
+                name: "usdcIn",
                 type: "uint256",
             },
             {
                 indexed: false,
                 internalType: "uint256",
-                name: "ethOut",
+                name: "bnbOut",
                 type: "uint256",
             },
             {
@@ -2434,37 +2438,36 @@ export const Swap_ABI = [
                 type: "address",
             },
         ],
-        name: "SwapPyUsdForEth",
+        name: "SwapUsdcForBnb",
         type: "event",
     },
     {
         inputs: [],
-        name: "ETH_USD_PRICE_ID",
-        outputs: [{ internalType: "bytes32", name: "", type: "bytes32" }],
+        name: "MAX_PRICE_AGE",
+        outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
         stateMutability: "view",
         type: "function",
     },
     {
         inputs: [],
-        name: "addLiquidityEth",
+        name: "addLiquidityBnb",
         outputs: [],
         stateMutability: "payable",
         type: "function",
     },
     {
         inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
-        name: "addLiquidityPyUsd",
+        name: "addLiquidityUsdc",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
     },
     {
         inputs: [],
-        name: "getEthUsd",
+        name: "getBnbUsd",
         outputs: [
-            { internalType: "int64", name: "price", type: "int64" },
-            { internalType: "uint64", name: "conf", type: "uint64" },
-            { internalType: "int32", name: "expo", type: "int32" },
+            { internalType: "int256", name: "price", type: "int256" },
+            { internalType: "uint256", name: "updatedAt", type: "uint256" },
         ],
         stateMutability: "view",
         type: "function",
@@ -2473,8 +2476,8 @@ export const Swap_ABI = [
         inputs: [],
         name: "getReserves",
         outputs: [
-            { internalType: "uint256", name: "ethReserveWei", type: "uint256" },
-            { internalType: "uint256", name: "pyusdReserve", type: "uint256" },
+            { internalType: "uint256", name: "bnbReserveWei", type: "uint256" },
+            { internalType: "uint256", name: "usdcReserve", type: "uint256" },
         ],
         stateMutability: "view",
         type: "function",
@@ -2495,7 +2498,7 @@ export const Swap_ABI = [
     },
     {
         inputs: [],
-        name: "pyUSD",
+        name: "usdc",
         outputs: [
             { internalType: "contract IERC20", name: "", type: "address" },
         ],
@@ -2504,16 +2507,16 @@ export const Swap_ABI = [
     },
     {
         inputs: [],
-        name: "pyth",
+        name: "priceFeed",
         outputs: [
-            { internalType: "contract IPyth", name: "", type: "address" },
+            { internalType: "contract AggregatorV3Interface", name: "", type: "address" },
         ],
         stateMutability: "view",
         type: "function",
     },
     {
         inputs: [],
-        name: "pyusdDecimals",
+        name: "usdcDecimals",
         outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
         stateMutability: "view",
         type: "function",
@@ -2537,23 +2540,23 @@ export const Swap_ABI = [
     },
     {
         inputs: [
-            { internalType: "uint256", name: "minPyUsdOut", type: "uint256" },
+            { internalType: "uint256", name: "minUsdcOut", type: "uint256" },
             { internalType: "address", name: "to", type: "address" },
         ],
-        name: "swapEthForPyUsd",
-        outputs: [{ internalType: "uint256", name: "pyOut", type: "uint256" }],
+        name: "swapBnbForUsdc",
+        outputs: [{ internalType: "uint256", name: "usdcOut", type: "uint256" }],
         stateMutability: "payable",
         type: "function",
     },
     {
         inputs: [
-            { internalType: "uint256", name: "amountPyUsd", type: "uint256" },
-            { internalType: "uint256", name: "minEthOut", type: "uint256" },
+            { internalType: "uint256", name: "amountUsdc", type: "uint256" },
+            { internalType: "uint256", name: "minBnbOut", type: "uint256" },
             { internalType: "address payable", name: "to", type: "address" },
         ],
-        name: "swapPyUsdForEth",
+        name: "swapUsdcForBnb",
         outputs: [
-            { internalType: "uint256", name: "ethOutWei", type: "uint256" },
+            { internalType: "uint256", name: "bnbOutWei", type: "uint256" },
         ],
         stateMutability: "nonpayable",
         type: "function",

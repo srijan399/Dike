@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MultiversePrediction is ReentrancyGuard, Ownable {
-    IERC20 public immutable pyUSD;
+    IERC20 public immutable usdc;
 
     uint256 public predictionCounter;
     uint256 public constant MINIMUM_LIQUIDITY = 10 * 10 ** 6;
@@ -106,8 +106,8 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
 
     event PredictionResolved(uint256 indexed predictionId, bool outcome);
 
-    constructor(address _pyUSD) {
-        pyUSD = IERC20(_pyUSD);
+    constructor(address _usdc) {
+        usdc = IERC20(_usdc);
     }
 
     // ============ PREDICTION CREATION ============
@@ -131,7 +131,7 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
 
         // Transfer initial liquidity from creator
         require(
-            pyUSD.transferFrom(msg.sender, address(this), _initialLiquidity),
+            usdc.transferFrom(msg.sender, address(this), _initialLiquidity),
             "Transfer failed"
         );
 
@@ -202,7 +202,7 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
         );
 
         require(
-            pyUSD.transferFrom(msg.sender, address(this), _amount),
+            usdc.transferFrom(msg.sender, address(this), _amount),
             "Transfer failed"
         );
 

@@ -8,11 +8,11 @@ contract DeployDikeScript is Script {
     MultiversePrediction public multiversePrediction;
 
     // Network-specific configurations
-    address public constant PYUSD_MAINNET =
-        0x6c3ea9036406852006290770BEdFcAbA0e23A0e8;
-    address public constant PYUSD_SEPOLIA =
-        0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9;
-    address public constant PYUSD_ANVIL = address(0);
+    address public constant USDC_BNB_TESTNET =
+        0x64544969ed7EBf5f083679233325356EbE738930;
+    address public constant USDC_MAINNET =
+        0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d;
+    address public constant USDC_ANVIL = address(0);
 
     function setUp() public {}
 
@@ -20,29 +20,29 @@ contract DeployDikeScript is Script {
         // Get the network name
         string memory network = vm.envString("NETWORK");
 
-        address pyUSDAddress;
+        address usdcAddress;
 
-        // Set pyUSD address based on network
-        // If NETWORK is provided, use real pyUSD addresses, otherwise deploy mock
+        // Set USDC address based on network
+        // If NETWORK is provided, use real USDC addresses, otherwise deploy mock
         if (
             keccak256(abi.encodePacked(network)) ==
-            keccak256(abi.encodePacked("mainnet"))
+            keccak256(abi.encodePacked("bsc_testnet"))
         ) {
-            pyUSDAddress = PYUSD_MAINNET;
+            usdcAddress = USDC_BNB_TESTNET;
         } else if (
             keccak256(abi.encodePacked(network)) ==
-            keccak256(abi.encodePacked("sepolia"))
+            keccak256(abi.encodePacked("bsc_mainnet"))
         ) {
-            pyUSDAddress = PYUSD_SEPOLIA;
+            usdcAddress = USDC_MAINNET;
         } else {}
 
         console.log("Deploying MultiversePrediction on network:", network);
-        console.log("Using pyUSD address:", pyUSDAddress);
+        console.log("Using USDC address:", usdcAddress);
 
         vm.startBroadcast();
 
         // Deploy the MultiversePrediction contract
-        multiversePrediction = new MultiversePrediction(pyUSDAddress);
+        multiversePrediction = new MultiversePrediction(usdcAddress);
 
         vm.stopBroadcast();
 
@@ -51,34 +51,34 @@ contract DeployDikeScript is Script {
             address(multiversePrediction)
         );
         console.log("Owner:", multiversePrediction.owner());
-        console.log("pyUSD token:", address(multiversePrediction.pyUSD()));
+        console.log("USDC token:", address(multiversePrediction.usdc()));
     }
 
-    function deployMockPyUSD(
+    function deployMockUSDC(
         uint256 deployerPrivateKey
     ) internal returns (address) {
-        console.log("Deploying mock pyUSD token for local testing...");
+        console.log("Deploying mock USDC token for local testing...");
 
         vm.startBroadcast(deployerPrivateKey);
 
         // Deploy a simple mock ERC20 token
-        MockPyUSD mockPyUSD = new MockPyUSD();
+        MockUSDC mockUSDC = new MockUSDC();
 
         vm.stopBroadcast();
 
-        console.log("Mock pyUSD deployed at:", address(mockPyUSD));
-        return address(mockPyUSD);
+        console.log("Mock USDC deployed at:", address(mockUSDC));
+        return address(mockUSDC);
     }
 }
 
 // Simple mock ERC20 token for local testing
-contract MockPyUSD {
+contract MockUSDC {
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
 
     uint256 public totalSupply = 1000000 * 10 ** 6; // 1M tokens with 6 decimals
-    string public name = "Mock pyUSD";
-    string public symbol = "pyUSD";
+    string public name = "Mock USDC";
+    string public symbol = "USDC";
     uint8 public decimals = 6;
 
     constructor() {

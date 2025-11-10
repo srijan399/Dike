@@ -6,7 +6,7 @@ import {MultiversePrediction} from "src/Dike.sol";
 import {ERC20Mock} from "@openzeppelin/contracts/mocks/ERC20Mock.sol";
 
 contract DikeTest is Test {
-    ERC20Mock pyUSD;
+    ERC20Mock usdc;
     MultiversePrediction dike;
 
     address deployer = address(0xA11CE);
@@ -18,22 +18,22 @@ contract DikeTest is Test {
 
     function setUp() public {
         vm.startPrank(deployer);
-        pyUSD = new ERC20Mock();
-        dike = new MultiversePrediction(address(pyUSD));
+        usdc = new ERC20Mock();
+        dike = new MultiversePrediction(address(usdc));
         vm.stopPrank();
 
         // Mint funds for creator and investors
-        pyUSD.mint(creator, 1_000_000 * DECIMALS);
-        pyUSD.mint(investorYes, 1_000_000 * DECIMALS);
-        pyUSD.mint(investorNo, 1_000_000 * DECIMALS);
+        usdc.mint(creator, 1_000_000 * DECIMALS);
+        usdc.mint(investorYes, 1_000_000 * DECIMALS);
+        usdc.mint(investorNo, 1_000_000 * DECIMALS);
 
         // Approvals
         vm.prank(creator);
-        pyUSD.approve(address(dike), type(uint256).max);
+        usdc.approve(address(dike), type(uint256).max);
         vm.prank(investorYes);
-        pyUSD.approve(address(dike), type(uint256).max);
+        usdc.approve(address(dike), type(uint256).max);
         vm.prank(investorNo);
-        pyUSD.approve(address(dike), type(uint256).max);
+        usdc.approve(address(dike), type(uint256).max);
     }
 
     // ============ createPrediction ============
@@ -191,7 +191,7 @@ contract DikeTest is Test {
             dike.createPrediction("T", "C", "M", block.timestamp + 1 days + i, 20 * DECIMALS);
         }
 
-        uint256[] memory active = dike.getActivePredictions();
+        MultiversePrediction.Prediction[] memory active = dike.getActivePredictions();
         assertEq(active.length, 3);
     }
 
