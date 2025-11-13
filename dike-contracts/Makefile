@@ -58,7 +58,7 @@ verify-full-sepolia:
 
 verify-swap-bsc_testnet:
 	forge verify-contract --chain-id 97 --num-of-optimizations 200 --watch \
-		--etherscan-api-key U9CTZEN3RYUF7MAMHE1DIDVGS2HK9V36U6 \
+		--etherscan-api-key $(ETHERSCAN_API_KEY) \
 		0x6562601Dee56446db027fAC457a5c85a5856c375 src/Swap.sol:Swap
 
 # Deploy to local Anvil network
