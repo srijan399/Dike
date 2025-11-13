@@ -1,1287 +1,1631 @@
 export const DikeAbi = [
     {
-        type: "constructor",
-        inputs: [
+        "type": "constructor",
+        "inputs": [
             {
-                name: "_pyUSD",
-                type: "address",
-                internalType: "address",
-            },
+                "name": "_usdc",
+                "type": "address",
+                "internalType": "address"
+            }
         ],
-        stateMutability: "nonpayable",
+        "stateMutability": "nonpayable"
     },
     {
-        type: "function",
-        name: "COLLATERAL_RATIO",
-        inputs: [],
-        outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-        stateMutability: "view",
+        "type": "function",
+        "name": "COLLATERAL_RATIO",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "MINIMUM_LIQUIDITY",
-        inputs: [],
-        outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-        stateMutability: "view",
+        "type": "function",
+        "name": "MINIMUM_LIQUIDITY",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "createPrediction",
-        inputs: [
+        "type": "function",
+        "name": "createPrediction",
+        "inputs": [
             {
-                name: "_title",
-                type: "string",
-                internalType: "string",
+                "name": "_title",
+                "type": "string",
+                "internalType": "string"
             },
             {
-                name: "_category",
-                type: "string",
-                internalType: "string",
+                "name": "_category",
+                "type": "string",
+                "internalType": "string"
             },
             {
-                name: "_metadata",
-                type: "string",
-                internalType: "string",
+                "name": "_metadata",
+                "type": "string",
+                "internalType": "string"
             },
             {
-                name: "_resolutionDate",
-                type: "uint256",
-                internalType: "uint256",
+                "name": "_resolutionDate",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                name: "_initialLiquidity",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_initialLiquidity",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-        stateMutability: "nonpayable",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "nonpayable"
     },
     {
-        type: "function",
-        name: "extendChain",
-        inputs: [
+        "type": "function",
+        "name": "extendChain",
+        "inputs": [
             {
-                name: "_parentPredictionId",
-                type: "uint256",
-                internalType: "uint256",
+                "name": "_parentPredictionId",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                name: "_childPredictionId",
-                type: "uint256",
-                internalType: "uint256",
+                "name": "_childPredictionId",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                name: "_collateralAmount",
-                type: "uint256",
-                internalType: "uint256",
+                "name": "_collateralAmount",
+                "type": "uint256",
+                "internalType": "uint256"
             },
-            { name: "_side", type: "bool", internalType: "bool" },
             {
-                name: "_minExpectedVotes",
-                type: "uint256",
-                internalType: "uint256",
+                "name": "_side",
+                "type": "bool",
+                "internalType": "bool"
             },
+            {
+                "name": "_minExpectedVotes",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [],
-        stateMutability: "nonpayable",
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
-        type: "function",
-        name: "getActivePredictions",
-        inputs: [],
-        outputs: [
+        "type": "function",
+        "name": "getActivePredictions",
+        "inputs": [],
+        "outputs": [
             {
-                name: "activePredictions",
-                type: "tuple[]",
-                internalType: "struct MultiversePrediction.Prediction[]",
-                components: [
+                "name": "activePredictions",
+                "type": "tuple[]",
+                "internalType": "struct MultiversePrediction.Prediction[]",
+                "components": [
                     {
-                        name: "id",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "id",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "creator",
-                        type: "address",
-                        internalType: "address",
+                        "name": "creator",
+                        "type": "address",
+                        "internalType": "address"
                     },
                     {
-                        name: "title",
-                        type: "string",
-                        internalType: "string",
+                        "name": "title",
+                        "type": "string",
+                        "internalType": "string"
                     },
                     {
-                        name: "category",
-                        type: "string",
-                        internalType: "string",
+                        "name": "category",
+                        "type": "string",
+                        "internalType": "string"
                     },
                     {
-                        name: "metadata",
-                        type: "string",
-                        internalType: "string",
+                        "name": "metadata",
+                        "type": "string",
+                        "internalType": "string"
                     },
                     {
-                        name: "resolutionDate",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "resolutionDate",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "initialLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "initialLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "yesLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "yesLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "noLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "noLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "resolved",
-                        type: "bool",
-                        internalType: "bool",
+                        "name": "resolved",
+                        "type": "bool",
+                        "internalType": "bool"
                     },
                     {
-                        name: "outcome",
-                        type: "bool",
-                        internalType: "bool",
+                        "name": "outcome",
+                        "type": "bool",
+                        "internalType": "bool"
                     },
                     {
-                        name: "createdAt",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "createdAt",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "active",
-                        type: "bool",
-                        internalType: "bool",
-                    },
-                ],
-            },
+                        "name": "active",
+                        "type": "bool",
+                        "internalType": "bool"
+                    }
+                ]
+            }
         ],
-        stateMutability: "view",
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "getAllPredictions",
-        inputs: [],
-        outputs: [
+        "type": "function",
+        "name": "getAllPredictions",
+        "inputs": [],
+        "outputs": [
             {
-                name: "allPredictions",
-                type: "tuple[]",
-                internalType: "struct MultiversePrediction.Prediction[]",
-                components: [
+                "name": "allPredictions",
+                "type": "tuple[]",
+                "internalType": "struct MultiversePrediction.Prediction[]",
+                "components": [
                     {
-                        name: "id",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "id",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "creator",
-                        type: "address",
-                        internalType: "address",
+                        "name": "creator",
+                        "type": "address",
+                        "internalType": "address"
                     },
                     {
-                        name: "title",
-                        type: "string",
-                        internalType: "string",
+                        "name": "title",
+                        "type": "string",
+                        "internalType": "string"
                     },
                     {
-                        name: "category",
-                        type: "string",
-                        internalType: "string",
+                        "name": "category",
+                        "type": "string",
+                        "internalType": "string"
                     },
                     {
-                        name: "metadata",
-                        type: "string",
-                        internalType: "string",
+                        "name": "metadata",
+                        "type": "string",
+                        "internalType": "string"
                     },
                     {
-                        name: "resolutionDate",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "resolutionDate",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "initialLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "initialLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "yesLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "yesLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "noLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "noLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "resolved",
-                        type: "bool",
-                        internalType: "bool",
+                        "name": "resolved",
+                        "type": "bool",
+                        "internalType": "bool"
                     },
                     {
-                        name: "outcome",
-                        type: "bool",
-                        internalType: "bool",
+                        "name": "outcome",
+                        "type": "bool",
+                        "internalType": "bool"
                     },
                     {
-                        name: "createdAt",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "createdAt",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "active",
-                        type: "bool",
-                        internalType: "bool",
-                    },
-                ],
-            },
+                        "name": "active",
+                        "type": "bool",
+                        "internalType": "bool"
+                    }
+                ]
+            }
         ],
-        stateMutability: "view",
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "getAvailableCollateral",
-        inputs: [
+        "type": "function",
+        "name": "getAvailableCollateral",
+        "inputs": [
             {
-                name: "_user",
-                type: "address",
-                internalType: "address",
+                "name": "_user",
+                "type": "address",
+                "internalType": "address"
             },
             {
-                name: "_parentPredictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_parentPredictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-        stateMutability: "view",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "getCurrentPositionValue",
-        inputs: [
+        "type": "function",
+        "name": "getChainsByParent",
+        "inputs": [
             {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-            },
-            {
-                name: "_predictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_parentPredictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-        stateMutability: "view",
+        "outputs": [
+            {
+                "name": "chains",
+                "type": "tuple[]",
+                "internalType": "struct MultiversePrediction.ChainView[]",
+                "components": [
+                    {
+                        "name": "user",
+                        "type": "address",
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "parentPredictionId",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "childPredictionIds",
+                        "type": "uint256[]",
+                        "internalType": "uint256[]"
+                    },
+                    {
+                        "name": "totalCollateralUsed",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "liquidated",
+                        "type": "bool",
+                        "internalType": "bool"
+                    }
+                ]
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "getCurrentPrices",
-        inputs: [
+        "type": "function",
+        "name": "getCurrentPositionValue",
+        "inputs": [
             {
-                name: "_predictionId",
-                type: "uint256",
-                internalType: "uint256",
+                "name": "_user",
+                "type": "address",
+                "internalType": "address"
             },
+            {
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [
+        "outputs": [
             {
-                name: "yesPrice",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "noPrice",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        stateMutability: "view",
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "getPrediction",
-        inputs: [
+        "type": "function",
+        "name": "getCurrentPrices",
+        "inputs": [
             {
-                name: "_predictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [
+        "outputs": [
             {
-                name: "",
-                type: "tuple",
-                internalType: "struct MultiversePrediction.Prediction",
-                components: [
-                    {
-                        name: "id",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "creator",
-                        type: "address",
-                        internalType: "address",
-                    },
-                    {
-                        name: "title",
-                        type: "string",
-                        internalType: "string",
-                    },
-                    {
-                        name: "category",
-                        type: "string",
-                        internalType: "string",
-                    },
-                    {
-                        name: "metadata",
-                        type: "string",
-                        internalType: "string",
-                    },
-                    {
-                        name: "resolutionDate",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "initialLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "yesLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "noLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "resolved",
-                        type: "bool",
-                        internalType: "bool",
-                    },
-                    {
-                        name: "outcome",
-                        type: "bool",
-                        internalType: "bool",
-                    },
-                    {
-                        name: "createdAt",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "active",
-                        type: "bool",
-                        internalType: "bool",
-                    },
-                ],
+                "name": "yesPrice",
+                "type": "uint256",
+                "internalType": "uint256"
             },
+            {
+                "name": "noPrice",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        stateMutability: "view",
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "getPredictionInvestments",
-        inputs: [
+        "type": "function",
+        "name": "getMyTotalInvestmentInPrediction",
+        "inputs": [
             {
-                name: "_predictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [
+        "outputs": [
             {
-                name: "",
-                type: "tuple[]",
-                internalType: "struct MultiversePrediction.Investment[]",
-                components: [
-                    {
-                        name: "predictionId",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "investor",
-                        type: "address",
-                        internalType: "address",
-                    },
-                    {
-                        name: "amount",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "side",
-                        type: "bool",
-                        internalType: "bool",
-                    },
-                    {
-                        name: "expectedVotes",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "timestamp",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                    {
-                        name: "claimed",
-                        type: "bool",
-                        internalType: "bool",
-                    },
-                    {
-                        name: "isCollateralBased",
-                        type: "bool",
-                        internalType: "bool",
-                    },
-                    {
-                        name: "parentPredictionId",
-                        type: "uint256",
-                        internalType: "uint256",
-                    },
-                ],
+                "name": "totalAmount",
+                "type": "uint256",
+                "internalType": "uint256"
             },
+            {
+                "name": "yesAmount",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "noAmount",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        stateMutability: "view",
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "getPredictionWithPrices",
-        inputs: [
+        "type": "function",
+        "name": "getPrediction",
+        "inputs": [
             {
-                name: "_predictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [
+        "outputs": [
             {
-                name: "prediction",
-                type: "tuple",
-                internalType: "struct MultiversePrediction.Prediction",
-                components: [
+                "name": "",
+                "type": "tuple",
+                "internalType": "struct MultiversePrediction.Prediction",
+                "components": [
                     {
-                        name: "id",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "id",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "creator",
-                        type: "address",
-                        internalType: "address",
+                        "name": "creator",
+                        "type": "address",
+                        "internalType": "address"
                     },
                     {
-                        name: "title",
-                        type: "string",
-                        internalType: "string",
+                        "name": "title",
+                        "type": "string",
+                        "internalType": "string"
                     },
                     {
-                        name: "category",
-                        type: "string",
-                        internalType: "string",
+                        "name": "category",
+                        "type": "string",
+                        "internalType": "string"
                     },
                     {
-                        name: "metadata",
-                        type: "string",
-                        internalType: "string",
+                        "name": "metadata",
+                        "type": "string",
+                        "internalType": "string"
                     },
                     {
-                        name: "resolutionDate",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "resolutionDate",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "initialLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "initialLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "yesLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "yesLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "noLiquidity",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "noLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "resolved",
-                        type: "bool",
-                        internalType: "bool",
+                        "name": "resolved",
+                        "type": "bool",
+                        "internalType": "bool"
                     },
                     {
-                        name: "outcome",
-                        type: "bool",
-                        internalType: "bool",
+                        "name": "outcome",
+                        "type": "bool",
+                        "internalType": "bool"
                     },
                     {
-                        name: "createdAt",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "createdAt",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "active",
-                        type: "bool",
-                        internalType: "bool",
-                    },
-                ],
-            },
-            {
-                name: "yesPrice",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "noPrice",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                        "name": "active",
+                        "type": "bool",
+                        "internalType": "bool"
+                    }
+                ]
+            }
         ],
-        stateMutability: "view",
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "getTotalLiquidity",
-        inputs: [
+        "type": "function",
+        "name": "getPredictionInvestments",
+        "inputs": [
             {
-                name: "_predictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "getUserChain",
-        inputs: [
+        "outputs": [
             {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-            },
-        ],
-        outputs: [
-            {
-                name: "predictionIds",
-                type: "uint256[]",
-                internalType: "uint256[]",
-            },
-            {
-                name: "totalInvested",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "totalClaimed",
-                type: "uint256",
-                internalType: "uint256",
-            },
-        ],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "getUserCollateralPosition",
-        inputs: [
-            {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-            },
-            {
-                name: "_parentPredictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
-        ],
-        outputs: [
-            {
-                name: "parentId",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "totalUsed",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "childIds",
-                type: "uint256[]",
-                internalType: "uint256[]",
-            },
-            {
-                name: "liquidated",
-                type: "bool",
-                internalType: "bool",
-            },
-            {
-                name: "availableCollateral",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "positionValue",
-                type: "uint256",
-                internalType: "uint256",
-            },
-        ],
-        stateMutability: "view",
-    },
-    {
-        type: "function",
-        name: "getUserInvestmentsInPrediction",
-        inputs: [
-            {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-            },
-            {
-                name: "_predictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
-        ],
-        outputs: [
-            {
-                name: "",
-                type: "tuple[]",
-                internalType: "struct MultiversePrediction.Investment[]",
-                components: [
+                "name": "",
+                "type": "tuple[]",
+                "internalType": "struct MultiversePrediction.Investment[]",
+                "components": [
                     {
-                        name: "predictionId",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "predictionId",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "investor",
-                        type: "address",
-                        internalType: "address",
+                        "name": "investor",
+                        "type": "address",
+                        "internalType": "address"
                     },
                     {
-                        name: "amount",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "amount",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "side",
-                        type: "bool",
-                        internalType: "bool",
+                        "name": "side",
+                        "type": "bool",
+                        "internalType": "bool"
                     },
                     {
-                        name: "expectedVotes",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "expectedVotes",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "timestamp",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "timestamp",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
                     {
-                        name: "claimed",
-                        type: "bool",
-                        internalType: "bool",
+                        "name": "claimed",
+                        "type": "bool",
+                        "internalType": "bool"
                     },
                     {
-                        name: "isCollateralBased",
-                        type: "bool",
-                        internalType: "bool",
+                        "name": "isCollateralBased",
+                        "type": "bool",
+                        "internalType": "bool"
                     },
                     {
-                        name: "parentPredictionId",
-                        type: "uint256",
-                        internalType: "uint256",
+                        "name": "parentPredictionId",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    }
+                ]
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "getPredictionWithPrices",
+        "inputs": [
+            {
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "prediction",
+                "type": "tuple",
+                "internalType": "struct MultiversePrediction.Prediction",
+                "components": [
+                    {
+                        "name": "id",
+                        "type": "uint256",
+                        "internalType": "uint256"
                     },
-                ],
+                    {
+                        "name": "creator",
+                        "type": "address",
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "title",
+                        "type": "string",
+                        "internalType": "string"
+                    },
+                    {
+                        "name": "category",
+                        "type": "string",
+                        "internalType": "string"
+                    },
+                    {
+                        "name": "metadata",
+                        "type": "string",
+                        "internalType": "string"
+                    },
+                    {
+                        "name": "resolutionDate",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "initialLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "yesLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "noLiquidity",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "resolved",
+                        "type": "bool",
+                        "internalType": "bool"
+                    },
+                    {
+                        "name": "outcome",
+                        "type": "bool",
+                        "internalType": "bool"
+                    },
+                    {
+                        "name": "createdAt",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "active",
+                        "type": "bool",
+                        "internalType": "bool"
+                    }
+                ]
             },
+            {
+                "name": "yesPrice",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "noPrice",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        stateMutability: "view",
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "getUserParentPredictionIds",
-        inputs: [
+        "type": "function",
+        "name": "getTotalLiquidity",
+        "inputs": [
             {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-            },
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [{ name: "", type: "uint256[]", internalType: "uint256[]" }],
-        stateMutability: "view",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "getUserTotalInvestmentAmount",
-        inputs: [
+        "type": "function",
+        "name": "getUserChain",
+        "inputs": [
             {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-            },
-            {
-                name: "_predictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_user",
+                "type": "address",
+                "internalType": "address"
+            }
         ],
-        outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-        stateMutability: "view",
+        "outputs": [
+            {
+                "name": "predictionIds",
+                "type": "uint256[]",
+                "internalType": "uint256[]"
+            },
+            {
+                "name": "totalInvested",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "totalClaimed",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "getUserTotalInvestmentInPrediction",
-        inputs: [
+        "type": "function",
+        "name": "getUserChains",
+        "inputs": [
             {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-            },
-            {
-                name: "_predictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_user",
+                "type": "address",
+                "internalType": "address"
+            }
         ],
-        outputs: [
+        "outputs": [
             {
-                name: "totalAmount",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "yesAmount",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "noAmount",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "chains",
+                "type": "tuple[]",
+                "internalType": "struct MultiversePrediction.ChainView[]",
+                "components": [
+                    {
+                        "name": "user",
+                        "type": "address",
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "parentPredictionId",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "childPredictionIds",
+                        "type": "uint256[]",
+                        "internalType": "uint256[]"
+                    },
+                    {
+                        "name": "totalCollateralUsed",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "liquidated",
+                        "type": "bool",
+                        "internalType": "bool"
+                    }
+                ]
+            }
         ],
-        stateMutability: "view",
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "investInPrediction",
-        inputs: [
+        "type": "function",
+        "name": "getUserCollateralPosition",
+        "inputs": [
             {
-                name: "_predictionId",
-                type: "uint256",
-                internalType: "uint256",
+                "name": "_user",
+                "type": "address",
+                "internalType": "address"
             },
             {
-                name: "_amount",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            { name: "_side", type: "bool", internalType: "bool" },
-            {
-                name: "_minExpectedVotes",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_parentPredictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [],
-        stateMutability: "nonpayable",
+        "outputs": [
+            {
+                "name": "parentId",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "totalUsed",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "childIds",
+                "type": "uint256[]",
+                "internalType": "uint256[]"
+            },
+            {
+                "name": "liquidated",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "availableCollateral",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "positionValue",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "isPositionLiquidatable",
-        inputs: [
+        "type": "function",
+        "name": "getUserInvestmentsInPrediction",
+        "inputs": [
             {
-                name: "_user",
-                type: "address",
-                internalType: "address",
+                "name": "_user",
+                "type": "address",
+                "internalType": "address"
             },
             {
-                name: "_parentPredictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [{ name: "", type: "bool", internalType: "bool" }],
-        stateMutability: "view",
+        "outputs": [
+            {
+                "name": "",
+                "type": "tuple[]",
+                "internalType": "struct MultiversePrediction.Investment[]",
+                "components": [
+                    {
+                        "name": "predictionId",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "investor",
+                        "type": "address",
+                        "internalType": "address"
+                    },
+                    {
+                        "name": "amount",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "side",
+                        "type": "bool",
+                        "internalType": "bool"
+                    },
+                    {
+                        "name": "expectedVotes",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "timestamp",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "claimed",
+                        "type": "bool",
+                        "internalType": "bool"
+                    },
+                    {
+                        "name": "isCollateralBased",
+                        "type": "bool",
+                        "internalType": "bool"
+                    },
+                    {
+                        "name": "parentPredictionId",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    }
+                ]
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "liquidatePosition",
-        inputs: [
+        "type": "function",
+        "name": "getUserParentPredictionIds",
+        "inputs": [
             {
-                name: "_user",
-                type: "address",
-                internalType: "address",
-            },
-            {
-                name: "_parentPredictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "_user",
+                "type": "address",
+                "internalType": "address"
+            }
         ],
-        outputs: [],
-        stateMutability: "nonpayable",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256[]",
+                "internalType": "uint256[]"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "owner",
-        inputs: [],
-        outputs: [{ name: "", type: "address", internalType: "address" }],
-        stateMutability: "view",
+        "type": "function",
+        "name": "getUserTotalInvestmentAmount",
+        "inputs": [
+            {
+                "name": "_user",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "predictionCounter",
-        inputs: [],
-        outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-        stateMutability: "view",
+        "type": "function",
+        "name": "getUserTotalInvestmentInPrediction",
+        "inputs": [
+            {
+                "name": "_user",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "totalAmount",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "yesAmount",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "noAmount",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "predictionInvestments",
-        inputs: [
-            { name: "", type: "uint256", internalType: "uint256" },
-            { name: "", type: "uint256", internalType: "uint256" },
+        "type": "function",
+        "name": "investInPrediction",
+        "inputs": [
+            {
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "_amount",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "_side",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "_minExpectedVotes",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [
-            {
-                name: "predictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "investor",
-                type: "address",
-                internalType: "address",
-            },
-            {
-                name: "amount",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            { name: "side", type: "bool", internalType: "bool" },
-            {
-                name: "expectedVotes",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "timestamp",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            { name: "claimed", type: "bool", internalType: "bool" },
-            {
-                name: "isCollateralBased",
-                type: "bool",
-                internalType: "bool",
-            },
-            {
-                name: "parentPredictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
-        ],
-        stateMutability: "view",
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
-        type: "function",
-        name: "predictions",
-        inputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-        outputs: [
-            { name: "id", type: "uint256", internalType: "uint256" },
+        "type": "function",
+        "name": "isPositionLiquidatable",
+        "inputs": [
             {
-                name: "creator",
-                type: "address",
-                internalType: "address",
-            },
-            { name: "title", type: "string", internalType: "string" },
-            {
-                name: "category",
-                type: "string",
-                internalType: "string",
+                "name": "_user",
+                "type": "address",
+                "internalType": "address"
             },
             {
-                name: "metadata",
-                type: "string",
-                internalType: "string",
-            },
-            {
-                name: "resolutionDate",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "initialLiquidity",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "yesLiquidity",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "noLiquidity",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            { name: "resolved", type: "bool", internalType: "bool" },
-            { name: "outcome", type: "bool", internalType: "bool" },
-            {
-                name: "createdAt",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            { name: "active", type: "bool", internalType: "bool" },
+                "name": "_parentPredictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        stateMutability: "view",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "pyUSD",
-        inputs: [],
-        outputs: [
+        "type": "function",
+        "name": "liquidatePosition",
+        "inputs": [
             {
-                name: "",
-                type: "address",
-                internalType: "contract IERC20",
+                "name": "_user",
+                "type": "address",
+                "internalType": "address"
             },
+            {
+                "name": "_parentPredictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        stateMutability: "view",
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
-        type: "function",
-        name: "renounceOwnership",
-        inputs: [],
-        outputs: [],
-        stateMutability: "nonpayable",
+        "type": "function",
+        "name": "owner",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "resolvePrediction",
-        inputs: [
+        "type": "function",
+        "name": "parentIdToUsers",
+        "inputs": [
             {
-                name: "_predictionId",
-                type: "uint256",
-                internalType: "uint256",
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
             },
-            { name: "_outcome", type: "bool", internalType: "bool" },
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [],
-        stateMutability: "nonpayable",
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "transferOwnership",
-        inputs: [
+        "type": "function",
+        "name": "predictionCounter",
+        "inputs": [],
+        "outputs": [
             {
-                name: "newOwner",
-                type: "address",
-                internalType: "address",
-            },
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        outputs: [],
-        stateMutability: "nonpayable",
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "userChains",
-        inputs: [{ name: "", type: "address", internalType: "address" }],
-        outputs: [
+        "type": "function",
+        "name": "predictionInvestments",
+        "inputs": [
             {
-                name: "totalInvested",
-                type: "uint256",
-                internalType: "uint256",
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                name: "totalClaimed",
-                type: "uint256",
-                internalType: "uint256",
-            },
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        stateMutability: "view",
+        "outputs": [
+            {
+                "name": "predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "investor",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "amount",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "side",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "expectedVotes",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "claimed",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "isCollateralBased",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "parentPredictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "userCollateralPositions",
-        inputs: [
-            { name: "", type: "address", internalType: "address" },
-            { name: "", type: "uint256", internalType: "uint256" },
-        ],
-        outputs: [
+        "type": "function",
+        "name": "predictions",
+        "inputs": [
             {
-                name: "parentPredictionId",
-                type: "uint256",
-                internalType: "uint256",
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "id",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                name: "totalCollateralUsed",
-                type: "uint256",
-                internalType: "uint256",
+                "name": "creator",
+                "type": "address",
+                "internalType": "address"
             },
-            { name: "liquidated", type: "bool", internalType: "bool" },
+            {
+                "name": "title",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "category",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "metadata",
+                "type": "string",
+                "internalType": "string"
+            },
+            {
+                "name": "resolutionDate",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "initialLiquidity",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "yesLiquidity",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "noLiquidity",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "resolved",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "outcome",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "createdAt",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "active",
+                "type": "bool",
+                "internalType": "bool"
+            }
         ],
-        stateMutability: "view",
+        "stateMutability": "view"
     },
     {
-        type: "function",
-        name: "userInvestments",
-        inputs: [
-            { name: "", type: "address", internalType: "address" },
-            { name: "", type: "uint256", internalType: "uint256" },
-            { name: "", type: "uint256", internalType: "uint256" },
-        ],
-        outputs: [
-            {
-                name: "predictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "investor",
-                type: "address",
-                internalType: "address",
-            },
-            {
-                name: "amount",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            { name: "side", type: "bool", internalType: "bool" },
-            {
-                name: "expectedVotes",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            {
-                name: "timestamp",
-                type: "uint256",
-                internalType: "uint256",
-            },
-            { name: "claimed", type: "bool", internalType: "bool" },
-            {
-                name: "isCollateralBased",
-                type: "bool",
-                internalType: "bool",
-            },
-            {
-                name: "parentPredictionId",
-                type: "uint256",
-                internalType: "uint256",
-            },
-        ],
-        stateMutability: "view",
+        "type": "function",
+        "name": "renounceOwnership",
+        "inputs": [],
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
-        type: "function",
-        name: "userParentPredictions",
-        inputs: [
-            { name: "", type: "address", internalType: "address" },
-            { name: "", type: "uint256", internalType: "uint256" },
+        "type": "function",
+        "name": "resolvePrediction",
+        "inputs": [
+            {
+                "name": "_predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "_outcome",
+                "type": "bool",
+                "internalType": "bool"
+            }
         ],
-        outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
-        stateMutability: "view",
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
-        type: "event",
-        name: "ChainExtended",
-        inputs: [
+        "type": "function",
+        "name": "transferOwnership",
+        "inputs": [
             {
-                name: "parentPredictionId",
-                type: "uint256",
-                indexed: true,
-                internalType: "uint256",
-            },
-            {
-                name: "childPredictionId",
-                type: "uint256",
-                indexed: true,
-                internalType: "uint256",
-            },
-            {
-                name: "investor",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
-            {
-                name: "collateralAmount",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-            },
+                "name": "newOwner",
+                "type": "address",
+                "internalType": "address"
+            }
         ],
-        anonymous: false,
+        "outputs": [],
+        "stateMutability": "nonpayable"
     },
     {
-        type: "event",
-        name: "InvestmentMade",
-        inputs: [
+        "type": "function",
+        "name": "usdc",
+        "inputs": [],
+        "outputs": [
             {
-                name: "predictionId",
-                type: "uint256",
-                indexed: true,
-                internalType: "uint256",
-            },
-            {
-                name: "investor",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
-            {
-                name: "amount",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-            },
-            {
-                name: "side",
-                type: "bool",
-                indexed: false,
-                internalType: "bool",
-            },
-            {
-                name: "yesPrice",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-            },
-            {
-                name: "noPrice",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-            },
+                "name": "",
+                "type": "address",
+                "internalType": "contract IERC20"
+            }
         ],
-        anonymous: false,
+        "stateMutability": "view"
     },
     {
-        type: "event",
-        name: "OwnershipTransferred",
-        inputs: [
+        "type": "function",
+        "name": "userChains",
+        "inputs": [
             {
-                name: "previousOwner",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
-            {
-                name: "newOwner",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
         ],
-        anonymous: false,
+        "outputs": [
+            {
+                "name": "totalInvested",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "totalClaimed",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "event",
-        name: "PositionLiquidated",
-        inputs: [
+        "type": "function",
+        "name": "userCollateralPositions",
+        "inputs": [
             {
-                name: "parentPredictionId",
-                type: "uint256",
-                indexed: true,
-                internalType: "uint256",
+                "name": "",
+                "type": "address",
+                "internalType": "address"
             },
             {
-                name: "user",
-                type: "address",
-                indexed: true,
-                internalType: "address",
-            },
-            {
-                name: "childPredictionIds",
-                type: "uint256[]",
-                indexed: false,
-                internalType: "uint256[]",
-            },
-            {
-                name: "totalCollateralUsed",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-            },
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        anonymous: false,
+        "outputs": [
+            {
+                "name": "parentPredictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "totalCollateralUsed",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "liquidated",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "event",
-        name: "PredictionCreated",
-        inputs: [
+        "type": "function",
+        "name": "userInvestments",
+        "inputs": [
             {
-                name: "predictionId",
-                type: "uint256",
-                indexed: true,
-                internalType: "uint256",
+                "name": "",
+                "type": "address",
+                "internalType": "address"
             },
             {
-                name: "creator",
-                type: "address",
-                indexed: true,
-                internalType: "address",
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                name: "title",
-                type: "string",
-                indexed: false,
-                internalType: "string",
-            },
-            {
-                name: "initialLiquidity",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-            },
-            {
-                name: "resolutionDate",
-                type: "uint256",
-                indexed: false,
-                internalType: "uint256",
-            },
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        anonymous: false,
+        "outputs": [
+            {
+                "name": "predictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "investor",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "amount",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "side",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "expectedVotes",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "timestamp",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "claimed",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "isCollateralBased",
+                "type": "bool",
+                "internalType": "bool"
+            },
+            {
+                "name": "parentPredictionId",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
     {
-        type: "event",
-        name: "PredictionResolved",
-        inputs: [
+        "type": "function",
+        "name": "userParentPredictions",
+        "inputs": [
             {
-                name: "predictionId",
-                type: "uint256",
-                indexed: true,
-                internalType: "uint256",
+                "name": "",
+                "type": "address",
+                "internalType": "address"
             },
             {
-                name: "outcome",
-                type: "bool",
-                indexed: false,
-                internalType: "bool",
-            },
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        anonymous: false,
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
     },
+    {
+        "type": "event",
+        "name": "ChainExtended",
+        "inputs": [
+            {
+                "name": "parentPredictionId",
+                "type": "uint256",
+                "indexed": true,
+                "internalType": "uint256"
+            },
+            {
+                "name": "childPredictionId",
+                "type": "uint256",
+                "indexed": true,
+                "internalType": "uint256"
+            },
+            {
+                "name": "investor",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "collateralAmount",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "InvestmentMade",
+        "inputs": [
+            {
+                "name": "predictionId",
+                "type": "uint256",
+                "indexed": true,
+                "internalType": "uint256"
+            },
+            {
+                "name": "investor",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "amount",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "side",
+                "type": "bool",
+                "indexed": false,
+                "internalType": "bool"
+            },
+            {
+                "name": "yesPrice",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "noPrice",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "OwnershipTransferred",
+        "inputs": [
+            {
+                "name": "previousOwner",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "newOwner",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "PositionLiquidated",
+        "inputs": [
+            {
+                "name": "parentPredictionId",
+                "type": "uint256",
+                "indexed": true,
+                "internalType": "uint256"
+            },
+            {
+                "name": "user",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "childPredictionIds",
+                "type": "uint256[]",
+                "indexed": false,
+                "internalType": "uint256[]"
+            },
+            {
+                "name": "totalCollateralUsed",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "PredictionCreated",
+        "inputs": [
+            {
+                "name": "predictionId",
+                "type": "uint256",
+                "indexed": true,
+                "internalType": "uint256"
+            },
+            {
+                "name": "creator",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "title",
+                "type": "string",
+                "indexed": false,
+                "internalType": "string"
+            },
+            {
+                "name": "initialLiquidity",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "resolutionDate",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "PredictionResolved",
+        "inputs": [
+            {
+                "name": "predictionId",
+                "type": "uint256",
+                "indexed": true,
+                "internalType": "uint256"
+            },
+            {
+                "name": "outcome",
+                "type": "bool",
+                "indexed": false,
+                "internalType": "bool"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "error",
+        "name": "OwnableInvalidOwner",
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "address",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "error",
+        "name": "OwnableUnauthorizedAccount",
+        "inputs": [
+            {
+                "name": "account",
+                "type": "address",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "error",
+        "name": "ReentrancyGuardReentrantCall",
+        "inputs": []
+    }
 ];
 
 export const PYUSD_ABI = [
@@ -2293,8 +2637,8 @@ export const PYUSD_ABI = [
 ];
 
 // Contract address
-export const Dike_SEPOLIA_ADDRESS =
-    "0xc863E329FFfB2Ac6eD4393F8235873c2DB502711";
+export const Dike_BNB_ADDRESS =
+    "0x64801c4e53b942Ff5d5eef0b77f4FA5024b03D56";
 export const PYUSD_SEPOLIA_ADDRESS =
     "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9";
 
@@ -2304,270 +2648,407 @@ export const USDC_BNB_TESTNET_ADDRESS =
 
 // Swap contract (BNB Chain Testnet)
 export const SWAP_BNB_TESTNET_ADDRESS =
-    "0x4717b94751322b70Fb497f0c3CD8Cc835C93900C"; // Update after deployment
+    "0x6562601Dee56446db027fAC457a5c85a5856c375"; // Update after deployment
 
 // Minimal ABI for our Swap contract functions used by the UI
 export const Swap_ABI = [
     {
-        inputs: [
-            { internalType: "address", name: "chainlinkPriceFeed", type: "address" },
-            { internalType: "address", name: "usdcToken", type: "address" },
-        ],
-        stateMutability: "nonpayable",
-        type: "constructor",
-    },
-    {
-        anonymous: false,
-        inputs: [
+        "type": "constructor",
+        "inputs": [
             {
-                indexed: true,
-                internalType: "address",
-                name: "manager",
-                type: "address",
+                "name": "chainlinkPriceFeed",
+                "type": "address",
+                "internalType": "address"
             },
             {
-                indexed: false,
-                internalType: "uint256",
-                name: "bnbAmount",
-                type: "uint256",
+                "name": "usdcToken",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "MAX_PRICE_AGE",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "addLiquidityBnb",
+        "inputs": [],
+        "outputs": [],
+        "stateMutability": "payable"
+    },
+    {
+        "type": "function",
+        "name": "addLiquidityUsdc",
+        "inputs": [
+            {
+                "name": "amount",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "getBnbUsd",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "price",
+                "type": "int256",
+                "internalType": "int256"
             },
             {
-                indexed: false,
-                internalType: "uint256",
-                name: "usdcAmount",
-                type: "uint256",
-            },
+                "name": "updatedAt",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        name: "LiquidityAdded",
-        type: "event",
+        "stateMutability": "view"
     },
     {
-        anonymous: false,
-        inputs: [
+        "type": "function",
+        "name": "getReserves",
+        "inputs": [],
+        "outputs": [
             {
-                indexed: true,
-                internalType: "address",
-                name: "account",
-                type: "address",
-            },
-            {
-                indexed: false,
-                internalType: "bool",
-                name: "approved",
-                type: "bool",
-            },
-        ],
-        name: "LiquidityManagerUpdated",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: true,
-                internalType: "address",
-                name: "previousOwner",
-                type: "address",
+                "name": "bnbReserveWei",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                indexed: true,
-                internalType: "address",
-                name: "newOwner",
-                type: "address",
-            },
+                "name": "usdcReserve",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
         ],
-        name: "OwnershipTransferred",
-        type: "event",
+        "stateMutability": "view"
     },
     {
-        anonymous: false,
-        inputs: [
+        "type": "function",
+        "name": "isLiquidityManager",
+        "inputs": [
             {
-                indexed: true,
-                internalType: "address",
-                name: "user",
-                type: "address",
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "owner",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "priceFeed",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "contract AggregatorV3Interface"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "renounceOwnership",
+        "inputs": [],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "setLiquidityManager",
+        "inputs": [
+            {
+                "name": "account",
+                "type": "address",
+                "internalType": "address"
             },
             {
-                indexed: false,
-                internalType: "uint256",
-                name: "bnbIn",
-                type: "uint256",
+                "name": "approved",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "swapBnbForUsdc",
+        "inputs": [
+            {
+                "name": "minUsdcOut",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                indexed: false,
-                internalType: "uint256",
-                name: "usdcOut",
-                type: "uint256",
+                "name": "to",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "usdcOut",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "payable"
+    },
+    {
+        "type": "function",
+        "name": "swapUsdcForBnb",
+        "inputs": [
+            {
+                "name": "amountUsdc",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                indexed: true,
-                internalType: "address",
-                name: "to",
-                type: "address",
-            },
-        ],
-        name: "SwapBnbForUsdc",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: true,
-                internalType: "address",
-                name: "user",
-                type: "address",
+                "name": "minBnbOut",
+                "type": "uint256",
+                "internalType": "uint256"
             },
             {
-                indexed: false,
-                internalType: "uint256",
-                name: "usdcIn",
-                type: "uint256",
+                "name": "to",
+                "type": "address",
+                "internalType": "address payable"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "bnbOutWei",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "transferOwnership",
+        "inputs": [
+            {
+                "name": "newOwner",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "usdc",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "contract IERC20"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "usdcDecimals",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint8",
+                "internalType": "uint8"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "event",
+        "name": "LiquidityAdded",
+        "inputs": [
+            {
+                "name": "manager",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
             },
             {
-                indexed: false,
-                internalType: "uint256",
-                name: "bnbOut",
-                type: "uint256",
+                "name": "bnbAmount",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
             },
             {
-                indexed: true,
-                internalType: "address",
-                name: "to",
-                type: "address",
+                "name": "usdcAmount",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            }
+        ],
+        "anonymous": false
+    },
+    {
+        "type": "event",
+        "name": "LiquidityManagerUpdated",
+        "inputs": [
+            {
+                "name": "account",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
             },
+            {
+                "name": "approved",
+                "type": "bool",
+                "indexed": false,
+                "internalType": "bool"
+            }
         ],
-        name: "SwapUsdcForBnb",
-        type: "event",
+        "anonymous": false
     },
     {
-        inputs: [],
-        name: "MAX_PRICE_AGE",
-        outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "addLiquidityBnb",
-        outputs: [],
-        stateMutability: "payable",
-        type: "function",
-    },
-    {
-        inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
-        name: "addLiquidityUsdc",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "getBnbUsd",
-        outputs: [
-            { internalType: "int256", name: "price", type: "int256" },
-            { internalType: "uint256", name: "updatedAt", type: "uint256" },
+        "type": "event",
+        "name": "OwnershipTransferred",
+        "inputs": [
+            {
+                "name": "previousOwner",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "newOwner",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            }
         ],
-        stateMutability: "view",
-        type: "function",
+        "anonymous": false
     },
     {
-        inputs: [],
-        name: "getReserves",
-        outputs: [
-            { internalType: "uint256", name: "bnbReserveWei", type: "uint256" },
-            { internalType: "uint256", name: "usdcReserve", type: "uint256" },
+        "type": "event",
+        "name": "SwapBnbForUsdc",
+        "inputs": [
+            {
+                "name": "user",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "bnbIn",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "usdcOut",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "to",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            }
         ],
-        stateMutability: "view",
-        type: "function",
+        "anonymous": false
     },
     {
-        inputs: [{ internalType: "address", name: "", type: "address" }],
-        name: "isLiquidityManager",
-        outputs: [{ internalType: "bool", name: "", type: "bool" }],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "owner",
-        outputs: [{ internalType: "address", name: "", type: "address" }],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "usdc",
-        outputs: [
-            { internalType: "contract IERC20", name: "", type: "address" },
+        "type": "event",
+        "name": "SwapUsdcForBnb",
+        "inputs": [
+            {
+                "name": "user",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            },
+            {
+                "name": "usdcIn",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "bnbOut",
+                "type": "uint256",
+                "indexed": false,
+                "internalType": "uint256"
+            },
+            {
+                "name": "to",
+                "type": "address",
+                "indexed": true,
+                "internalType": "address"
+            }
         ],
-        stateMutability: "view",
-        type: "function",
+        "anonymous": false
     },
     {
-        inputs: [],
-        name: "priceFeed",
-        outputs: [
-            { internalType: "contract AggregatorV3Interface", name: "", type: "address" },
-        ],
-        stateMutability: "view",
-        type: "function",
+        "type": "error",
+        "name": "OwnableInvalidOwner",
+        "inputs": [
+            {
+                "name": "owner",
+                "type": "address",
+                "internalType": "address"
+            }
+        ]
     },
     {
-        inputs: [],
-        name: "usdcDecimals",
-        outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
-        stateMutability: "view",
-        type: "function",
+        "type": "error",
+        "name": "OwnableUnauthorizedAccount",
+        "inputs": [
+            {
+                "name": "account",
+                "type": "address",
+                "internalType": "address"
+            }
+        ]
     },
     {
-        inputs: [],
-        name: "renounceOwnership",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            { internalType: "address", name: "account", type: "address" },
-            { internalType: "bool", name: "approved", type: "bool" },
-        ],
-        name: "setLiquidityManager",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            { internalType: "uint256", name: "minUsdcOut", type: "uint256" },
-            { internalType: "address", name: "to", type: "address" },
-        ],
-        name: "swapBnbForUsdc",
-        outputs: [{ internalType: "uint256", name: "usdcOut", type: "uint256" }],
-        stateMutability: "payable",
-        type: "function",
-    },
-    {
-        inputs: [
-            { internalType: "uint256", name: "amountUsdc", type: "uint256" },
-            { internalType: "uint256", name: "minBnbOut", type: "uint256" },
-            { internalType: "address payable", name: "to", type: "address" },
-        ],
-        name: "swapUsdcForBnb",
-        outputs: [
-            { internalType: "uint256", name: "bnbOutWei", type: "uint256" },
-        ],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            { internalType: "address", name: "newOwner", type: "address" },
-        ],
-        name: "transferOwnership",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
+        "type": "error",
+        "name": "ReentrancyGuardReentrantCall",
+        "inputs": []
+    }
 ];

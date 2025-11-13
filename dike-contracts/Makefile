@@ -34,6 +34,8 @@ deploy:
 deploySri:
 	forge script script/DeployDike.s.sol:DeployDikeScript --rpc-url https://sepolia.infura.io/v3/1ea5690df9404cc282f3644cb559e6cd --account pvt --broadcast --via-ir
 
+deploySwap:
+	forge script script/DeploySwap.s.sol:DeploySwap --rpc-url https://bsc-testnet.nodereal.io/v1/e9a36765eb8a40b9bd12e680a1fd2bc5 --account default --broadcast --via-ir
 
 # Deploy FullDike to specified network
 deploy-full:
@@ -53,6 +55,11 @@ verify-full-sepolia:
 	forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch \
 		--etherscan-api-key $(ETHERSCAN_API_KEY) \
 		$(CONTRACT_ADDRESS) src/FullDike.sol:FullDike
+
+verify-swap-bsc_testnet:
+	forge verify-contract --chain-id 97 --num-of-optimizations 200 --watch \
+		--etherscan-api-key U9CTZEN3RYUF7MAMHE1DIDVGS2HK9V36U6 \
+		0x6562601Dee56446db027fAC457a5c85a5856c375 src/Swap.sol:Swap
 
 # Deploy to local Anvil network
 deploy-anvil:

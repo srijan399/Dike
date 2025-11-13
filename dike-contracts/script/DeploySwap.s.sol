@@ -9,13 +9,13 @@ import {Swap} from "../src/Swap.sol";
 /// forge script script/DeploySwap.s.sol:DeploySwap --rpc-url $SEPOLIA_RPC_URL --private-key $PRIVATE_KEY --broadcast -vvvv
 contract DeploySwap is Script {
     // Sepolia Pyth contract address
-    address constant SEPOLIA_PYTH = 0xDd24F84d36BF92C65F92307595335bdFab5Bbd21;
+    address constant CHAINLINK_PRICE_FEED_BNB_USD = 0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526;
     // Sepolia PYUSD token address
-    address constant SEPOLIA_PYUSD = 0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9;
+    address constant BNB_USDC = 0x64544969ed7EBf5f083679233325356EbE738930;
 
     function run() external {
         vm.startBroadcast();
-        Swap swap = new Swap(SEPOLIA_PYTH, SEPOLIA_PYUSD);
+        Swap swap = new Swap(CHAINLINK_PRICE_FEED_BNB_USD, BNB_USDC);
         vm.stopBroadcast();
 
         swap; // silence
