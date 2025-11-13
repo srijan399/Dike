@@ -29,7 +29,7 @@ test:
 
 # Deploy Dike to specified network
 deploy:
-	forge script script/DeployDike.s.sol:DeployDikeScript --rpc-url https://eth-sepolia.g.alchemy.com/v2/IsiYA3L8QTZAaZm0_JNTt6qgw1yLehws --account default --broadcast --via-ir
+	forge script script/DeployDike.s.sol:DeployDikeScript --rpc-url https://data-seed-prebsc-1-s1.binance.org:8545 --account default --broadcast --via-ir
 
 deploySri:
 	forge script script/DeployDike.s.sol:DeployDikeScript --rpc-url https://sepolia.infura.io/v3/1ea5690df9404cc282f3644cb559e6cd --account pvt --broadcast --via-ir
@@ -38,6 +38,11 @@ deploySri:
 # Deploy FullDike to specified network
 deploy-full:
 	forge script script/DeployFullDike.s.sol:DeployFullDikeScript --rpc-url https://ethereum-sepolia-public.nodies.app --account default --broadcast --via-ir
+
+verify-bsc_testnet:
+	forge verify-contract --chain-id 97 --num-of-optimizations 200 --watch \
+		--etherscan-api-key $(ETHERSCAN_API_KEY) \
+		0x64801c4e53b942Ff5d5eef0b77f4FA5024b03D56 src/Dike.sol:MultiversePrediction
 
 verify-sepolia:
 	forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch \

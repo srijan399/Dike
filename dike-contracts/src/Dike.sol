@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MultiversePrediction is ReentrancyGuard, Ownable {
@@ -106,7 +106,7 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
 
     event PredictionResolved(uint256 indexed predictionId, bool outcome);
 
-    constructor(address _usdc) {
+    constructor(address _usdc) Ownable(msg.sender) {
         usdc = IERC20(_usdc);
     }
 

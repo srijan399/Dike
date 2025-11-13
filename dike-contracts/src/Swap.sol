@@ -3,7 +3,7 @@ pragma solidity ^0.8.28;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
@@ -55,7 +55,7 @@ contract Swap is Ownable, ReentrancyGuard {
 
     /// @param chainlinkPriceFeed The address of the Chainlink BNB/USD price feed
     /// @param usdcToken The USDC ERC20 token address
-    constructor(address chainlinkPriceFeed, address usdcToken) {
+    constructor(address chainlinkPriceFeed, address usdcToken) Ownable(msg.sender) {
         require(chainlinkPriceFeed != address(0), "Invalid price feed");
         require(usdcToken != address(0), "Invalid USDC token");
         priceFeed = AggregatorV3Interface(chainlinkPriceFeed);
