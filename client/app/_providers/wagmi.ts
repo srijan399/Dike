@@ -3,24 +3,42 @@
 import { createConfig, http } from "wagmi";
 import { cookieStorage, createStorage } from "wagmi";
 import { getDefaultConfig } from "connectkit";
-import { sepolia } from "wagmi/chains";
+import { sepolia , bscTestnet} from "wagmi/chains";
 import { defineChain } from "viem";
 
 // Custom Sepolia chain with Infura RPC and Etherscan block explorer
-const customSepolia = defineChain({
-  ...sepolia,
+// const customSepolia = defineChain({
+//   ...sepolia,
+//   rpcUrls: {
+//     default: {
+//       http: [`https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || 'YOUR_INFURA_PROJECT_ID'}`],
+//     },
+//     public: {
+//       http: [`https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || 'YOUR_INFURA_PROJECT_ID'}`],
+//     },
+//   },
+//   blockExplorers: {
+//     default: {
+//       name: 'Etherscan',
+//       url: 'https://sepolia.etherscan.io/',
+//     },
+//   },
+// });
+
+const customBscTestnet = defineChain({
+  ...bscTestnet,
   rpcUrls: {
     default: {
-      http: [`https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || 'YOUR_INFURA_PROJECT_ID'}`],
+      http: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
     },
     public: {
-      http: [`https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || 'YOUR_INFURA_PROJECT_ID'}`],
+      http: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
     },
   },
   blockExplorers: {
     default: {
-      name: 'Etherscan',
-      url: 'https://sepolia.etherscan.io/',
+      name: 'BscScan',
+      url: 'https://testnet.bscscan.com/',
     },
   },
 });
@@ -29,9 +47,9 @@ const customSepolia = defineChain({
 export const config = createConfig(
     getDefaultConfig({
         enableFamily: false,
-        chains: [customSepolia],
+        chains: [ customBscTestnet],
         transports: {
-            [customSepolia.id]: http(`https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID || 'YOUR_INFURA_PROJECT_ID'}`),
+            [customBscTestnet.id]: http('https://data-seed-prebsc-1-s1.binance.org:8545/'),
         },
         storage: createStorage({
             storage: cookieStorage,
