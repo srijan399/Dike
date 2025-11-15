@@ -1628,6 +1628,9 @@ export const DikeAbi = [
     }
 ];
 
+
+
+// actual pyusd abi 
 // export const PYUSD_ABI = [
 //     {
 //         inputs: [
@@ -2637,6 +2640,7 @@ export const DikeAbi = [
 // ];
 
 
+// bsc usdc testnet token abi
 export const PYUSD_ABI = [
   {
     "inputs": [],
@@ -2864,18 +2868,18 @@ export const PYUSD_ABI = [
   }
 ];
 
-// Contract address
+// Contract address for BNB deployment (kept the same name hehe)
 export const Dike_SEPOLIA_ADDRESS =
     "0x64801c4e53b942Ff5d5eef0b77f4FA5024b03D56";
 // export const Dike_SEPOLIA_ADDRESS =
 //     "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9";
 
-// USDC on BNB Chain Testnet
-export const USDC_BNB_TESTNET_ADDRESS =
+// USDC on BNB Chain Testnet (kept the same name hehe)
+export const PYUSD_SEPOLIA_ADDRESS =
     "0x64544969ed7EBf5f083679233325356EbE738930";
 
-// Swap contract (BNB Chain Testnet)
-export const SWAP_BNB_TESTNET_ADDRESS =
+// Swap contract (BNB Chain Testnet) (kept the same name hehe)
+export const SWAP_SEPOLIA_ADDRESS =
     "0x6562601Dee56446db027fAC457a5c85a5856c375"; // Update after deployment
 
 // Minimal ABI for our Swap contract functions used by the UI

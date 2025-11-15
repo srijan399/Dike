@@ -4,7 +4,8 @@ import { useCallback, useMemo, useState } from "react";
 import {
     DikeAbi,
     Dike_SEPOLIA_ADDRESS,
-    PYUSD_ABI
+    PYUSD_ABI,
+    PYUSD_SEPOLIA_ADDRESS,
 } from "@/app/abi";
 import { parseUnits } from "viem";
 import { useAccount, usePublicClient, useReadContract, useWriteContract } from "wagmi";
@@ -49,7 +50,7 @@ export default function useInvestInPrediction() {
 
     // A reactive allowance read. Consumers can also ignore it; we still double-check at runtime.
     const { data: allowance } = useReadContract({
-        address: Dike_SEPOLIA_ADDRESS,
+        address: PYUSD_SEPOLIA_ADDRESS,
         abi: PYUSD_ABI,
         functionName: "allowance",
         args: address ? [address, Dike_SEPOLIA_ADDRESS] : undefined,
@@ -74,7 +75,7 @@ export default function useInvestInPrediction() {
                     setIsApproving(true);
                     // Approve exact needed amount (idempotent enough for demo)
                     const approveTx = await writeContractAsync({
-                        address: Dike_SEPOLIA_ADDRESS,
+                        address: PYUSD_SEPOLIA_ADDRESS,
                         abi: PYUSD_ABI,
                         functionName: "approve",
                         args: [Dike_SEPOLIA_ADDRESS, amountUnits],
