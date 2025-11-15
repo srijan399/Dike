@@ -1,20 +1,20 @@
 "use client";
 
 import { useAccount, useBalance } from "wagmi";
-import { Dike_SEPOLIA_ADDRESS } from "@/app/abi";
+import { USDC_BNB_TESTNET_ADDRESS } from "@/app/abi";
 
 /**
  * usePyUsdBalance
- * - Returns the connected wallet's PYUSD balance on Sepolia.
+ * - Returns the connected wallet's USDC balance on BSC Testnet.
  * - Includes loading state and auto-updates via `watch`.
  */
 export default function usePyUsdBalance() {
   const { address } = useAccount();
 
   const result = useBalance({
-    chainId: 11155111,
+    chainId: 97, // BSC Testnet
     address,
-    token: Dike_SEPOLIA_ADDRESS,
+    token: USDC_BNB_TESTNET_ADDRESS,
     // Avoid unnecessary calls when no wallet is connected
     // and prevent frequent refetches that cause loading flicker.
     query: {

@@ -17,6 +17,15 @@ import { useUserChain } from "@/hooks/useChain"
 import { DikeAbi, Dike_SEPOLIA_ADDRESS } from "@/app/abi"
 import { Search, RefreshCw, Link as LinkIcon } from "lucide-react"
 
+// Hook to prevent hydration mismatches
+function useMounted() {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+    return mounted;
+}
+
 type OpportunityUI = {
     id: string
     title: string
@@ -52,14 +61,16 @@ export function OpportunitiesPage() {
     const [showDetailsModal, setShowDetailsModal] = useState(false)
     const [selectedPrediction, setSelectedPrediction] = useState<Prediction | null>(null)
     const [showChains, setShowChains] = useState(false)
+    const mounted = useMounted() // Prevent hydration mismatches
     const { data: pyusdBalance, isLoading: isPyusdLoading } = usePyUsdBalance()
     const { chainData, isLoading: isChainLoading } = useUserChain()
 
     const { data: allPredictionsData, isLoading: isPredLoading, isFetching: isPredFetching, refetch: refetchAllPredictions } =
         useReadContract({ address: Dike_SEPOLIA_ADDRESS, abi: DikeAbi, functionName: "getAllPredictions" })
 
+    // Reduce refetch frequency to prevent excessive rerenders
     useEffect(() => {
-        const id = setInterval(() => refetchAllPredictions(), 10000)
+        const id = setInterval(() => refetchAllPredictions(), 30000) // Changed from 10s to 30s
         return () => clearInterval(id)
     }, [refetchAllPredictions])
 
@@ -101,16 +112,24 @@ export function OpportunitiesPage() {
 
         let cancelled = false
         ;(async () => {
+            // Fetch with timeout and limit concurrent requests
             const entries: Array<[string, IPFSMetadata | null]> = await Promise.all(
-                toFetch.map(async (cid) => {
+                toFetch.slice(0, 10).map(async (cid) => { // Limit to 10 concurrent fetches
                     try {
-                        // Use a public IPFS gateway; could be swapped to your own if needed
-                        const res = await fetch(`https://ipfs.io/ipfs/${cid}`)
+                        const controller = new AbortController()
+                        const timeoutId = setTimeout(() => controller.abort(), 5000) // 5s timeout
+                        
+                        const res = await fetch(`https://ipfs.io/ipfs/${cid}`, {
+                            signal: controller.signal,
+                        })
+                        clearTimeout(timeoutId)
+                        
                         if (!res.ok) return [cid, null] as [string, IPFSMetadata | null]
                         const json = (await res.json()) as IPFSMetadata
                         return [cid, json]
-                    } catch {
-                        return [cid, null]
+                    } catch (error) {
+                        // Silently fail for network errors
+                        return [cid, null] as [string, IPFSMetadata | null]
                     }
                 })
             )
@@ -280,7 +299,7 @@ export function OpportunitiesPage() {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="text-2xl font-bold text-white">
-                                            {isPredLoading && !predictions.length ? "Loading..." : predictions.length}
+                                            {!mounted && isPredLoading ? "Loading..." : predictions.length}
                                         </div>
                                     </CardContent>
                                 </div>
@@ -293,7 +312,7 @@ export function OpportunitiesPage() {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="text-2xl font-bold text-white">
-                                            {isPredLoading && !predictions.length
+                                            {!mounted && isPredLoading
                                                 ? "Loading..."
                                                 : predictions
                                                     .reduce((sum, p) => sum + Math.max(0, Number(p.yesLiquidity) + Number(p.noLiquidity)), 0)
@@ -310,9 +329,9 @@ export function OpportunitiesPage() {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="text-2xl font-bold text-white">
-                                            {isChainLoading 
+                                            {!mounted && isChainLoading 
                                                 ? "Loading..." 
-                                                : chainData?.predictionIds.length || 0
+                                                : chainData?.predictionIds.length ?? 0
                                             }
                                         </div>
                                     </CardContent>
@@ -326,7 +345,7 @@ export function OpportunitiesPage() {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="text-2xl font-bold text-white">
-                                            {isPyusdLoading
+                                            {!mounted && isPyusdLoading
                                                 ? "Loading..."
                                                 : pyusdBalance?.formatted
                                                     ? `${Number(pyusdBalance.formatted).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${pyusdBalance.symbol ?? "PYUSD"}`

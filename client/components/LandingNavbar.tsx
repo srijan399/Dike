@@ -4,6 +4,13 @@ import Link from "next/link";
 import { Instrument_Sans } from "next/font/google";
 import { ConnectKitButton } from "connectkit";
 import { Wallet } from "lucide-react";
+import { Instrument_Serif } from "next/font/google";
+
+const instrumentSerif = Instrument_Serif({
+    subsets: ["latin"],
+    weight: ["400"],
+    display: "swap",
+})
 
 const instrumentSans = Instrument_Sans({
     subsets: ["latin"],
@@ -18,38 +25,38 @@ export default function LandingNavbar() {
             {/* Nav Items - Absolutely Centered */}
             <div className={`${instrumentSans.className} absolute left-1/2 -translate-x-1/2 flex items-center gap-12 text-white`}>
                 <Link
-                    href="/"
-                    className="relative text-base font-normal tracking-wide transition-colors duration-300 hover:text-white/80 group"
-                >
-                    Home
-                    <span className="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
-                </Link>
-                <Link
                     href="/predictions"
                     className="relative text-base font-normal tracking-wide transition-colors duration-300 hover:text-white/80 group"
                 >
-                    Predictions
+                    predictions
                     <span className="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <Link
                     href="/swap"
                     className="relative text-base font-normal tracking-wide transition-colors duration-300 hover:text-white/80 group"
                 >
-                    Swap
+                    swap
+                    <span className="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+                <Link
+                    href="/"
+                    className={`${instrumentSerif.className} relative text-4xl font-normal tracking-wide transition-colors duration-300 hover:text-white/80 group`}
+                >
+                    DIKE
                     <span className="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <Link
                     href="/dashboard"
                     className="relative text-base font-normal tracking-wide transition-colors duration-300 hover:text-white/80 group"
                 >
-                    Dashboard
+                    dashboard
                     <span className="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <Link
                     href="/profile"
                     className="relative text-base font-normal tracking-wide transition-colors duration-300 hover:text-white/80 group"
                 >
-                    Profile
+                    profile
                     <span className="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
             </div>

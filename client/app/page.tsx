@@ -37,7 +37,7 @@ export default function LandingPage() {
                     <GrainGradient
                         width="100%"
                         height="100%"
-                        colors={["#702d00", "#88ddae"]}
+                        colors={["#D00613", "#FFBF02"]}
                         colorBack="#140a00"
                         softness={0.1}
                         intensity={0.34}
@@ -71,7 +71,7 @@ export default function LandingPage() {
                     <GrainGradient
                         width="100%"
                         height="100%"
-                        colors={["#702d00", "#88ddae"]}
+                        colors={["#D00613", "#FFBF02"]}
                         colorBack="#140a00"
                         softness={0.15}
                         intensity={0.34}
@@ -143,7 +143,7 @@ export default function LandingPage() {
                     <GrainGradient
                         width="100%"
                         height="100%"
-                        colors={["#702d00", "#88ddae"]}
+                        colors={["#D00613", "#FFBF02"]}
                         colorBack="#140a00"
                         softness={0.15}
                         intensity={0.34}

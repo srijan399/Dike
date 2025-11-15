@@ -3,8 +3,10 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import CardBackground from "@/components/CardBackground"
 
-function Card({ className, cardIndex, children, ...props }: React.ComponentProps<"div"> & { cardIndex?: number }) {
-  const index = cardIndex ?? Math.floor(Math.random() * 1000);
+const Card = React.memo(function Card({ className, cardIndex, children, ...props }: React.ComponentProps<"div"> & { cardIndex?: number }) {
+  // Use cardIndex if provided, otherwise default to 0 for consistent backgrounds
+  // The key prop from parent components will ensure uniqueness when needed
+  const stableIndex = cardIndex ?? 0;
   
   return (
     <div
@@ -15,13 +17,23 @@ function Card({ className, cardIndex, children, ...props }: React.ComponentProps
       )}
       {...props}
     >
-      <CardBackground index={index} />
+      <CardBackground index={stableIndex} />
       <div className="relative z-10 flex flex-col gap-6">
         {children}
       </div>
     </div>
   )
-}
+}, (prevProps, nextProps) => {
+  // Custom comparison to prevent unnecessary rerenders
+  // Only rerender if cardIndex, className, or children reference changes
+  return (
+    prevProps.cardIndex === nextProps.cardIndex &&
+    prevProps.className === nextProps.className &&
+    prevProps.children === nextProps.children
+  );
+});
+
+Card.displayName = 'Card';
 
 function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (

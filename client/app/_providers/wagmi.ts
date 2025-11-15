@@ -43,11 +43,25 @@ const customBscTestnet = defineChain({
   },
 });
 
+// Get WalletConnect Project ID from environment variable
+// Required for WalletConnect functionality (mobile wallets, etc.)
+// Get your free project ID at: https://cloud.walletconnect.com
+const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+
+if (!walletConnectProjectId && typeof window !== 'undefined') {
+    console.warn(
+        '⚠️ WalletConnect Project ID not found!\n' +
+        'WalletConnect features (mobile wallet connections) will not work.\n' +
+        'Get your free project ID at: https://cloud.walletconnect.com\n' +
+        'Then add NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID to your .env.local file'
+    );
+}
+
 // Create config outside of component to prevent re-initialization
 export const config = createConfig(
     getDefaultConfig({
         enableFamily: false,
-        chains: [ customBscTestnet],
+        chains: [customBscTestnet],
         transports: {
             [customBscTestnet.id]: http('https://data-seed-prebsc-1-s1.binance.org:8545/'),
         },
@@ -56,7 +70,8 @@ export const config = createConfig(
         }),
 
         // Required API Keys
-        walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "default_project_id",
+        // Use empty string if not set - ConnectKit will handle gracefully
+        walletConnectProjectId: walletConnectProjectId || "",
 
         // Required App Info
         appName: "Nova Protocol",

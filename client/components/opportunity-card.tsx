@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, memo } from "react"
 import { Calendar, Users, TrendingUp, Eye, GitBranch } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -27,7 +27,7 @@ interface OpportunityCardProps {
     hasActiveVerses: boolean
 }
 
-export function OpportunityCard({ opportunity, onViewDetails, onBranch, hasActiveVerses }: OpportunityCardProps) {
+export const OpportunityCard = memo(function OpportunityCard({ opportunity, onViewDetails, onBranch, hasActiveVerses }: OpportunityCardProps) {
     const [isHovered, setIsHovered] = useState(false)
     const [investSide, setInvestSide] = useState<"yes" | "no" | null>(null)
 
@@ -186,4 +186,4 @@ export function OpportunityCard({ opportunity, onViewDetails, onBranch, hasActiv
             )}
         </>
     )
-}
+});

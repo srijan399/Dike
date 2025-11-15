@@ -1,8 +1,9 @@
 'use client'
 
 import { GrainGradient } from '@paper-design/shaders-react';
+import { memo } from 'react';
 
-export default function PageBackground() {
+const PageBackground = memo(function PageBackground() {
     return (
         <div className="fixed inset-0 z-0">
             <GrainGradient
@@ -14,11 +15,16 @@ export default function PageBackground() {
                 intensity={0.15}
                 noise={0.25}
                 shape="wave"
-                speed={1}
+                speed={0}
+                frame={0}
                 offsetX={0.44}
                 offsetY={1}
             />
         </div>
     );
-}
+});
+
+PageBackground.displayName = 'PageBackground';
+
+export default PageBackground;
 
