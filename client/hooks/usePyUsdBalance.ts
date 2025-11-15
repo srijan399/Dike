@@ -1,7 +1,7 @@
 "use client";
 
 import { useAccount, useBalance } from "wagmi";
-import { PYUSD_SEPOLIA_ADDRESS } from "@/app/abi";
+import { Dike_SEPOLIA_ADDRESS } from "@/app/abi";
 
 /**
  * usePyUsdBalance
@@ -14,7 +14,7 @@ export default function usePyUsdBalance() {
   const result = useBalance({
     chainId: 11155111,
     address,
-    token: PYUSD_SEPOLIA_ADDRESS,
+    token: Dike_SEPOLIA_ADDRESS,
     // Avoid unnecessary calls when no wallet is connected
     // and prevent frequent refetches that cause loading flicker.
     query: {

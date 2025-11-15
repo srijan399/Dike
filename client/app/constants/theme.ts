@@ -6,16 +6,16 @@ export const theme = {
     "--ck-overlay-backdrop-filter": "blur(6px)",
 
     /* Primary Button */
-    "--ck-primary-button-color": "#f1f5f9", // slate-100
-    "--ck-primary-button-background": "#0891b2", // darker cyan-600
-    "--ck-primary-button-box-shadow": "0 0 10px 0 #06b6d4", // subtle glow
-    "--ck-primary-button-border-radius": "14px",
-    "--ck-primary-button-font-weight": "600",
+    "--ck-primary-button-color": "#ffffff", // white
+    "--ck-primary-button-background": "#c6750c", // yellow/orange from theme
+    "--ck-primary-button-box-shadow": "0 0 10px 0 rgba(198, 117, 12, 0.5)", // subtle glow
+    "--ck-primary-button-border-radius": "4px",
+    "--ck-primary-button-font-weight": "400",
     "--ck-primary-button-hover-color": "#ffffff",
-    "--ck-primary-button-hover-background": "#0e7490", // cyan-700
-    "--ck-primary-button-hover-box-shadow": "0 0 12px 0 #22d3ee",
-    "--ck-primary-button-active-background": "#155e75", // cyan-800
-    "--ck-primary-button-active-box-shadow": "0 0 10px 0 #38bdf8",
+    "--ck-primary-button-hover-background": "#beae60", // lighter yellow from theme
+    "--ck-primary-button-hover-box-shadow": "0 0 12px 0 rgba(190, 174, 96, 0.6)",
+    "--ck-primary-button-active-background": "#d7cbc6", // beige from theme
+    "--ck-primary-button-active-box-shadow": "0 0 10px 0 rgba(215, 203, 198, 0.5)",
 
     /* Secondary Button */
     "--ck-secondary-button-color": "#cbd5e1", // slate-300
@@ -46,16 +46,16 @@ export const theme = {
     "--ck-body-background-tertiary": "#2a3646", // steel-blue tone
 
     /* Text */
-    "--ck-body-color": "#e2e8f0", // slate-200
-    "--ck-body-color-muted": "#94a3b8",
-    "--ck-body-color-muted-hover": "#f1f5f9",
+    "--ck-body-color": "#ffffff", // white
+    "--ck-body-color-muted": "#fef08a", // yellow-200
+    "--ck-body-color-muted-hover": "#ffffff",
     "--ck-body-color-danger": "#ef4444", // red-500
     "--ck-body-color-valid": "#22c55e", // green-500
-    "--ck-modal-heading-font-weight": "600",
+    "--ck-modal-heading-font-weight": "400",
 
     /* Miscellaneous */
-    "--ck-focus-color": "#06b6d4",
-    "--ck-body-action-color": "#7dd3fc",
+    "--ck-focus-color": "#fef08a", // yellow-200
+    "--ck-body-action-color": "#67e8f9", // cyan-300
     "--ck-body-divider": "#334155",
     "--ck-qr-dot-color": "#e2e8f0",
     "--ck-qr-background": "#1e293b",
@@ -75,15 +75,15 @@ export const theme = {
     "--ck-body-disclaimer-background": "#1c2533",
 
     /* Connect Wallet Button */
-    "--ck-connectbutton-font-size": "15px",
-    "--ck-connectbutton-border-radius": "10px",
-    "--ck-connectbutton-color": "#e2e8f0",
-    "--ck-connectbutton-background": "#0f172a",
-    "--ck-connectbutton-box-shadow": "0 0 6px 0 #0891b2",
+    "--ck-connectbutton-font-size": "16px",
+    "--ck-connectbutton-border-radius": "4px",
+    "--ck-connectbutton-color": "#ffffff",
+    "--ck-connectbutton-background": "rgba(255, 255, 255, 0.05)",
+    "--ck-connectbutton-box-shadow": "0 0 6px 0 rgba(198, 117, 12, 0.3)",
     "--ck-connectbutton-hover-color": "#ffffff",
-    "--ck-connectbutton-hover-background": "#155e75",
-    "--ck-connectbutton-hover-box-shadow": "0 0 8px 0 #0ea5e9",
+    "--ck-connectbutton-hover-background": "rgba(255, 255, 255, 0.1)",
+    "--ck-connectbutton-hover-box-shadow": "0 0 8px 0 rgba(190, 174, 96, 0.4)",
     "--ck-connectbutton-active-color": "#ffffff",
-    "--ck-connectbutton-active-background": "#164e63",
-    "--ck-connectbutton-active-box-shadow": "0 0 6px 0 #22d3ee",
+    "--ck-connectbutton-active-background": "rgba(255, 255, 255, 0.15)",
+    "--ck-connectbutton-active-box-shadow": "0 0 6px 0 rgba(215, 203, 198, 0.5)",
 };

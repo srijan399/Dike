@@ -44,7 +44,7 @@ export function ChainVisualization({ onSelectPrediction }: ChainVisualizationPro
                 <CardContent>
                     <div className="flex items-center justify-center py-8">
                         <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        <span className="ml-2 text-muted-foreground">Loading chains...</span>
+                        <span className="ml-2 text-yellow-200">Loading chains...</span>
                     </div>
                 </CardContent>
             </Card>
@@ -62,9 +62,9 @@ export function ChainVisualization({ onSelectPrediction }: ChainVisualizationPro
                 </CardHeader>
                 <CardContent>
                     <div className="text-center py-8">
-                        <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <p className="text-muted-foreground">No investment chains found</p>
-                        <p className="text-sm text-muted-foreground mt-2">
+                        <Target className="w-12 h-12 text-yellow-300 mx-auto mb-4" />
+                        <p className="text-yellow-200">No investment chains found</p>
+                        <p className="text-sm text-cyan-100 mt-2">
                             Start investing in predictions to build your chains
                         </p>
                     </div>
@@ -89,19 +89,19 @@ export function ChainVisualization({ onSelectPrediction }: ChainVisualizationPro
                             <div className="text-2xl font-bold text-primary">
                                 {chainData.predictionIds.length}
                             </div>
-                            <div className="text-sm text-muted-foreground">Active Positions</div>
+                            <div className="text-sm text-yellow-200">Active Positions</div>
                         </div>
-                        <div className="text-center p-4 bg-card/50 rounded-lg border">
-                            <div className="text-2xl font-bold text-accent">
+                        <div className="text-center p-4 bg-white/5 rounded-lg border border-white/20">
+                            <div className="text-2xl font-bold text-white">
                                 {formatPyUSD(chainData.totalInvested)}
                             </div>
-                            <div className="text-sm text-muted-foreground">Total Invested</div>
+                            <div className="text-sm text-yellow-200">Total Invested</div>
                         </div>
-                        <div className="text-center p-4 bg-card/50 rounded-lg border">
-                            <div className="text-2xl font-bold text-chart-4">
+                        <div className="text-center p-4 bg-white/5 rounded-lg border border-white/20">
+                            <div className="text-2xl font-bold text-white">
                                 {formatPyUSD(chainData.totalClaimed)}
                             </div>
-                            <div className="text-sm text-muted-foreground">Total Claimed</div>
+                            <div className="text-sm text-yellow-200">Total Claimed</div>
                         </div>
                     </div>
 
@@ -180,9 +180,9 @@ function ParentPredictionCard({ parentId, onSelectPrediction }: {
             <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                     <div className="flex-1">
-                        <h4 className="font-semibold text-sm mb-1">{prediction.title}</h4>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                            <Badge variant="outline" className="text-xs">
+                        <h4 className="font-semibold text-sm mb-1 text-white">{prediction.title}</h4>
+                        <div className="flex items-center gap-2 text-xs text-yellow-200 mb-2">
+                            <Badge variant="outline" className="text-xs border-yellow-400/30 text-yellow-200">
                                 Root Chain #{parentId.toString()}
                             </Badge>
                             {position.liquidated && (
@@ -194,19 +194,19 @@ function ParentPredictionCard({ parentId, onSelectPrediction }: {
                         </div>
                         <div className="grid grid-cols-2 gap-4 text-xs">
                             <div>
-                                <span className="text-muted-foreground">Used Collateral:</span>
-                                <div className="font-medium">{formatPyUSD(position.totalUsed)}</div>
+                                <span className="text-yellow-200">Used Collateral:</span>
+                                <div className="font-medium text-white">{formatPyUSD(position.totalUsed)}</div>
                             </div>
                             <div>
-                                <span className="text-muted-foreground">Available:</span>
-                                <div className="font-medium text-green-600">{formatPyUSD(position.availableCollateral)}</div>
+                                <span className="text-yellow-200">Available:</span>
+                                <div className="font-medium text-cyan-300">{formatPyUSD(position.availableCollateral)}</div>
                             </div>
                         </div>
                     </div>
                     <div className="text-right">
-                        <div className="text-xs text-muted-foreground">Position Value</div>
-                        <div className="font-bold text-sm">{formatPyUSD(position.positionValue)}</div>
-                        <div className="text-xs text-muted-foreground mt-1">
+                        <div className="text-xs text-yellow-200">Position Value</div>
+                        <div className="font-bold text-sm text-white">{formatPyUSD(position.positionValue)}</div>
+                        <div className="text-xs text-yellow-200 mt-1">
                             {position.childIds.length} child positions
                         </div>
                     </div>
@@ -265,9 +265,9 @@ function ChainPositionCard({ predictionId, onSelectPrediction }: {
             <CardContent className="p-3">
                 <div className="flex items-start justify-between">
                     <div className="flex-1">
-                        <h5 className="font-medium text-sm mb-1">{prediction.title}</h5>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                            <Badge variant="outline" className="text-xs">
+                        <h5 className="font-medium text-sm mb-1 text-white">{prediction.title}</h5>
+                        <div className="flex items-center gap-2 text-xs text-yellow-200 mb-2">
+                            <Badge variant="outline" className="text-xs border-yellow-400/30 text-yellow-200">
                                 #{predictionId.toString()}
                             </Badge>
                             {hasCollateralBased && (
@@ -303,12 +303,12 @@ function ChainPositionCard({ predictionId, onSelectPrediction }: {
                         </div>
                     </div>
                     <div className="text-right">
-                        <div className="font-bold text-sm">{formatPyUSD(totalInvested)}</div>
-                        <div className="text-xs text-muted-foreground">
+                        <div className="font-bold text-sm text-white">{formatPyUSD(totalInvested)}</div>
+                        <div className="text-xs text-yellow-200">
                             {investments.length} position{investments.length !== 1 ? 's' : ''}
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                            <Clock className="w-3 h-3 inline mr-1" />
+                        <div className="text-xs text-yellow-200">
+                            <Clock className="w-3 h-3 inline mr-1 text-cyan-300" />
                             {formatDate(BigInt(prediction.resolutionDate))}
                         </div>
                     </div>

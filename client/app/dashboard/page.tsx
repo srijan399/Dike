@@ -10,6 +10,8 @@ import { VerseTreeView } from "@/components/verse-tree-view"
 import { StatsOverview } from "@/components/stats-overview"
 import useOpportunitiesTree from "@/hooks/useOpportunitiesTree"
 import { useRouter } from "next/navigation"
+import PageBackground from '@/components/PageBackground';
+import LandingNavbar from '@/components/LandingNavbar';
 
 const mockVerses = [
     {
@@ -69,8 +71,9 @@ export default function MultiverseDashboard() {
 
     return (
         <div className="relative min-h-screen">
-
-            <div className="relative z-10 max-w-7xl mx-auto px-6 py-8">
+            <PageBackground />
+            <LandingNavbar />
+            <div className="relative z-10 max-w-7xl mx-auto px-6 py-8 pt-20">
                 {!selectedVerse ? (
                     <>
                         {/* Stats Overview */}

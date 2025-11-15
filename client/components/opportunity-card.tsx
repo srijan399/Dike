@@ -53,9 +53,12 @@ export function OpportunityCard({ opportunity, onViewDetails, onBranch, hasActiv
 
     const openInvest = (side: "yes" | "no") => setInvestSide(side)
 
+    const cardIndex = parseInt(opportunity.id) || 0;
+    
     return (
         <>
             <Card
+                cardIndex={cardIndex}
                 className={`verse-card glass-card border-border/40 transition-all duration-300 hover:scale-[1.02] cursor-pointer relative overflow-hidden ${isHovered ? "cosmic-glow" : ""}`}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -75,11 +78,11 @@ export function OpportunityCard({ opportunity, onViewDetails, onBranch, hasActiv
                                         {opportunity.potentialPayout}
                                     </Badge>
                                 </div>
-                                <CardTitle className="text-lg font-bold text-balance leading-tight">{opportunity.title}</CardTitle>
+                                <CardTitle className="text-lg font-bold text-white text-balance leading-tight">{opportunity.title}</CardTitle>
                             </div>
                         </div>
 
-                        <p className="text-sm text-muted-foreground text-pretty line-clamp-2 mt-2">{opportunity.description}</p>
+                        <p className="text-sm text-cyan-100 text-pretty line-clamp-2 mt-2">{opportunity.description}</p>
                     </CardHeader>
 
                     <CardContent className="space-y-4">
@@ -99,13 +102,13 @@ export function OpportunityCard({ opportunity, onViewDetails, onBranch, hasActiv
                         </div>
 
                         {/* Stats */}
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <div className="flex items-center justify-between text-xs text-yellow-200">
                             <div className="flex items-center gap-1">
-                                <Users className="w-3 h-3" />
+                                <Users className="w-3 h-3 text-cyan-300" />
                                 <span>{opportunity.totalVotes.toLocaleString()} votes</span>
                             </div>
                             <div className="flex items-center gap-1">
-                                <Calendar className="w-3 h-3" />
+                                <Calendar className="w-3 h-3 text-cyan-300" />
                                 <span>{formatDate(opportunity.resolutionDate)}</span>
                             </div>
                         </div>

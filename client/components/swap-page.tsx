@@ -159,7 +159,7 @@ export default function SwapPage() {
                     {/* Page Title */}
                     <div className="text-center mb-8">
                         <h2 className="text-4xl font-bold mb-2 tracking-tight bg-gradient-to-r from-neon-blue to-neon-purple bg-clip-text text-transparent">Swap</h2>
-                        <p className="text-muted-foreground text-lg">Oracle-priced swaps between BNB and USDC</p>
+                        <p className="text-cyan-100 text-lg">Oracle-priced swaps between BNB and USDC</p>
                     </div>
 
                     <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -168,7 +168,7 @@ export default function SwapPage() {
                             <Card className="glass-effect border-border/50 cosmic-glow shadow-2xl">
                                 <CardHeader className="pb-4">
                                     <div className="flex items-center justify-between">
-                                        <CardTitle className="text-xl">Swap Assets</CardTitle>
+                                        <CardTitle className="text-xl text-white">Swap Assets</CardTitle>
                                         <div className="flex items-center gap-2">
                                             <Badge variant="outline" className="border-neon-blue/50 text-neon-blue">BNB Chain</Badge>
                                             <Badge variant="outline" className="border-neon-green/50 text-neon-green">Chainlink</Badge>
@@ -179,8 +179,8 @@ export default function SwapPage() {
                                     {/* From Section */}
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
-                                            <label className="text-sm font-medium text-muted-foreground">From</label>
-                                            <span className="text-xs text-muted-foreground">Balance: {fromCurrency === "bnb" ? (bnbBal ? Number(bnbBal.formatted).toFixed(4) : "-") + " BNB" : (usdcBal ? (Number(usdcBal as unknown as bigint) / 1e6).toFixed(2) : 0) + " USDC"}</span>
+                                            <label className="text-sm font-medium text-yellow-200">From</label>
+                                            <span className="text-xs text-cyan-100">Balance: {fromCurrency === "bnb" ? (bnbBal ? Number(bnbBal.formatted).toFixed(4) : "-") + " BNB" : (usdcBal ? (Number(usdcBal as unknown as bigint) / 1e6).toFixed(2) : 0) + " USDC"}</span>
                                         </div>
 
                                         <div className="flex gap-3 h-12">
@@ -220,7 +220,7 @@ export default function SwapPage() {
                                         </div>
 
                                         {fromAmount && (
-                                            <div className="text-sm text-muted-foreground text-right">
+                                            <div className="text-sm text-cyan-100 text-right">
                                                 Est. output: {toAmount || "-"} {fromCurrency === "bnb" ? "USDC" : "BNB"}
                                             </div>
                                         )}
@@ -257,8 +257,8 @@ export default function SwapPage() {
                                     {/* To Section */}
                                     <div className="space-y-3">
                                         <div className="flex items-center justify-between">
-                                            <label className="text-sm font-medium text-muted-foreground">To</label>
-                                            <span className="text-xs text-muted-foreground">Balance: {usdcBal ? (Number(usdcBal as unknown as bigint) / 1e6).toFixed(2) : 0} USDC</span>
+                                            <label className="text-sm font-medium text-yellow-200">To</label>
+                                            <span className="text-xs text-cyan-100">Balance: {usdcBal ? (Number(usdcBal as unknown as bigint) / 1e6).toFixed(2) : 0} USDC</span>
                                         </div>
 
                                         <div className="flex gap-3">
@@ -266,7 +266,7 @@ export default function SwapPage() {
                                                 <div className="w-6 h-6 bg-gradient-to-r from-neon-green to-neon-blue rounded-full" />
                                                 <div>
                                                     <div className="font-medium">{fromCurrency === "bnb" ? "USDC" : "BNB"}</div>
-                                                    <div className="text-xs text-muted-foreground">{fromCurrency === "bnb" ? "USD Coin" : "Binance Coin"}</div>
+                                                    <div className="text-xs text-cyan-100">{fromCurrency === "bnb" ? "USD Coin" : "Binance Coin"}</div>
                                                 </div>
                                             </div>
 
@@ -276,13 +276,13 @@ export default function SwapPage() {
                                                     placeholder="0.0"
                                                     value={toAmount}
                                                     readOnly
-                                                    className="h-12 text-right text-xl font-semibold bg-secondary/30 border border-border/50 text-muted-foreground rounded-md"
+                                                    className="h-12 text-right text-xl font-semibold bg-secondary/30 border border-border/50 text-white rounded-md"
                                                 />
                                             </div>
                                         </div>
 
                                         {toAmount && (
-                                            <div className="text-sm text-muted-foreground text-right">
+                                            <div className="text-sm text-cyan-100 text-right">
                                                 ≈ ${Number.parseFloat(toAmount).toLocaleString()}
                                             </div>
                                         )}
@@ -293,8 +293,8 @@ export default function SwapPage() {
                                     {/* Exchange Rate & Details */}
                                     <div className="space-y-3 text-sm">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-muted-foreground">Exchange Rate</span>
-                                            <span className="font-medium">
+                                            <span className="text-yellow-200">Exchange Rate</span>
+                                            <span className="font-medium text-white">
                                                 {fromCurrency === "bnb"
                                                     ? `1 BNB = ${exchangeRate ? exchangeRate.toLocaleString(undefined, { maximumFractionDigits: 2 }) : "-"} USDC`
                                                     : `1 USDC = ${exchangeRate ? (1 / exchangeRate).toFixed(6) : "-"} BNB`}
@@ -302,25 +302,25 @@ export default function SwapPage() {
                                         </div>
 
                                         <div className="flex items-center justify-between">
-                                            <span className="text-muted-foreground">Min received (after slippage)</span>
-                                            <span className="font-medium">{minReceivePreview}</span>
+                                            <span className="text-yellow-200">Min received (after slippage)</span>
+                                            <span className="font-medium text-white">{minReceivePreview}</span>
                                         </div>
 
                                         {reserves && (
                                             <div className="flex items-center justify-between">
-                                                <span className="text-muted-foreground">Pool Reserves</span>
-                                                <span className="font-medium text-xs">
+                                                <span className="text-yellow-200">Pool Reserves</span>
+                                                <span className="font-medium text-white text-xs">
                                                     {Number(reserves[0]) / 1e18} BNB • {Number(reserves[1]) / 1e6} USDC
                                                 </span>
                                             </div>
                                         )}
 
                                         <div className="flex items-center justify-between">
-                                            <span className="text-muted-foreground">Slippage Tolerance</span>
+                                            <span className="text-yellow-200">Slippage Tolerance</span>
                                             <div className="flex items-center gap-2">
                                                 <div className="flex gap-1">
                                                     {["0.1","0.5","1.0","3.0"].map(v => (
-                                                        <button key={v} onClick={() => setSlippage(v)} className={`px-2 py-1 text-xs rounded-md border ${slippage===v?"border-neon-blue text-neon-blue":"border-border/50 text-muted-foreground hover:text-foreground"}`}>{v}%</button>
+                                                        <button key={v} onClick={() => setSlippage(v)} className={`px-2 py-1 text-xs rounded-md border ${slippage===v?"border-yellow-400 text-yellow-300":"border-white/30 text-cyan-100 hover:text-white"}`}>{v}%</button>
                                                     ))}
                                                 </div>
                                                 <Select value={slippage} onValueChange={setSlippage}>
@@ -338,13 +338,13 @@ export default function SwapPage() {
                                         </div>
 
                                         <div className="flex items-center justify-between">
-                                            <span className="text-muted-foreground">Network Fee</span>
-                                            <span className="font-medium">~$2.50</span>
+                                            <span className="text-yellow-200">Network Fee</span>
+                                            <span className="font-medium text-white">~$2.50</span>
                                         </div>
 
                                         <div className="flex items-center justify-between">
-                                            <span className="text-muted-foreground">Route</span>
-                                            <span className="font-medium text-xs">{selectedCurrency?.name} → {fromCurrency === "bnb" ? "USDC" : "BNB"}</span>
+                                            <span className="text-yellow-200">Route</span>
+                                            <span className="font-medium text-white text-xs">{selectedCurrency?.name} → {fromCurrency === "bnb" ? "USDC" : "BNB"}</span>
                                         </div>
                                     </div>
 
@@ -380,8 +380,8 @@ export default function SwapPage() {
                             {/* Price Chart */}
                             <Card className="glass-effect border-border/50">
                                 <CardHeader className="pb-3">
-                                    <CardTitle className="text-lg flex items-center gap-2">
-                                        <TrendingUp className="w-5 h-5 text-neon-green" />
+                                    <CardTitle className="text-lg flex items-center gap-2 text-white">
+                                        <TrendingUp className="w-5 h-5 text-yellow-300" />
                                         Price Chart
                                     </CardTitle>
                                 </CardHeader>
@@ -393,8 +393,8 @@ export default function SwapPage() {
                             {/* Transaction Summary */}
                             <Card className="glass-effect border-border/50">
                                 <CardHeader className="pb-3">
-                                    <CardTitle className="text-lg flex items-center gap-2">
-                                        <Info className="w-5 h-5 text-neon-blue" />
+                                    <CardTitle className="text-lg flex items-center gap-2 text-white">
+                                        <Info className="w-5 h-5 text-yellow-300" />
                                         Transaction Summary
                                     </CardTitle>
                                 </CardHeader>

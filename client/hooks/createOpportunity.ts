@@ -2,7 +2,6 @@ import {
     Dike_SEPOLIA_ADDRESS,
     DikeAbi,
     PYUSD_ABI,
-    PYUSD_SEPOLIA_ADDRESS,
 } from "@/app/abi";
 import { parseUnits } from "viem";
 import { useAccount, useWriteContract, useReadContract, useBalance } from "wagmi";
@@ -70,7 +69,7 @@ export const useApproveToken = () => {
         const amountToApprove = parseUnits(amount, 6);
         
         const tx = await writeContractAsync({
-            address: PYUSD_SEPOLIA_ADDRESS,
+            address: Dike_SEPOLIA_ADDRESS,
             abi: PYUSD_ABI,
             functionName: "approve",
             args: [Dike_SEPOLIA_ADDRESS, amountToApprove],
@@ -82,7 +81,7 @@ export const useApproveToken = () => {
     // Alternative approve method like in testV2
     const approveWallet = async () => {
         const tx = await writeContractAsync({
-            address: PYUSD_SEPOLIA_ADDRESS,
+            address: Dike_SEPOLIA_ADDRESS,
             abi: PYUSD_ABI,
             functionName: "approve",
             args: [Dike_SEPOLIA_ADDRESS, "1000000000"],
@@ -99,7 +98,7 @@ export const usePyUSDBalance = () => {
     const balance = useBalance({
         chainId: 11155111,
         address: address,
-        token: PYUSD_SEPOLIA_ADDRESS,
+        token: Dike_SEPOLIA_ADDRESS,
     });
 
     return { balance: balance.data, isLoading: balance.isLoading, refetch: balance.refetch };
@@ -109,7 +108,7 @@ export const useAllowance = () => {
     const { address } = useAccount();
     
     const { data: allowance, refetch } = useReadContract({
-        address: PYUSD_SEPOLIA_ADDRESS,
+        address: Dike_SEPOLIA_ADDRESS,
         abi: PYUSD_ABI,
         functionName: "allowance",
         args: address ? [address, Dike_SEPOLIA_ADDRESS] : undefined,
@@ -226,7 +225,7 @@ export const useSendTokens = () => {
 
     const sendTokens = async (fromAddress: string, toAddress: string, amount: string) => {
         const tx = await writeContractAsync({
-            address: PYUSD_SEPOLIA_ADDRESS,
+            address: Dike_SEPOLIA_ADDRESS,
             abi: PYUSD_ABI,
             functionName: "transferFrom",
             args: [fromAddress, toAddress, amount],

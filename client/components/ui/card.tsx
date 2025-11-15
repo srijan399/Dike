@@ -1,17 +1,25 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import CardBackground from "@/components/CardBackground"
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+function Card({ className, cardIndex, children, ...props }: React.ComponentProps<"div"> & { cardIndex?: number }) {
+  const index = cardIndex ?? Math.floor(Math.random() * 1000);
+  
   return (
     <div
       data-slot="card"
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+        "relative text-white flex flex-col gap-6 rounded-xl border border-white/10 py-6 shadow-sm overflow-hidden",
         className
       )}
       {...props}
-    />
+    >
+      <CardBackground index={index} />
+      <div className="relative z-10 flex flex-col gap-6">
+        {children}
+      </div>
+    </div>
   )
 }
 

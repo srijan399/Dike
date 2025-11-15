@@ -20,6 +20,8 @@ import useCreatePrediction, {
   Prediction
 } from '@/hooks/createOpportunity';
 import useIPFS from '@/hooks/useIPFS';
+import PageBackground from '@/components/PageBackground';
+import LandingNavbar from '@/components/LandingNavbar';
 
 export default function CreatePredictionPage() {
   const { address, isConnected } = useAccount();
@@ -333,7 +335,10 @@ export default function CreatePredictionPage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="relative min-h-screen">
+        <PageBackground />
+        <LandingNavbar />
+        <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <Card className="w-full max-w-md bg-black border-white shadow-xl">
           <CardContent className="pt-6 text-center space-y-6">
             <div className="space-y-4">
@@ -357,13 +362,17 @@ export default function CreatePredictionPage() {
             </ConnectKitButton.Custom>
           </CardContent>
         </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      <div className="max-w-5xl mx-auto px-6 py-12">
+    <div className="relative min-h-screen">
+      <PageBackground />
+      <LandingNavbar />
+      <div className="relative z-10">
+      <div className="max-w-5xl mx-auto px-6 py-12 pt-20">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-white mb-4">Create Prediction Market</h1>
@@ -846,6 +855,7 @@ export default function CreatePredictionPage() {
             </Card>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

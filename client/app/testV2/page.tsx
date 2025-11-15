@@ -2,7 +2,7 @@
 import {
     DikeAbi,
     PYUSD_ABI,
-    PYUSD_SEPOLIA_ADDRESS,
+    Dike_SEPOLIA_ADDRESS,
     Dike_SEPOLIA_ADDRESS,
 } from "@/app/abi";
 import { Button } from "@/components/ui/button";
@@ -121,12 +121,12 @@ export default function TestV2() {
     const balance = useBalance({
         chainId: 11155111,
         address: address,
-        token: PYUSD_SEPOLIA_ADDRESS,
+        token: Dike_SEPOLIA_ADDRESS,
     });
 
     const approveWallet = async () => {
         const tx = await writeContractAsync({
-            address: PYUSD_SEPOLIA_ADDRESS,
+            address: Dike_SEPOLIA_ADDRESS,
             abi: PYUSD_ABI,
             functionName: "approve",
             args: [Dike_SEPOLIA_ADDRESS, "1000000000"],
@@ -135,7 +135,7 @@ export default function TestV2() {
     };
 
     const { data: allowance } = useReadContract({
-        address: PYUSD_SEPOLIA_ADDRESS,
+        address: Dike_SEPOLIA_ADDRESS,
         abi: PYUSD_ABI,
         functionName: "allowance",
         args: [allowanceAdmin, myAddress],
@@ -143,7 +143,7 @@ export default function TestV2() {
 
     const sendTokens = async () => {
         const tx = await writeContractAsync({
-            address: PYUSD_SEPOLIA_ADDRESS,
+            address: Dike_SEPOLIA_ADDRESS,
             abi: PYUSD_ABI,
             functionName: "transferFrom",
             args: [myAddress, Dike_SEPOLIA_ADDRESS, "1000000"],

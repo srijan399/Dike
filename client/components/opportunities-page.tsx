@@ -273,26 +273,26 @@ export function OpportunitiesPage() {
                 <main className={`flex-1 transition-all duration-300 ml-0`}>
                     <div className="container mx-auto px-6 py-8">
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                            <Card className="galaxy-border">
+                            <Card cardIndex={0} className="galaxy-border">
                                 <div>
                                     <CardHeader className="pb-2">
-                                        <CardTitle className="text-sm font-medium text-muted-foreground">Total Opportunities</CardTitle>
+                                        <CardTitle className="text-sm font-medium text-cyan-100">Total Opportunities</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold text-primary">
+                                        <div className="text-2xl font-bold text-white">
                                             {isPredLoading && !predictions.length ? "Loading..." : predictions.length}
                                         </div>
                                     </CardContent>
                                 </div>
                             </Card>
 
-                            <Card className="galaxy-border">
+                            <Card cardIndex={1} className="galaxy-border">
                                 <div>
                                     <CardHeader className="pb-2">
-                                        <CardTitle className="text-sm font-medium text-muted-foreground">Active Votes</CardTitle>
+                                        <CardTitle className="text-sm font-medium text-cyan-100">Active Votes</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold text-accent">
+                                        <div className="text-2xl font-bold text-white">
                                             {isPredLoading && !predictions.length
                                                 ? "Loading..."
                                                 : predictions
@@ -303,13 +303,13 @@ export function OpportunitiesPage() {
                                 </div>
                             </Card>
 
-                            <Card className="galaxy-border">
+                            <Card cardIndex={2} className="galaxy-border">
                                 <div>
                                     <CardHeader className="pb-2">
-                                        <CardTitle className="text-sm font-medium text-muted-foreground">Your Investments</CardTitle>
+                                        <CardTitle className="text-sm font-medium text-cyan-100">Your Investments</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold text-chart-4">
+                                        <div className="text-2xl font-bold text-white">
                                             {isChainLoading 
                                                 ? "Loading..." 
                                                 : chainData?.predictionIds.length || 0
@@ -319,13 +319,13 @@ export function OpportunitiesPage() {
                                 </div>
                             </Card>
 
-                            <Card className="galaxy-border">
+                            <Card cardIndex={3} className="galaxy-border">
                                 <div>
                                     <CardHeader className="pb-2">
-                                        <CardTitle className="text-sm font-medium text-muted-foreground">Total Balance</CardTitle>
+                                        <CardTitle className="text-sm font-medium text-cyan-100">Total Balance</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold text-chart-5">
+                                        <div className="text-2xl font-bold text-white">
                                             {isPyusdLoading
                                                 ? "Loading..."
                                                 : pyusdBalance?.formatted

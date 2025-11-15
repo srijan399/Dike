@@ -47,17 +47,15 @@ export function VerseCard({ verse, onClick }: VerseCardProps) {
         }
     }
 
+    const cardIndex = parseInt(verse.id) || 0;
+    
     return (
         <Card
+            cardIndex={cardIndex}
             className="verse-card cursor-pointer float-animation group relative overflow-hidden"
             onClick={onClick}
             style={{ animationDelay: `${Math.random() * 2}s` }}
         >
-            {/* Glassmorphic background with enhanced blur and transparency */}
-            <div className="absolute inset-0 bg-white/5 backdrop-blur-xl border border-white/10 rounded-lg">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-cyan-500/5 rounded-lg"></div>
-            </div>
-            
             {/* Subtle outer glow effect */}
             <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 via-cyan-400/20 to-purple-500/20 rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
             <CardHeader className="px-5 pt-5 pb-3 relative z-10">
@@ -72,13 +70,13 @@ export function VerseCard({ verse, onClick }: VerseCardProps) {
                     </Badge>
                 </div>
                 <CardTitle
-                    className="text-base sm:text-lg leading-tight text-balance break-words group-hover:text-primary transition-colors text-white/90 group-hover:text-cyan-300"
+                    className="text-base sm:text-lg leading-tight text-balance break-words group-hover:text-cyan-300 transition-colors text-white group-hover:text-cyan-300"
                     style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
                 >
                     {verse.title}
                 </CardTitle>
                 <p
-                    className="text-xs text-white/60 text-pretty break-words"
+                    className="text-xs text-cyan-100 text-pretty break-words"
                     style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
                 >
                     {verse.universeDescription}
@@ -86,12 +84,12 @@ export function VerseCard({ verse, onClick }: VerseCardProps) {
             </CardHeader>
             <CardContent className="px-5 pb-5 space-y-3 relative z-10">
                 <div className="flex justify-between items-center">
-                    <span className="text-sm text-white/60">Total Value</span>
-                    <span className="font-semibold text-blue-300">${verse.totalValue.toLocaleString()}</span>
+                    <span className="text-sm text-yellow-200">Total Value</span>
+                    <span className="font-semibold text-cyan-300">${verse.totalValue.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-sm text-white/60">Opportunities</span>
-                    <span className="font-semibold text-white/90">{verse.opportunities}</span>
+                    <span className="text-sm text-yellow-200">Opportunities</span>
+                    <span className="font-semibold text-white">{verse.opportunities}</span>
                 </div>
 
                 <div className="w-full bg-white/10 backdrop-blur-sm rounded-full h-2 mt-3 border border-white/20">

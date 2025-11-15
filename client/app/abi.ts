@@ -2867,7 +2867,7 @@ export const USDC_BNB_TESTNET_ABI = [
 // Contract address
 export const Dike_BNB_ADDRESS =
     "0x64801c4e53b942Ff5d5eef0b77f4FA5024b03D56";
-export const PYUSD_SEPOLIA_ADDRESS =
+export const Dike_SEPOLIA_ADDRESS =
     "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9";
 
 // USDC on BNB Chain Testnet

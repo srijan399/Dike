@@ -52,18 +52,18 @@ export function InvestModal({
                 <div>
                     <CardHeader className="pb-4">
                         <div className="flex items-center justify-between">
-                            <CardTitle className="text-xl font-bold">Invest</CardTitle>
+                            <CardTitle className="text-xl font-bold text-white">Invest</CardTitle>
                             <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close">
                                 <X className="w-4 h-4" />
                             </Button>
                         </div>
                         {title ? (
-                            <p className="text-sm text-muted-foreground truncate">{title}</p>
+                            <p className="text-sm text-cyan-100 truncate">{title}</p>
                         ) : null}
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <label className="text-xs text-muted-foreground">Amount (PYUSD)</label>
+                            <label className="text-xs text-yellow-200">Amount (PYUSD)</label>
                             <Input
                                 placeholder="0.0"
                                 value={amount}
@@ -90,7 +90,7 @@ export function InvestModal({
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs text-muted-foreground">Slippage (%)</label>
+                            <label className="text-xs text-yellow-200">Slippage (%)</label>
                             <Input
                                 placeholder="2"
                                 value={slippage}

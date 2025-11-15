@@ -2,7 +2,6 @@ import {
     Dike_SEPOLIA_ADDRESS,
     DikeAbi,
     PYUSD_ABI,
-    PYUSD_SEPOLIA_ADDRESS,
 } from "@/app/abi";
 import { useAccount, useReadContract, useBalance } from "wagmi";
 import { useEffect, useState } from "react";
@@ -81,7 +80,7 @@ export const useUserPyUSDBalance = () => {
     const balance = useBalance({
         chainId: 11155111,
         address: address,
-        token: PYUSD_SEPOLIA_ADDRESS,
+        token: Dike_SEPOLIA_ADDRESS,
     });
 
     return { 
@@ -112,7 +111,7 @@ export const useUserAllowance = () => {
     const { address } = useAccount();
     
     const { data: allowance, refetch, isLoading } = useReadContract({
-        address: PYUSD_SEPOLIA_ADDRESS,
+        address: Dike_SEPOLIA_ADDRESS,
         abi: PYUSD_ABI,
         functionName: "allowance",
         args: address ? [address, Dike_SEPOLIA_ADDRESS] : undefined,

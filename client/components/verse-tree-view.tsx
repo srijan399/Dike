@@ -254,7 +254,7 @@ export function VerseTreeView({ verseId, onBack, tree }: VerseTreeViewProps) {
     if (!verseData) {
         return (
             <div className="text-center py-12">
-                <p className="text-muted-foreground">Verse data not found</p>
+                <p className="text-yellow-200">Verse data not found</p>
                 <Button onClick={onBack} className="mt-4">
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Back to Dashboard
@@ -281,7 +281,7 @@ export function VerseTreeView({ verseId, onBack, tree }: VerseTreeViewProps) {
                             <span className="text-3xl">{verseData.icon}</span>
                             {verseData.title}
                         </h1>
-                        <p className="text-muted-foreground">{verseData.description}</p>
+                        <p className="text-cyan-100">{verseData.description}</p>
                     </div>
                 </div>
                 <Button className="gap-2 cosmic-glow">
@@ -383,28 +383,28 @@ export function VerseTreeView({ verseId, onBack, tree }: VerseTreeViewProps) {
                     {selectedOpportunity && (
                         <Card className="verse-card glass-card border-border/40">
                             <CardHeader>
-                                <CardTitle className="text-lg">Prediction</CardTitle>
+                                <CardTitle className="text-lg text-white">Prediction</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
-                                    <h3 className="font-semibold text-primary mb-2">{selectedOpportunity.title}</h3>
-                                    <p className="text-sm text-muted-foreground mb-3">{selectedOpportunity.description}</p>
-                                    <Badge className="bg-accent/20 text-accent">Yes / No</Badge>
+                                    <h3 className="font-semibold text-white mb-2">{selectedOpportunity.title}</h3>
+                                    <p className="text-sm text-cyan-100 mb-3">{selectedOpportunity.description}</p>
+                                    <Badge className="bg-yellow-400/20 text-yellow-300 border-yellow-400/30">Yes / No</Badge>
                                 </div>
                                 <div className="space-y-3">
                                     <div className="flex justify-between">
-                                        <span className="text-sm text-muted-foreground">Positive (Yes)</span>
-                                        <span className="font-semibold text-primary">{pos.toFixed(2)}</span>
+                                        <span className="text-sm text-yellow-200">Positive (Yes)</span>
+                                        <span className="font-semibold text-cyan-300">{pos.toFixed(2)}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-sm text-muted-foreground">Negative (No)</span>
-                                        <span className="font-semibold text-chart-4">{neg.toFixed(2)}</span>
+                                        <span className="text-sm text-yellow-200">Negative (No)</span>
+                                        <span className="font-semibold text-cyan-300">{neg.toFixed(2)}</span>
                                     </div>
-                                    <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                                        <div className="h-2 bg-primary inline-block" style={{ width: `${pos * 100}%` }} />
-                                        <div className="h-2 bg-accent inline-block" style={{ width: `${neg * 100}%` }} />
+                                    <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                                        <div className="h-2 bg-cyan-400 inline-block" style={{ width: `${pos * 100}%` }} />
+                                        <div className="h-2 bg-yellow-400 inline-block" style={{ width: `${neg * 100}%` }} />
                                     </div>
-                                    <p className="text-xs text-muted-foreground text-right">Sum: {(pos + neg).toFixed(2)}</p>
+                                    <p className="text-xs text-yellow-200 text-right">Sum: {(pos + neg).toFixed(2)}</p>
                                 </div>
                             </CardContent>
                         </Card>
@@ -414,8 +414,8 @@ export function VerseTreeView({ verseId, onBack, tree }: VerseTreeViewProps) {
                     {/* Timeline */}
                     <Card className="verse-card glass-card border-border/40">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <TrendingUp className="w-5 h-5 text-chart-4" />
+                            <CardTitle className="flex items-center gap-2 text-white">
+                                <TrendingUp className="w-5 h-5 text-yellow-300" />
                                 Resolution Timeline
                             </CardTitle>
                         </CardHeader>
@@ -424,15 +424,15 @@ export function VerseTreeView({ verseId, onBack, tree }: VerseTreeViewProps) {
                                 <div className="flex items-center gap-3">
                                     <div className="w-3 h-3 rounded-full bg-chart-4"></div>
                                     <div>
-                                        <p className="text-sm font-medium">Q4 2024</p>
-                                        <p className="text-xs text-muted-foreground">Initial branches resolve</p>
+                                        <p className="text-sm font-medium text-white">Q4 2024</p>
+                                        <p className="text-xs text-yellow-200">Initial branches resolve</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-3 h-3 rounded-full bg-accent"></div>
+                                    <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
                                     <div>
-                                        <p className="text-sm font-medium">Dec 2026</p>
-                                        <p className="text-xs text-muted-foreground">Final resolution</p>
+                                        <p className="text-sm font-medium text-white">Dec 2026</p>
+                                        <p className="text-xs text-yellow-200">Final resolution</p>
                                     </div>
                                 </div>
                             </div>

@@ -7,7 +7,7 @@ import { useAccount } from "wagmi";
 
 // Contract address
 const Dike_SEPOLIA_ADDRESS = "0x4b0fe8D4512F94771D6B04c0BCD7602A0c095C16";
-const PYUSD_SEPOLIA_ADDRESS = "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9"; // PyUSD on Sepolia
+const Dike_SEPOLIA_ADDRESS = "0xCaC524BcA292aaade2DF8A05cC58F0a65B1B3bB9"; // PyUSD on Sepolia
 
 interface TestResult {
   name: string;
@@ -109,7 +109,7 @@ export default function ContractTestPage() {
           signer
         );
         const pyUSDContract = new ethers.Contract(
-          PYUSD_SEPOLIA_ADDRESS,
+          Dike_SEPOLIA_ADDRESS,
           PYUSD_ABI,
           signer
         );
@@ -122,7 +122,7 @@ export default function ContractTestPage() {
         setIsConnected(true);
 
         console.log("Connected to Sepolia testnet");
-        console.log("PyUSD contract initialized:", PYUSD_SEPOLIA_ADDRESS);
+        console.log("PyUSD contract initialized:", Dike_SEPOLIA_ADDRESS);
       } else {
         alert("Please install MetaMask!");
       }

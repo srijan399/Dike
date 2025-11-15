@@ -27,6 +27,8 @@ import {
   useSendTokens 
 } from '@/hooks/createOpportunity';
 import MarketDetails from '@/components/MarketDetails';
+import PageBackground from '@/components/PageBackground';
+import LandingNavbar from '@/components/LandingNavbar';
 
 export default function ProfilePage() {
   const { address, isConnected } = useAccount();
@@ -131,7 +133,10 @@ export default function ProfilePage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+      <div className="relative min-h-screen">
+        <PageBackground />
+        <LandingNavbar />
+        <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <Card className="w-full max-w-md bg-gray-900 border-gray-800 shadow-xl">
           <CardContent className="pt-6 text-center space-y-6">
             <div className="space-y-4">
@@ -141,7 +146,7 @@ export default function ProfilePage() {
                 </svg>
               </div>
               <h1 className="text-3xl font-bold text-white">Profile</h1>
-              <p className="text-gray-400 text-lg">Connect your wallet to view your profile</p>
+              <p className="text-cyan-100 text-lg">Connect your wallet to view your profile</p>
             </div>
             <ConnectKitButton.Custom>
               {({ show }) => (
@@ -155,18 +160,22 @@ export default function ProfilePage() {
             </ConnectKitButton.Custom>
           </CardContent>
         </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      <div className="max-w-7xl mx-auto px-6 py-12">
+    <div className="relative min-h-screen">
+      <PageBackground />
+      <LandingNavbar />
+      <div className="relative z-10">
+      <div className="max-w-7xl mx-auto px-6 py-12 pt-20">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-4xl font-bold text-white mb-2">Profile</h1>
-            <p className="text-gray-400 text-lg">
+            <p className="text-cyan-100 text-lg">
               Manage your wallet and track your prediction market activity
             </p>
           </div>
@@ -201,7 +210,7 @@ export default function ProfilePage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400 mb-1">Wallet Address</p>
+                <p className="text-sm text-yellow-200 mb-1">Wallet Address</p>
                 <p className="text-lg font-mono text-white">
                   {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Not connected'}
                 </p>
@@ -233,7 +242,7 @@ export default function ProfilePage() {
                 className={`flex items-center space-x-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === tab.id
                     ? 'bg-blue-600 text-white'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                    : 'text-yellow-200 hover:text-white hover:bg-white/10'
                 }`}
               >
                 <span>{tab.icon}</span>
@@ -259,9 +268,9 @@ export default function ProfilePage() {
                   <CardContent>
                     <div className="space-y-3">
                       <p className="text-3xl font-bold text-white">
-                        {formatPyUSD(pyusdBalance?.value)} <span className="text-lg text-gray-400">PyUSD</span>
+                        {formatPyUSD(pyusdBalance?.value)} <span className="text-lg text-cyan-100">PyUSD</span>
                       </p>
-                      <div className="text-sm text-gray-400">
+                      <div className="text-sm text-yellow-200">
                         <p>Available for trading and liquidity</p>
                       </div>
                     </div>
@@ -277,9 +286,9 @@ export default function ProfilePage() {
                   <CardContent>
                     <div className="space-y-3">
                       <p className="text-3xl font-bold text-white">
-                        {formatETH(ethBalance?.value)} <span className="text-lg text-gray-400">ETH</span>
+                        {formatETH(ethBalance?.value)} <span className="text-lg text-cyan-100">ETH</span>
                       </p>
-                      <div className="text-sm text-gray-400">
+                      <div className="text-sm text-yellow-200">
                         <p>For transaction fees</p>
                       </div>
                     </div>
@@ -295,20 +304,20 @@ export default function ProfilePage() {
                 <CardContent>
                   <div className="grid md:grid-cols-3 gap-6">
                     <div>
-                      <p className="text-sm text-gray-400 mb-1">Total Invested</p>
+                      <p className="text-sm text-yellow-200 mb-1">Total Invested</p>
                       <p className="text-2xl font-bold text-white">
                         {userChain ? formatPyUSD(userChain.totalInvested) : '0.00'} PyUSD
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400 mb-1">Total Claimed</p>
+                      <p className="text-sm text-yellow-200 mb-1">Total Claimed</p>
                       <p className="text-2xl font-bold text-white">
                         {userChain ? formatPyUSD(userChain.totalClaimed) : '0.00'} PyUSD
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400 mb-1">Net Profit/Loss</p>
-                      <p className={`text-2xl font-bold ${userChain ? getProfitLossColor(userChain.totalClaimed - userChain.totalInvested) : 'text-gray-400'}`}>
+                      <p className="text-sm text-yellow-200 mb-1">Net Profit/Loss</p>
+                      <p className={`text-2xl font-bold ${userChain ? getProfitLossColor(userChain.totalClaimed - userChain.totalInvested) : 'text-yellow-200'}`}>
                         {userChain ? (
                           <>
                             {(userChain.totalClaimed - userChain.totalInvested) >= BigInt(0) ? '+' : ''}
@@ -329,25 +338,25 @@ export default function ProfilePage() {
                 <CardContent>
                   <div className="grid md:grid-cols-4 gap-6">
                     <div>
-                      <p className="text-sm text-gray-400 mb-1">Created Predictions</p>
+                      <p className="text-sm text-yellow-200 mb-1">Created Predictions</p>
                       <p className="text-2xl font-bold text-white">
                         {userPredictions?.length || 0}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400 mb-1">Active Markets</p>
-                      <p className="text-2xl font-bold text-green-400">
+                      <p className="text-sm text-yellow-200 mb-1">Active Markets</p>
+                      <p className="text-2xl font-bold text-cyan-300">
                         {userPredictions?.filter(p => p.active).length || 0}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400 mb-1">Resolved Markets</p>
-                      <p className="text-2xl font-bold text-blue-400">
+                      <p className="text-sm text-yellow-200 mb-1">Resolved Markets</p>
+                      <p className="text-2xl font-bold text-cyan-300">
                         {userPredictions?.filter(p => p.resolved).length || 0}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400 mb-1">Total Markets</p>
+                      <p className="text-sm text-yellow-200 mb-1">Total Markets</p>
                       <p className="text-2xl font-bold text-white">
                         {predictionCounter ? Number(predictionCounter) : 0}
                       </p>
@@ -366,7 +375,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <p className="text-sm text-gray-400 mb-1">Current Allowance</p>
+                    <p className="text-sm text-yellow-200 mb-1">Current Allowance</p>
                     <p className="text-lg font-bold text-white">
                       {allowance ? formatPyUSD(allowance as bigint) : '0.00'} PyUSD
                     </p>
@@ -395,21 +404,21 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div>
-                    <p className="text-sm text-gray-400">Total Active Predictions</p>
+                    <p className="text-sm text-yellow-200">Total Active Predictions</p>
                     <p className="text-lg font-semibold text-white">
                       {activePredictions?.length || 0}
                     </p>
                   </div>
-                  <Separator className="bg-gray-700" />
+                  <Separator className="bg-white/20" />
                   <div>
-                    <p className="text-sm text-gray-400">Minimum Liquidity</p>
+                    <p className="text-sm text-yellow-200">Minimum Liquidity</p>
                     <p className="text-lg font-semibold text-white">
                       {minimumLiquidity ? formatPyUSD(minimumLiquidity as bigint) : '0.00'} PyUSD
                     </p>
                   </div>
-                  <Separator className="bg-gray-700" />
+                  <Separator className="bg-white/20" />
                   <div>
-                    <p className="text-sm text-gray-400">Network</p>
+                    <p className="text-sm text-yellow-200">Network</p>
                     <Badge variant="outline" className="border-blue-600 text-blue-400 bg-blue-900/20">
                       Sepolia Testnet
                     </Badge>
@@ -424,7 +433,7 @@ export default function ProfilePage() {
           <Card className="border-gray-800 bg-gray-900/50 backdrop-blur-sm">
             <CardHeader>
               <CardTitle className="text-white text-xl">🎯 My Prediction Markets</CardTitle>
-              <CardDescription className="text-gray-400">
+              <CardDescription className="text-cyan-100">
                 Detailed view of your created prediction markets
               </CardDescription>
             </CardHeader>
@@ -433,7 +442,7 @@ export default function ProfilePage() {
                 <div className="flex items-center justify-center py-12">
                   <div className="flex items-center space-x-3">
                     <div className="w-6 h-6 border-2 border-blue-400/30 border-t-blue-400 rounded-full animate-spin"></div>
-                    <span className="text-gray-400">Loading markets...</span>
+                    <span className="text-yellow-200">Loading markets...</span>
                   </div>
                 </div>
               ) : detailedMarkets && detailedMarkets.length > 0 ? (
@@ -454,7 +463,7 @@ export default function ProfilePage() {
                                 </Badge>
                               </div>
                               
-                              <div className="flex items-center space-x-4 text-sm text-gray-400 mb-3">
+                              <div className="flex items-center space-x-4 text-sm text-yellow-200 mb-3">
                                 <span>Category: {market.category}</span>
                                 <span>•</span>
                                 <span>Created: {formatDetailedDate(market.createdAt)}</span>
@@ -465,12 +474,12 @@ export default function ProfilePage() {
                               {/* Probability Bar */}
                               <div className="mb-3">
                                 <div className="flex items-center justify-between mb-1">
-                                  <span className="text-sm text-gray-400">YES Probability</span>
-                                  <span className="text-sm font-medium text-green-400">{probability}%</span>
+                                  <span className="text-sm text-yellow-200">YES Probability</span>
+                                  <span className="text-sm font-medium text-cyan-300">{probability}%</span>
                                 </div>
-                                <div className="w-full bg-gray-700 rounded-full h-2">
+                                <div className="w-full bg-white/10 rounded-full h-2">
                                   <div 
-                                    className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                                    className="bg-cyan-400 h-2 rounded-full transition-all duration-300"
                                     style={{ width: `${probability}%` }}
                                   />
                                 </div>
@@ -478,20 +487,20 @@ export default function ProfilePage() {
 
                               <div className="grid grid-cols-3 gap-4 text-sm">
                                 <div>
-                                  <span className="text-gray-400">Total Liquidity: </span>
+                                  <span className="text-yellow-200">Total Liquidity: </span>
                                   <span className="text-white font-medium">
                                     {formatPyUSD(BigInt(market.yesLiquidity) + BigInt(market.noLiquidity))} PyUSD
                                   </span>
                                 </div>
                                 <div>
-                                  <span className="text-gray-400">YES Pool: </span>
-                                  <span className="text-green-400 font-medium">
+                                  <span className="text-yellow-200">YES Pool: </span>
+                                  <span className="text-cyan-300 font-medium">
                                     {formatPyUSD(BigInt(market.yesLiquidity))} PyUSD
                                   </span>
                                 </div>
                                 <div>
-                                  <span className="text-gray-400">NO Pool: </span>
-                                  <span className="text-red-400 font-medium">
+                                  <span className="text-yellow-200">NO Pool: </span>
+                                  <span className="text-yellow-300 font-medium">
                                     {formatPyUSD(BigInt(market.noLiquidity))} PyUSD
                                   </span>
                                 </div>
@@ -506,7 +515,7 @@ export default function ProfilePage() {
                                     ? 'border-green-600 text-green-400 bg-green-900/20'
                                     : market.resolved
                                     ? 'border-blue-600 text-blue-400 bg-blue-900/20'
-                                    : 'border-gray-600 text-gray-400 bg-gray-800/20'
+                                    : 'border-yellow-400/30 text-yellow-200 bg-yellow-400/10'
                                 }`}
                               >
                                 {market.active ? 'Active' : market.resolved ? 'Resolved' : 'Inactive'}
@@ -621,6 +630,7 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
         )}
+      </div>
       </div>
     </div>
   );

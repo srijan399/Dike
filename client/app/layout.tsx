@@ -11,6 +11,7 @@ import GradientBlinds from "@/components/GradientBlinds";
 import Providers from "./_providers/provider";
 import { dikeTheme } from "@/lib/theme";
 import Navbar from "@/components/Navbar";
+import GrainGradientComponent from "@/components/GrainGradient";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -56,24 +57,6 @@ export default function RootLayout({
             >
                 <Providers>
                     {/* Global Prism Background */}
-                    <div className="absolute inset-0 z-0">
-                        <GradientBlinds
-                            gradientColors={dikeTheme.gradientColors}
-                            angle={dikeTheme.blinds.angle}
-                            noise={dikeTheme.blinds.noise}
-                            blindCount={dikeTheme.blinds.blindCount}
-                            blindMinWidth={dikeTheme.blinds.blindMinWidth}
-                            spotlightRadius={dikeTheme.blinds.spotlightRadius}
-                            spotlightSoftness={
-                                dikeTheme.blinds.spotlightSoftness
-                            }
-                            spotlightOpacity={dikeTheme.blinds.spotlightOpacity}
-                            mouseDampening={dikeTheme.blinds.mouseDampening}
-                            distortAmount={dikeTheme.blinds.distortAmount}
-                            shineDirection={dikeTheme.blinds.shineDirection}
-                            mixBlendMode={dikeTheme.blinds.mixBlendMode}
-                        />
-                    </div>
                     {/* Global readability overlay */}
                     <div
                         className={`absolute inset-0 z-5 ${dikeTheme.backgroundOverlayClass}`}
@@ -81,7 +64,6 @@ export default function RootLayout({
 
                     {/* App content */}
                     <div className="relative z-10 min-h-screen">
-                        <Navbar />
                         {children}
                     </div>
                 </Providers>

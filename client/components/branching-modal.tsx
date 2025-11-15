@@ -110,15 +110,15 @@ export function BranchingModal({ opportunity, onClose, onConfirm }: BranchingMod
                 <div>
                     <CardHeader className="pb-4">
                         <div className="flex items-center justify-between">
-                            <CardTitle className="text-xl font-bold flex items-center gap-2">
-                                <GitBranch className="w-5 h-5 text-primary" />
+                            <CardTitle className="text-xl font-bold flex items-center gap-2 text-white">
+                                <GitBranch className="w-5 h-5 text-yellow-300" />
                                 Branch Into New Reality
                             </CardTitle>
                             <Button variant="ghost" size="sm" onClick={onClose}>
                                 <X className="w-4 h-4" />
                             </Button>
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-cyan-100">
                             Connect this opportunity to one of your active verses to create a new branch in the multiverse.
                         </p>
                     </CardHeader>
@@ -136,7 +136,7 @@ export function BranchingModal({ opportunity, onClose, onConfirm }: BranchingMod
                                     <Badge className="bg-primary/20 text-primary">{opportunity.potentialPayout}</Badge>
                                 </div>
                                 <h4 className="font-medium text-balance">{opportunity.title}</h4>
-                                <p className="text-sm text-muted-foreground text-pretty">{opportunity.description}</p>
+                                <p className="text-sm text-cyan-100 text-pretty">{opportunity.description}</p>
                             </div>
                         </div>
 
@@ -149,10 +149,10 @@ export function BranchingModal({ opportunity, onClose, onConfirm }: BranchingMod
                             {isParentLoading ? (
                                 <div className="flex items-center justify-center py-4">
                                     <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                                    <span className="ml-2 text-sm text-muted-foreground">Loading chains...</span>
+                                    <span className="ml-2 text-sm text-yellow-200">Loading chains...</span>
                                 </div>
                             ) : availableChains.length === 0 ? (
-                                <div className="text-center py-6 text-muted-foreground">
+                                <div className="text-center py-6 text-yellow-200">
                                     <GitBranch className="w-12 h-12 mx-auto mb-4 opacity-50" />
                                     <p className="font-medium mb-2">No parent chains available for branching</p>
                                     <p className="text-sm">You need to create some investments first to enable chain branching.</p>
@@ -249,7 +249,7 @@ export function BranchingModal({ opportunity, onClose, onConfirm }: BranchingMod
                                         min="0"
                                         step="0.01"
                                     />
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-yellow-200">
                                         Leave empty for no slippage protection. This sets the minimum votes you expect to receive.
                                     </p>
                                 </div>
@@ -347,15 +347,15 @@ function InvestedPredictionItem({
             <div className="flex items-center justify-between w-full">
                 <div className="flex flex-col">
                     <span className="font-medium">{prediction.title}</span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-yellow-200">
                         #{predictionId.toString()} • Your investment
                     </span>
                 </div>
                 <div className="text-right ml-4">
-                    <div className="text-sm font-medium text-blue-600">
+                    <div className="text-sm font-medium text-cyan-300">
                         {formatPyUSD(totalInvestment)}
                     </div>
-                    <div className="text-xs text-muted-foreground">invested</div>
+                    <div className="text-xs text-yellow-200">invested</div>
                 </div>
             </div>
         </SelectItem>
@@ -385,12 +385,12 @@ function SelectedInvestmentInfo({ predictionId }: { predictionId: bigint }) {
         <div className="p-3 bg-muted/50 rounded-lg">
             <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                    <span className="text-muted-foreground">Your Investment:</span>
-                    <div className="font-medium text-blue-600">{formatPyUSD(totalDirectInvestment)}</div>
+                    <span className="text-yellow-200">Your Investment:</span>
+                    <div className="font-medium text-cyan-300">{formatPyUSD(totalDirectInvestment)}</div>
                 </div>
                 <div>
-                    <span className="text-muted-foreground">Current Value:</span>
-                    <div className="font-medium">{formatPyUSD(positionValue)}</div>
+                    <span className="text-yellow-200">Current Value:</span>
+                    <div className="font-medium text-white">{formatPyUSD(positionValue)}</div>
                 </div>
             </div>
             {!canUseAsCollateral && (
@@ -441,26 +441,26 @@ function BranchPreview({
                     <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-2 cosmic-glow-accent">
                         <LinkIcon className="w-6 h-6 text-primary" />
                     </div>
-                    <div className="text-sm font-medium">{prediction.title}</div>
-                    <div className="text-xs text-muted-foreground">{position.childIds.length} existing branches</div>
+                    <div className="text-sm font-medium text-white">{prediction.title}</div>
+                    <div className="text-xs text-yellow-200">{position.childIds.length} existing branches</div>
                 </div>
 
-                <ArrowRight className="w-6 h-6 text-muted-foreground" />
+                <ArrowRight className="w-6 h-6 text-yellow-300" />
 
                 <div className="text-center">
-                    <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mb-2 pulse-glow">
-                        <Zap className="w-6 h-6 text-accent" />
+                    <div className="w-16 h-16 bg-yellow-400/20 rounded-full flex items-center justify-center mb-2 pulse-glow">
+                        <Zap className="w-6 h-6 text-yellow-300" />
                     </div>
-                    <div className="text-sm font-medium">New Branch</div>
-                    <div className="text-xs text-muted-foreground">{opportunity.category}</div>
+                    <div className="text-sm font-medium text-white">New Branch</div>
+                    <div className="text-xs text-yellow-200">{opportunity.category}</div>
                 </div>
             </div>
 
-            <div className="mt-4 p-3 bg-muted/30 rounded text-center">
-                <div className="text-sm text-muted-foreground">
+            <div className="mt-4 p-3 bg-white/5 rounded text-center">
+                <div className="text-sm text-yellow-200">
                     Using {collateralAmount} PYUSD collateral to branch into:
                 </div>
-                <div className="font-medium mt-1 text-balance">"{opportunity.title}"</div>
+                <div className="font-medium mt-1 text-balance text-white">"{opportunity.title}"</div>
                 <div className="mt-2">
                     <Badge 
                         variant="outline" 
