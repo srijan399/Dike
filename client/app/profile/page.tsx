@@ -220,7 +220,7 @@ export default function ProfilePage() {
                   Connected
                 </Badge>
                 <Badge variant="outline" className="border-blue-600 text-blue-400 bg-blue-900/20">
-                  Sepolia
+                  BNB
                 </Badge>
               </div>
             </div>
