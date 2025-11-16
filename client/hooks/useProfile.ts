@@ -79,7 +79,7 @@ export const useUserPyUSDBalance = () => {
     const { address } = useAccount();
     
     const balance = useBalance({
-        chainId: 11155111,
+        chainId: 97,
         address: address,
         token: PYUSD_SEPOLIA_ADDRESS,
     });
@@ -96,7 +96,7 @@ export const useUserETHBalance = () => {
     const { address } = useAccount();
     
     const balance = useBalance({
-        chainId: 11155111,
+        chainId: 97,
         address: address,
     });
 

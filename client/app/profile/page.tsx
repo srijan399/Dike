@@ -59,7 +59,7 @@ export default function ProfilePage() {
   const formatPyUSD = (value: bigint | undefined): string => {
     if (!value) return '0.00';
     try {
-      const formatted = formatUnits(value, 6);
+      const formatted = formatUnits(value, 18);
       return parseFloat(formatted).toFixed(2);
     } catch (error) {
       return '0.00';

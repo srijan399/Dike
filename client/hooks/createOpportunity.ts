@@ -42,7 +42,7 @@ const useCreatePrediction = () => {
         }
 
         const resolutionTimestamp = Math.floor(new Date(formData.resolutionDate).getTime() / 1000);
-        const liquidityAmount = parseUnits(formData.initialLiquidity, 6);
+        const liquidityAmount = parseUnits(formData.initialLiquidity, 18);
 
         const tx = await writeContractAsync({
             address: Dike_SEPOLIA_ADDRESS,
@@ -67,7 +67,7 @@ export const useApproveToken = () => {
     const { writeContractAsync, isPending: isApprovalPending } = useWriteContract();
 
     const approve = async (amount: string) => {
-        const amountToApprove = parseUnits(amount, 6);
+        const amountToApprove = parseUnits(amount, 18);
         
         const tx = await writeContractAsync({
             address: PYUSD_SEPOLIA_ADDRESS,
@@ -97,7 +97,7 @@ export const usePyUSDBalance = () => {
     const { address } = useAccount();
     
     const balance = useBalance({
-        chainId: 11155111,
+        chainId: 97,
         address: address,
         token: PYUSD_SEPOLIA_ADDRESS,
     });
