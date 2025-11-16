@@ -2878,6 +2878,9 @@ export const Dike_SEPOLIA_ADDRESS = Dike_BNB_ADDRESS;
 export const PYUSD_SEPOLIA_ADDRESS =
     "0x64544969ed7EBf5f083679233325356EbE738930";
 
+export const USDC_BNB_TESTNET_ADDRESS =
+    "0x64544969ed7EBf5f083679233325356EbE738930";
+
 // Swap contract (BNB Chain Testnet) (kept the same name hehe)
 export const SWAP_SEPOLIA_ADDRESS =
     "0x6562601Dee56446db027fAC457a5c85a5856c375"; // Update after deployment
