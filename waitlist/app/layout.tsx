@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Dike Protocol · Waitlist",
     type: "website",
-    url: "https://dike.xyz",
+    url: "https://dikeprotocol.xyz",
     siteName: "Dike Protocol",
     locale: "en_US",
     images: [
