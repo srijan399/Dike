@@ -99,3 +99,54 @@ export async function POST(request: Request) {
   }
 }
 
+export async function GET(request: Request) {
+  //get all waitlist entries
+  try {
+    if(request.headers.get("x-admin-secret") !== process.env.ADMIN_SECRET) {
+      return NextResponse.json(
+        { error: "Forbidden" },
+        { status: 403 }
+      );
+    }
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.error("Missing Supabase environment variables");
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+
+    const { data, error } = await supabase.from("waitlist").select("*");
+
+    const responseData = {
+      entries: data,
+      count: data ? data.length : 0,
+    };
+
+    if (error) {
+      console.error("Supabase error:", error);
+      return NextResponse.json(
+        { error: "Failed to fetch waitlist entries" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ responseData }, { status: 200 });
+  } catch (error) {
+    console.error("Error processing request:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
