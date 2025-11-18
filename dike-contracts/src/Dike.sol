@@ -9,7 +9,7 @@ contract MultiversePrediction is ReentrancyGuard, Ownable {
     IERC20 public immutable usdc;
 
     uint256 public predictionCounter;
-    uint256 public constant MINIMUM_LIQUIDITY = 10 * 10 ** 6;
+    uint256 public constant MINIMUM_LIQUIDITY = 10 * 10 ** 18; // 10 USDC
     uint256 public constant COLLATERAL_RATIO = 60;
 
     struct Prediction {
