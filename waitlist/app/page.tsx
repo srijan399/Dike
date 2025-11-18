@@ -86,7 +86,7 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <div className="w-full flex justify-center">
+              <div className="w-full flex justify-center pt-4">
                 <WaitlistSearchBar
                   onEmailSubmit={(email: string) => {
                     console.log('Email submitted:', email);
@@ -201,12 +201,6 @@ export default function LandingPage() {
           <div className={`${instrumentSans.className} text-white/90 text-base md:text-lg lg:text-xl leading-relaxed mb-8 md:mb-10 max-w-2xl`}>
             Be among the first to experience the future of prediction markets.<br />Join our waitlist to get early access and stay updated on our launch.
           </div>
-          <Link
-            href="#top"
-            className={`${instrumentSerif.className} text-white text-lg md:text-xl lg:text-3xl font-normal tracking-wide px-6 md:px-8 lg:px-12 py-3 md:py-4 lg:py-5 border border-white/30 hover:border-white/60 hover:bg-white/10 transition-all duration-300 rounded-sm`}
-          >
-            Join the Waitlist
-          </Link>
         </div>
 
         {/* Footer */}

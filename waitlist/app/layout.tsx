@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter, Orbitron, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { ToastProvider } from "@/components/ui/toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,9 +64,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${orbitron.variable} ${jetbrainsMono.variable} antialiased relative min-h-screen bg-black overflow-x-hidden`}
       >
-        <div className="relative z-10 min-h-screen">
-          {children}
-        </div>
+        <ToastProvider>
+          <div className="relative z-10 min-h-screen">
+            {children}
+          </div>
+        </ToastProvider>
       </body>
     </html>
   );

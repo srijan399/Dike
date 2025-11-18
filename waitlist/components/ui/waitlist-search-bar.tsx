@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Instrument_Serif } from "next/font/google";
 import { Instrument_Sans } from "next/font/google";
+import { useToast } from "./toast";
 
 const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
@@ -42,10 +43,10 @@ const EnterIcon = () => {
 
 export const WaitlistSearchBar = ({ onEmailSubmit }: { onEmailSubmit?: (email: string) => void }) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const { showToast } = useToast();
   const [step, setStep] = useState(1); // 1: Join button, 2: Email input, 3: Submit button visible
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [feedback, setFeedback] = useState("");
 
   const handleButtonClick = () => {
     if (step === 1) {
@@ -71,7 +72,7 @@ export const WaitlistSearchBar = ({ onEmailSubmit }: { onEmailSubmit?: (email: s
     if (!email.trim() || status === "loading") return;
 
     setStatus("loading");
-    setFeedback("Joining the waitlist...");
+    showToast("Joining the waitlist...", "info");
 
     try {
       const response = await fetch("/api/waitlist", {
@@ -89,7 +90,7 @@ export const WaitlistSearchBar = ({ onEmailSubmit }: { onEmailSubmit?: (email: s
       }
 
       setStatus("success");
-      setFeedback("Success! Please check your inbox for confirmation.");
+      showToast("Success! Please check your inbox for confirmation.", "success");
       localStorage.setItem("waitlistEmail", email);
       onEmailSubmit?.(email);
       setTimeout(() => {
@@ -100,7 +101,7 @@ export const WaitlistSearchBar = ({ onEmailSubmit }: { onEmailSubmit?: (email: s
       const message =
         error instanceof Error ? error.message : "Failed to join waitlist";
       setStatus("error");
-      setFeedback(message);
+      showToast(message, "error");
     }
 
     const waitlistSection = document.getElementById("waitlist");
@@ -190,22 +191,26 @@ export const WaitlistSearchBar = ({ onEmailSubmit }: { onEmailSubmit?: (email: s
         {/* Enter Icon */}
         <AnimatePresence>
           {step >= 2 && (
-            <motion.div 
+            <motion.button 
               key="enter-icon"
+              type="submit"
+              disabled={status === "loading"}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.35, delay: 0.1, ease: "easeOut" }}
-              className="flex items-center pb-2" 
+              className="flex items-center pb-2 cursor-pointer" 
               style={{ color: 'white', display: 'flex' }}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.98 }}
             >
               <EnterIcon />
-            </motion.div>
+            </motion.button>
           )}
         </AnimatePresence>
 
         {/* Submit Button */}
-        <AnimatePresence>
+        {/* <AnimatePresence>
           {step === 3 && (
             <motion.button
               key="submit-button"
@@ -229,25 +234,8 @@ export const WaitlistSearchBar = ({ onEmailSubmit }: { onEmailSubmit?: (email: s
               <span className="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
             </motion.button>
           )}
-        </AnimatePresence>
+        </AnimatePresence> */}
       </form>
-      {feedback && (
-        <div
-          className={`${instrumentSans.className} absolute left-1/2 -translate-x-1/2 mt-4 text-center text-sm md:text-base`}
-          style={{
-            top: "100%",
-            color:
-              status === "error"
-                ? "#FCA5A5"
-                : status === "success"
-                ? "#BBF7D0"
-                : "rgba(255,255,255,0.75)",
-          }}
-          aria-live="polite"
-        >
-          {feedback}
-        </div>
-      )}
     </div>
   );
 };

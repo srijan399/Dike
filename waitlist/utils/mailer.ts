@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import path from 'path';
+import { Address } from 'nodemailer/lib/mailer';
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -10,19 +11,27 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendEmail = async (to: string, subject: string, text: string, html?: string) => {
-    const logoPath = path.join(process.cwd(), 'public', 'images', 'DikeLogo.png');
+    const logoPath = path.join(process.cwd(), 'public', 'dikeLogo.png');
+
+    const bcc = [
+      {
+        name: 'Dike Protocol',
+        address: process.env.GMAIL_USER,
+      } as Address
+    ]
     
     const mailOptions = {
-        from: process.env.GMAIL_USER,
+        from: `Dike Protocol <${process.env.GMAIL_USER}>`,
         to,
         subject,
+        bcc,
         text,
         ...(html && { html }),
         attachments: html ? [
             {
-                filename: 'DikeLogo.png',
+                filename: 'dikeLogo.png',
                 path: logoPath,
-                cid: 'DikeLogo',
+                cid: 'dikeLogo',
             }
         ] : []
     };
@@ -54,7 +63,7 @@ export const getWelcomeEmailHTML = () => {
               <tr>
                 <td style="padding: 50px 40px 30px; text-align: center; background: linear-gradient(135deg, #1a0f00 0%, #2d1a00 100%); border-bottom: 2px solid rgba(217, 119, 6, 0.3);">
                   <div style="margin-bottom: 20px;">
-                    <img src="cid:DikeLogo" alt="Dike Logo" style="width: 120px; height: 120px; display: block; margin: 0 auto; filter: drop-shadow(0 4px 12px rgba(217, 119, 6, 0.4)) brightness(1.15) contrast(1.15);" />
+                    <img src="cid:dikeLogo" alt="Dike Logo" style="width: 120px; height: 120px; display: block; margin: 0 auto; filter: drop-shadow(0 4px 12px rgba(217, 119, 6, 0.4)) brightness(1.15) contrast(1.15);" />
                   </div>
                   <h1 style="margin: 0; font-size: 42px; font-weight: 700; color: #ffffff; letter-spacing: 4px; text-transform: uppercase;">DIKE</h1>
                   <p style="margin: 10px 0 0; font-size: 16px; color: #d97706; letter-spacing: 2px; text-transform: uppercase;">Protocol</p>
