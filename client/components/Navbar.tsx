@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ConnectKitButton } from "connectkit";
 import { useState, useEffect, useRef } from "react";
 import { ChevronDown, Menu, X, Wallet, BarChart3, User, Activity } from "lucide-react";
+import { labelhash } from "viem";
 
 export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -44,6 +45,12 @@ export default function Navbar() {
                 { label: "Swap", href: "/swap", icon: <Wallet className="w-4 h-4" /> },
                 { label: "Dashboard", href: "/dashboard", icon: <BarChart3 className="w-4 h-4" /> },
             ]
+        },
+        {
+            label: "Dashboard",
+            href: "/dashboard",
+            icon: <BarChart3 className="w-4 h-4" />,
+            hasDropdown: false,
         },
         {
             label: "Profile",
