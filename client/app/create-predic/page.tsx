@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { formatUnits, parseUnits } from 'viem';
 import { useAccount, useDisconnect } from 'wagmi';
 import { ConnectKitButton } from 'connectkit';
@@ -20,6 +20,7 @@ import useCreatePrediction, {
   Prediction
 } from '@/hooks/createOpportunity';
 import useIPFS from '@/hooks/useIPFS';
+import { PYUSD_DECIMALS } from '@/app/constants/tokens';
 import PageBackground from '@/components/PageBackground';
 import LandingNavbar from '@/components/LandingNavbar';
 
@@ -78,14 +79,23 @@ export default function CreatePredictionPage() {
 
   // Helper functions
   const formatPyUSD = (value: bigint | undefined): string => {
-    if (!value) return '0.00 PyUSD';
+    if (!value) return '0.00 USDC';
     try {
-      const formatted = formatUnits(value, 6);
-      return `${parseFloat(formatted).toFixed(2)} PyUSD`;
+      const formatted = formatUnits(value, PYUSD_DECIMALS);
+      return `${parseFloat(formatted).toFixed(2)} USDC`;
     } catch (error) {
-      return '0.00 PyUSD';
+      return '0.00 USDC';
     }
   };
+
+  const minimumLiquidityFormatted = useMemo(() => {
+    if (!minimumLiquidity) return null;
+    try {
+      return formatUnits(minimumLiquidity as bigint, PYUSD_DECIMALS);
+    } catch {
+      return null;
+    }
+  }, [minimumLiquidity]);
 
   const formatDate = (timestamp: number): string => {
     return new Date(timestamp * 1000).toLocaleDateString();
@@ -149,7 +159,7 @@ export default function CreatePredictionPage() {
   const needsApproval = (): boolean => {
     if (!allowance || !formData.initialLiquidity) return true;
     try {
-      const requiredAmount = parseUnits(formData.initialLiquidity, 6);
+      const requiredAmount = parseUnits(formData.initialLiquidity, PYUSD_DECIMALS);
       return (allowance as bigint) < requiredAmount;
     } catch {
       return true;
@@ -159,7 +169,7 @@ export default function CreatePredictionPage() {
   const hasInsufficientBalance = (): boolean => {
     if (!balance?.value || !formData.initialLiquidity) return false;
     try {
-      const requiredAmount = parseUnits(formData.initialLiquidity, 6);
+      const requiredAmount = parseUnits(formData.initialLiquidity, PYUSD_DECIMALS);
       return balance.value < requiredAmount;
     } catch {
       return false;
@@ -169,7 +179,7 @@ export default function CreatePredictionPage() {
   const hasInsufficientLiquidity = (): boolean => {
     if (!minimumLiquidity || !formData.initialLiquidity) return false;
     try {
-      const liquidityAmount = parseUnits(formData.initialLiquidity, 6);
+      const liquidityAmount = parseUnits(formData.initialLiquidity, PYUSD_DECIMALS);
       return liquidityAmount < (minimumLiquidity as bigint);
     } catch {
       return false;
@@ -193,7 +203,7 @@ export default function CreatePredictionPage() {
         console.log('Allowance refetched');
       }, 2000);
       
-      setSuccess('PyUSD spending approved successfully!');
+      setSuccess('USDC spending approved successfully!');
     } catch (error) {
       console.error('Approval failed:', error);
       setError('Approval failed. Please try again.');
@@ -206,18 +216,18 @@ export default function CreatePredictionPage() {
 
     // Validation
     if (hasInsufficientLiquidity()) {
-      const minLiquidityFormatted = formatUnits(minimumLiquidity! as bigint, 6);
-      setError(`Initial liquidity must be at least ${minLiquidityFormatted} PyUSD`);
+      const minLiquidityForError = minimumLiquidityFormatted ?? 'the required minimum';
+      setError(`Initial liquidity must be at least ${minLiquidityForError} USDC`);
       return;
     }
 
     if (hasInsufficientBalance()) {
-      setError('Insufficient PyUSD balance');
+      setError('Insufficient USDC balance');
       return;
     }
 
     if (needsApproval()) {
-      setError('Please approve PyUSD spending first');
+      setError('Please approve USDC spending first');
       return;
     }
 
@@ -435,10 +445,10 @@ export default function CreatePredictionPage() {
                       Sepolia
                     </Badge>
                   </div>
-                  {minimumLiquidity ? (
+                  {minimumLiquidityFormatted ? (
                     <div>
                       <p className="text-sm text-gray-400">Min. Liquidity</p>
-                      <p className="text-sm text-gray-300">{formatUnits(minimumLiquidity as bigint, 6)} PyUSD</p>
+                      <p className="text-sm text-gray-300">{minimumLiquidityFormatted} PyUSD</p>
                     </div>
                   ) : null}
                 </CardContent>
@@ -696,7 +706,7 @@ export default function CreatePredictionPage() {
                       <div className="space-y-6">
                         <div>
                           <label className="block text-sm font-medium text-gray-300 mb-3">
-                            Initial Liquidity (PyUSD) *
+                            Initial Liquidity (USDC) *
                           </label>
                           <Input
                             name="initialLiquidity"
@@ -710,11 +720,11 @@ export default function CreatePredictionPage() {
                             required
                           />
                           {hasInsufficientBalance() && (
-                            <p className="text-red-400 text-sm mt-2">Insufficient PyUSD balance</p>
+                            <p className="text-red-400 text-sm mt-2">Insufficient USDC balance</p>
                           )}
-                          {hasInsufficientLiquidity() && minimumLiquidity ? (
+                          {hasInsufficientLiquidity() && minimumLiquidityFormatted ? (
                             <p className="text-amber-400 text-sm mt-2">
-                              Minimum liquidity: {formatUnits(minimumLiquidity as bigint, 6)} PyUSD
+                              Minimum liquidity: {minimumLiquidityFormatted} USDC
                             </p>
                           ) : null}
                         </div>
@@ -751,7 +761,7 @@ export default function CreatePredictionPage() {
                             </div>
                             <div>
                               <p className="text-gray-400">Initial Liquidity</p>
-                              <p className="text-white">{formData.initialLiquidity} PyUSD</p>
+                              <p className="text-white">{formData.initialLiquidity} USDC</p>
                             </div>
                             <div>
                               <p className="text-gray-400">Resolution Date</p>
@@ -783,7 +793,7 @@ export default function CreatePredictionPage() {
                         {needsApproval() && (
                           <div className="bg-orange-900/20 border border-orange-800 rounded-xl p-6">
                             <h4 className="text-orange-300 font-medium mb-3">Approval Required</h4>
-                            <p className="text-gray-300 text-sm mb-4">You need to approve PyUSD spending before creating the prediction.</p>
+                            <p className="text-gray-300 text-sm mb-4">You need to approve USDC spending before creating the prediction.</p>
                             <Button
                               type="button"
                               onClick={handleApproval}
@@ -796,7 +806,7 @@ export default function CreatePredictionPage() {
                                   <span>Approving...</span>
                                 </div>
                               ) : (
-                                'Approve PyUSD Spending'
+                                'Approve USDC Spending'
                               )}
                             </Button>
                           </div>

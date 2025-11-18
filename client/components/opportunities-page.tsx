@@ -348,7 +348,7 @@ export function OpportunitiesPage() {
                                             {!mounted && isPyusdLoading
                                                 ? "Loading..."
                                                 : pyusdBalance?.formatted
-                                                    ? `${Number(pyusdBalance.formatted).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${pyusdBalance.symbol ?? "PYUSD"}`
+                                                    ? `${Number(pyusdBalance.formatted).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${pyusdBalance.symbol ?? "USDC"}`
                                                     : "Connect wallet"}
                                         </div>
                                     </CardContent>

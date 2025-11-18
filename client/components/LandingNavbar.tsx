@@ -46,10 +46,10 @@ export default function LandingNavbar() {
                     <span className="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <Link
-                    href="/dashboard"
+                    href="/create-predic"
                     className="relative text-base font-normal tracking-wide transition-colors duration-300 hover:text-white/80 group"
                 >
-                    dashboard
+                    Create Prediction
                     <span className="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <Link
@@ -59,6 +59,7 @@ export default function LandingNavbar() {
                     profile
                     <span className="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
+
             </div>
             
             {/* Wallet Connect Button - Right */}

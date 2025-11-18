@@ -4,6 +4,7 @@ import {
     PYUSD_ABI,
     PYUSD_SEPOLIA_ADDRESS,
 } from "@/app/abi";
+import { PYUSD_DECIMALS } from "@/app/constants/tokens";
 import { parseUnits } from "viem";
 import { useAccount, useWriteContract, useReadContract, useBalance } from "wagmi";
 import { useEffect, useState } from "react";
@@ -42,7 +43,7 @@ const useCreatePrediction = () => {
         }
 
         const resolutionTimestamp = Math.floor(new Date(formData.resolutionDate).getTime() / 1000);
-        const liquidityAmount = parseUnits(formData.initialLiquidity, 18);
+        const liquidityAmount = parseUnits(formData.initialLiquidity, PYUSD_DECIMALS);
 
         const tx = await writeContractAsync({
             address: Dike_SEPOLIA_ADDRESS,
@@ -67,7 +68,7 @@ export const useApproveToken = () => {
     const { writeContractAsync, isPending: isApprovalPending } = useWriteContract();
 
     const approve = async (amount: string) => {
-        const amountToApprove = parseUnits(amount, 18);
+        const amountToApprove = parseUnits(amount, PYUSD_DECIMALS);
         
         const tx = await writeContractAsync({
             address: PYUSD_SEPOLIA_ADDRESS,
@@ -81,11 +82,12 @@ export const useApproveToken = () => {
 
     // Alternative approve method like in testV2
     const approveWallet = async () => {
+        const maxAllowance = parseUnits("1000000", PYUSD_DECIMALS); // 1M PYUSD
         const tx = await writeContractAsync({
             address: PYUSD_SEPOLIA_ADDRESS,
             abi: PYUSD_ABI,
             functionName: "approve",
-            args: [Dike_SEPOLIA_ADDRESS, "1000000000"],
+            args: [Dike_SEPOLIA_ADDRESS, maxAllowance],
         });
         return tx;
     };
@@ -101,6 +103,8 @@ export const usePyUSDBalance = () => {
         address: address,
         token: PYUSD_SEPOLIA_ADDRESS,
     });
+
+    console.log("balance", balance.data);
 
     return { balance: balance.data, isLoading: balance.isLoading, refetch: balance.refetch };
 };
@@ -224,12 +228,21 @@ export const useAllPredictions = (predictionId: number) => {
 export const useSendTokens = () => {
     const { writeContractAsync } = useWriteContract();
 
-    const sendTokens = async (fromAddress: string, toAddress: string, amount: string) => {
+    const sendTokens = async (
+        fromAddress: string,
+        toAddress: string,
+        amount: string | bigint
+    ) => {
+        const normalizedAmount =
+            typeof amount === "string"
+                ? parseUnits(amount, PYUSD_DECIMALS)
+                : amount;
+
         const tx = await writeContractAsync({
             address: PYUSD_SEPOLIA_ADDRESS,
             abi: PYUSD_ABI,
             functionName: "transferFrom",
-            args: [fromAddress, toAddress, amount],
+            args: [fromAddress, toAddress, normalizedAmount],
         });
         return tx;
     };

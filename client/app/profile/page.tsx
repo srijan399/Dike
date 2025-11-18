@@ -26,6 +26,7 @@ import {
   useApproveToken,
   useSendTokens 
 } from '@/hooks/createOpportunity';
+import { PYUSD_DECIMALS } from '@/app/constants/tokens';
 import MarketDetails from '@/components/MarketDetails';
 import PageBackground from '@/components/PageBackground';
 import LandingNavbar from '@/components/LandingNavbar';
@@ -59,7 +60,7 @@ export default function ProfilePage() {
   const formatPyUSD = (value: bigint | undefined): string => {
     if (!value) return '0.00';
     try {
-      const formatted = formatUnits(value, 18);
+      const formatted = formatUnits(value, PYUSD_DECIMALS);
       return parseFloat(formatted).toFixed(2);
     } catch (error) {
       return '0.00';
@@ -262,13 +263,13 @@ export default function ProfilePage() {
                 <Card className="border-gray-800 bg-gray-900/50 backdrop-blur-sm">
                   <CardHeader className="pb-4">
                     <CardTitle className="text-white text-lg flex items-center">
-                      💵 PyUSD Balance
+                      💵 USDC Balance
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
                       <p className="text-3xl font-bold text-white">
-                        {formatPyUSD(pyusdBalance?.value)} <span className="text-lg text-cyan-100">PyUSD</span>
+                        {formatPyUSD(pyusdBalance?.value)} <span className="text-lg text-cyan-100">USDC</span>
                       </p>
                       <div className="text-sm text-yellow-200">
                         <p>Available for trading and liquidity</p>
@@ -280,13 +281,13 @@ export default function ProfilePage() {
                 <Card className="border-gray-800 bg-gray-900/50 backdrop-blur-sm">
                   <CardHeader className="pb-4">
                     <CardTitle className="text-white text-lg flex items-center">
-                      ⚡ ETH Balance
+                      ⚡ BNB Balance
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
                       <p className="text-3xl font-bold text-white">
-                        {formatETH(ethBalance?.value)} <span className="text-lg text-cyan-100">ETH</span>
+                        {formatETH(ethBalance?.value)} <span className="text-lg text-cyan-100">BNB</span>
                       </p>
                       <div className="text-sm text-yellow-200">
                         <p>For transaction fees</p>
@@ -306,13 +307,13 @@ export default function ProfilePage() {
                     <div>
                       <p className="text-sm text-yellow-200 mb-1">Total Invested</p>
                       <p className="text-2xl font-bold text-white">
-                        {userChain ? formatPyUSD(userChain.totalInvested) : '0.00'} PyUSD
+                        {userChain ? formatPyUSD(userChain.totalInvested) : '0.00'} USDC
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-yellow-200 mb-1">Total Claimed</p>
                       <p className="text-2xl font-bold text-white">
-                        {userChain ? formatPyUSD(userChain.totalClaimed) : '0.00'} PyUSD
+                        {userChain ? formatPyUSD(userChain.totalClaimed) : '0.00'} USDC
                       </p>
                     </div>
                     <div>
@@ -321,9 +322,9 @@ export default function ProfilePage() {
                         {userChain ? (
                           <>
                             {(userChain.totalClaimed - userChain.totalInvested) >= BigInt(0) ? '+' : ''}
-                            {formatPyUSD(userChain.totalClaimed - userChain.totalInvested)} PyUSD
+                            {formatPyUSD(userChain.totalClaimed - userChain.totalInvested)} USDC
                           </>
-                        ) : '0.00 PyUSD'}
+                        ) : '0.00 USDC'}
                       </p>
                     </div>
                   </div>
@@ -377,7 +378,7 @@ export default function ProfilePage() {
                   <div>
                     <p className="text-sm text-yellow-200 mb-1">Current Allowance</p>
                     <p className="text-lg font-bold text-white">
-                      {allowance ? formatPyUSD(allowance as bigint) : '0.00'} PyUSD
+                      {allowance ? formatPyUSD(allowance as bigint) : '0.00'} USDC
                     </p>
                   </div>
                   <Button
@@ -391,7 +392,7 @@ export default function ProfilePage() {
                         <span>Approving...</span>
                       </div>
                     ) : (
-                      'Approve Max PyUSD'
+                      'Approve Max USDC'
                     )}
                   </Button>
                 </CardContent>
@@ -413,14 +414,14 @@ export default function ProfilePage() {
                   <div>
                     <p className="text-sm text-yellow-200">Minimum Liquidity</p>
                     <p className="text-lg font-semibold text-white">
-                      {minimumLiquidity ? formatPyUSD(minimumLiquidity as bigint) : '0.00'} PyUSD
+                      {minimumLiquidity ? formatPyUSD(minimumLiquidity as bigint) : '0.00'} USDC
                     </p>
                   </div>
                   <Separator className="bg-white/20" />
                   <div>
                     <p className="text-sm text-yellow-200">Network</p>
                     <Badge variant="outline" className="border-blue-600 text-blue-400 bg-blue-900/20">
-                      Sepolia Testnet
+                      BSC Testnet
                     </Badge>
                   </div>
                 </CardContent>
@@ -489,19 +490,19 @@ export default function ProfilePage() {
                                 <div>
                                   <span className="text-yellow-200">Total Liquidity: </span>
                                   <span className="text-white font-medium">
-                                    {formatPyUSD(BigInt(market.yesLiquidity) + BigInt(market.noLiquidity))} PyUSD
+                                    {formatPyUSD(BigInt(market.yesLiquidity) + BigInt(market.noLiquidity))} USDC
                                   </span>
                                 </div>
                                 <div>
                                   <span className="text-yellow-200">YES Pool: </span>
                                   <span className="text-cyan-300 font-medium">
-                                    {formatPyUSD(BigInt(market.yesLiquidity))} PyUSD
+                                    {formatPyUSD(BigInt(market.yesLiquidity))} USDC
                                   </span>
                                 </div>
                                 <div>
                                   <span className="text-yellow-200">NO Pool: </span>
                                   <span className="text-yellow-300 font-medium">
-                                    {formatPyUSD(BigInt(market.noLiquidity))} PyUSD
+                                    {formatPyUSD(BigInt(market.noLiquidity))} USDC
                                   </span>
                                 </div>
                               </div>

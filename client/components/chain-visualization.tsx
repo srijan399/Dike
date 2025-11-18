@@ -20,7 +20,7 @@ export function ChainVisualization({ onSelectPrediction }: ChainVisualizationPro
     const { parentIds, isLoading: isParentLoading } = useUserParentPredictionIds()
 
     const formatPyUSD = (amount: bigint): string => {
-        return `${Number(formatUnits(amount, 6)).toLocaleString(undefined, { maximumFractionDigits: 2 })} PYUSD`
+        return `${Number(formatUnits(amount, 18)).toLocaleString(undefined, { maximumFractionDigits: 2 })} USDC`
     }
 
     const formatDate = (timestamp: bigint): string => {
@@ -156,7 +156,7 @@ function ParentPredictionCard({ parentId, onSelectPrediction }: {
     })
 
     const formatPyUSD = (amount: bigint): string => {
-        return `${Number(formatUnits(amount, 6)).toLocaleString(undefined, { maximumFractionDigits: 2 })} PYUSD`
+        return `${Number(formatUnits(amount, 6)).toLocaleString(undefined, { maximumFractionDigits: 2 })} USDC`
     }
 
     if (isLoading || !position || !predictionData) {
@@ -230,7 +230,7 @@ function ChainPositionCard({ predictionId, onSelectPrediction }: {
     })
 
     const formatPyUSD = (amount: bigint): string => {
-        return `${Number(formatUnits(amount, 6)).toLocaleString(undefined, { maximumFractionDigits: 2 })} PYUSD`
+        return `${Number(formatUnits(amount, 6)).toLocaleString(undefined, { maximumFractionDigits: 2 })} USDC`
     }
 
     const formatDate = (timestamp: bigint): string => {

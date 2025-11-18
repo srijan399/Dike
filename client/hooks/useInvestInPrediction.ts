@@ -7,6 +7,7 @@ import {
     PYUSD_ABI,
     PYUSD_SEPOLIA_ADDRESS,
 } from "@/app/abi";
+import { PYUSD_DECIMALS } from "@/app/constants/tokens";
 import { parseUnits } from "viem";
 import { useAccount, usePublicClient, useReadContract, useWriteContract } from "wagmi";
 
@@ -26,9 +27,6 @@ export default function useInvestInPrediction() {
     const [isInvesting, setIsInvesting] = useState(false);
     const [txHash, setTxHash] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-
-    // Token decimals: Using 6 based on PYUSD usage elsewhere in this repo.
-    const PYUSD_DECIMALS = 6 as const;
 
     const enabled = Boolean(address);
 

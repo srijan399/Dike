@@ -69,7 +69,7 @@ export function BranchingModal({ opportunity, onClose, onConfirm }: BranchingMod
     }, [potentialParents])
     
     const formatPyUSD = (amount: bigint): string => {
-        return `${Number(formatUnits(amount, 6)).toLocaleString(undefined, { maximumFractionDigits: 2 })} PYUSD`
+        return `${Number(formatUnits(amount, 18)).toLocaleString(undefined, { maximumFractionDigits: 2 })} USDC`
     }
 
     const handleConfirm = async () => {
@@ -190,7 +190,7 @@ export function BranchingModal({ opportunity, onClose, onConfirm }: BranchingMod
                                 <div className="space-y-2">
                                     <input
                                         type="number"
-                                        placeholder="Enter PYUSD amount"
+                                        placeholder="Enter USDC amount"
                                         value={collateralAmount}
                                         onChange={(e) => setCollateralAmount(e.target.value)}
                                         className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
@@ -327,7 +327,7 @@ function InvestedPredictionItem({
     })
 
     const formatPyUSD = (amount: bigint): string => {
-        return `${Number(formatUnits(amount, 6)).toLocaleString(undefined, { maximumFractionDigits: 2 })} PYUSD`
+        return `${Number(formatUnits(amount, 6)).toLocaleString(undefined, { maximumFractionDigits: 2 })} USDC`
     }
 
     if (!predictionData) {
@@ -369,7 +369,7 @@ function SelectedInvestmentInfo({ predictionId }: { predictionId: bigint }) {
     const { positionValue } = useCurrentPositionValue(predictionId)
 
     const formatPyUSD = (amount: bigint): string => {
-        return `${Number(formatUnits(amount, 6)).toLocaleString(undefined, { maximumFractionDigits: 2 })} PYUSD`
+        return `${Number(formatUnits(amount, 6)).toLocaleString(undefined, { maximumFractionDigits: 2 })} USDC`
     }
 
     if (!address || investments.length === 0) return null
@@ -458,7 +458,7 @@ function BranchPreview({
 
             <div className="mt-4 p-3 bg-white/5 rounded text-center">
                 <div className="text-sm text-yellow-200">
-                    Using {collateralAmount} PYUSD collateral to branch into:
+                    Using {collateralAmount} USDC collateral to branch into:
                 </div>
                 <div className="font-medium mt-1 text-balance text-white">"{opportunity.title}"</div>
                 <div className="mt-2">

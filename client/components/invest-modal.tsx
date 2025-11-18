@@ -63,7 +63,7 @@ export function InvestModal({
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
-                            <label className="text-xs text-yellow-200">Amount (PYUSD)</label>
+                            <label className="text-xs text-yellow-200">Amount (USDC)</label>
                             <Input
                                 placeholder="0.0"
                                 value={amount}

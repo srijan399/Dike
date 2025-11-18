@@ -20,7 +20,7 @@ export default function MarketDetails({ market, onClose, showInvestors = true }:
   
   const formatPyUSD = (value: bigint): string => {
     try {
-      const formatted = formatUnits(value, 6);
+      const formatted = formatUnits(value, 18);
       return parseFloat(formatted).toFixed(2);
     } catch (error) {
       return '0.00';
@@ -117,13 +117,13 @@ export default function MarketDetails({ market, onClose, showInvestors = true }:
             <div>
               <p className="text-sm text-gray-400 mb-1">YES Pool</p>
               <p className="text-xl font-bold text-green-400">
-                {formatPyUSD(BigInt(market.yesLiquidity))} PyUSD
+                {formatPyUSD(BigInt(market.yesLiquidity))} USDC
               </p>
             </div>
             <div>
               <p className="text-sm text-gray-400 mb-1">NO Pool</p>
               <p className="text-xl font-bold text-red-400">
-                {formatPyUSD(BigInt(market.noLiquidity))} PyUSD
+                {formatPyUSD(BigInt(market.noLiquidity))} USDC
               </p>
             </div>
           </div>
@@ -210,7 +210,7 @@ export default function MarketDetails({ market, onClose, showInvestors = true }:
                 </div>
                 <div>
                   <p className="text-sm text-gray-400">Initial Liquidity</p>
-                  <p className="text-white">{formatPyUSD(BigInt(market.initialLiquidity))} PyUSD</p>
+                  <p className="text-white">{formatPyUSD(BigInt(market.initialLiquidity))} USDC</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-400">Creator</p>
@@ -249,7 +249,7 @@ export default function MarketDetails({ market, onClose, showInvestors = true }:
                     </div>
                     <div className="text-right">
                       <p className="text-white font-medium">
-                        {formatPyUSD(investment.amount)} PyUSD
+                        {formatPyUSD(investment.amount)} USDC
                       </p>
                       <Badge 
                         variant="outline" 
