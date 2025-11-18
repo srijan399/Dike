@@ -49,7 +49,7 @@ export default function LandingNavbar() {
                     href="/create-predic"
                     className="relative text-base font-normal tracking-wide transition-colors duration-300 hover:text-white/80 group"
                 >
-                    Create Prediction
+                    create
                     <span className="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full"></span>
                 </Link>
                 <Link
