@@ -68,7 +68,7 @@ function getConfig(index: number, variant: 'default' | 'subtle' | 'vibrant') {
 
 // Intersection Observer for visibility-based rendering
 // Once a gradient is rendered, keep it rendered to avoid flicker
-const useIsVisible = (ref: React.RefObject<HTMLElement>, options?: IntersectionObserverInit) => {
+const useIsVisible = (ref: React.RefObject<HTMLElement | null>, options?: IntersectionObserverInit) => {
     const [shouldRender, setShouldRender] = useState(false);
     const hasRenderedRef = useRef(false);
 

@@ -2885,6 +2885,8 @@ export const USDC_BNB_TESTNET_ADDRESS =
 export const SWAP_SEPOLIA_ADDRESS =
     "0x6562601Dee56446db027fAC457a5c85a5856c375"; // Update after deployment
 
+export const SWAP_BNB_TESTNET_ADDRESS = SWAP_SEPOLIA_ADDRESS;
+
 // Minimal ABI for our Swap contract functions used by the UI
 export const Swap_ABI = [
     {
