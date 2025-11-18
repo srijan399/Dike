@@ -3,7 +3,6 @@ import {
     DikeAbi,
     PYUSD_ABI,
     Dike_SEPOLIA_ADDRESS,
-    Dike_SEPOLIA_ADDRESS,
 } from "@/app/abi";
 import { Button } from "@/components/ui/button";
 import {
