@@ -32,6 +32,25 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Dike Protocol · Waitlist",
   description: "Dike Protocol is a one-of-a-kind prediction market protocol that allows users to chain predictions and achieve maximum capital efficiency. Join the waitlist to be the first to experience the Dike Protocol. Get early access and stay updated on our launch.",
+  icons: {
+    icon: "/favicon.png",
+  },
+  openGraph: {
+    title: "Dike Protocol · Waitlist",
+    type: "website",
+    url: "https://dike.xyz",
+    siteName: "Dike Protocol",
+    locale: "en_US",
+    images: [
+      {
+        url: "/favicon.png",
+        width: 1200,
+        height: 630,
+        alt: "Dike Protocol",
+      },
+    ],
+    description: "Dike Protocol is a one-of-a-kind prediction market protocol that allows users to chain predictions and achieve maximum capital efficiency. Join the waitlist to be the first to experience the Dike Protocol. Get early access and stay updated on our launch.",
+  },
 };
 
 export default function RootLayout({
