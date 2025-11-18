@@ -57,25 +57,35 @@ export async function POST(request: Request) {
       );
     }
 
-    // Send confirmation email in the background (non-blocking)
-    // Using setImmediate to defer execution to the next event loop iteration
-    setImmediate(async () => {
-      try {
-        const htmlContent = getWelcomeEmailHTML();
-        await sendEmail(
-          email,
-          "Welcome to Dike Protocol - You're on the Waitlist!",
-          "Thank you for joining the Dike Protocol waitlist! You're now part of an exclusive community pioneering the next generation of capital-efficient prediction markets.",
-          htmlContent
-        );
-        console.log(`✅ Background email sent successfully to ${email}`);
-      } catch (emailError) {
-        // Log error but don't fail the request since email is sent in background
-        console.error(`❌ Error sending background email to ${email}:`, emailError);
-      }
-    });
+    try {
+      // Send confirmation email
+      const htmlContent = getWelcomeEmailHTML();
+      await sendEmail(
+        email,
+        "Welcome to Dike Protocol - You're on the Waitlist!",
+        "Thank you for joining the Dike Protocol waitlist! You're now part of an exclusive community pioneering the next generation of capital-efficient prediction markets.",
+        htmlContent
+      );
+    } catch (emailError) {
+      console.error("Error sending confirmation email:", emailError);
+      const rollbackError = await supabase
+        .from("waitlist")
+        .delete()
+        .eq("email", email.toLowerCase().trim());
 
-    // Return success immediately without waiting for email
+      if (rollbackError.error) {
+        console.error(
+          "Error rolling back waitlist entry after email failure:",
+          rollbackError.error
+        );
+      }
+
+      return NextResponse.json(
+        { error: "Failed to send confirmation email" },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
       { message: "Successfully joined waitlist", data },
       { status: 201 }
