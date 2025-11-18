@@ -121,7 +121,7 @@ export default function PriceChart({ currency }: PriceChartProps) {
             <div className="flex items-center justify-between">
                 <div>
                     <div className="text-2xl font-bold text-neon-green">${currency.price.toLocaleString()}</div>
-                    <div className="text-sm text-muted-foreground">{currency.name} / pyUSD</div>
+                    <div className="text-sm text-muted-foreground">{currency.name} / USDC</div>
                 </div>
                 <div className="text-right">
                     <div className="text-sm text-neon-green">24h</div>
