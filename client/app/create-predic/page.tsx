@@ -442,13 +442,13 @@ export default function CreatePredictionPage() {
                   <div>
                     <p className="text-sm text-gray-400">Network</p>
                     <Badge variant="outline" className="border-gray-600 text-gray-300 bg-gray-800/50">
-                      Sepolia
+                      BSC TESTNET
                     </Badge>
                   </div>
                   {minimumLiquidityFormatted ? (
                     <div>
                       <p className="text-sm text-gray-400">Min. Liquidity</p>
-                      <p className="text-sm text-gray-300">{minimumLiquidityFormatted} PyUSD</p>
+                      <p className="text-sm text-gray-300">{minimumLiquidityFormatted} USDC</p>
                     </div>
                   ) : null}
                 </CardContent>
