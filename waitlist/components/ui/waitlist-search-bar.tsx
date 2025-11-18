@@ -44,6 +44,8 @@ export const WaitlistSearchBar = ({ onEmailSubmit }: { onEmailSubmit?: (email: s
   const inputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState(1); // 1: Join button, 2: Email input, 3: Submit button visible
   const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [feedback, setFeedback] = useState("");
 
   const handleButtonClick = () => {
     if (step === 1) {
@@ -64,15 +66,46 @@ export const WaitlistSearchBar = ({ onEmailSubmit }: { onEmailSubmit?: (email: s
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim() && onEmailSubmit) {
-      onEmailSubmit(email);
-      localStorage.setItem('waitlistEmail', email);
-      const waitlistSection = document.getElementById('waitlist');
-      if (waitlistSection) {
-        waitlistSection.scrollIntoView({ behavior: 'smooth' });
+    if (!email.trim() || status === "loading") return;
+
+    setStatus("loading");
+    setFeedback("Joining the waitlist...");
+
+    try {
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || "Failed to join waitlist");
       }
+
+      setStatus("success");
+      setFeedback("Success! Please check your inbox for confirmation.");
+      localStorage.setItem("waitlistEmail", email);
+      onEmailSubmit?.(email);
+      setTimeout(() => {
+        setEmail("");
+        setStep(1);
+      }, 1500);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to join waitlist";
+      setStatus("error");
+      setFeedback(message);
+    }
+
+    const waitlistSection = document.getElementById("waitlist");
+    if (waitlistSection) {
+      waitlistSection.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -182,6 +215,7 @@ export const WaitlistSearchBar = ({ onEmailSubmit }: { onEmailSubmit?: (email: s
               exit={{ opacity: 0, width: 0 }}
               transition={{ duration: 0.35, delay: 0.1, ease: "easeOut" }}
               className={`${instrumentSerif.className} text-white text-base md:text-lg lg:text-xl font-normal tracking-wide pb-2 border-0 border-b border-transparent relative group whitespace-nowrap`}
+              disabled={status === "loading"}
               style={{ 
                 background: 'transparent', 
                 outline: 'none', 
@@ -197,6 +231,23 @@ export const WaitlistSearchBar = ({ onEmailSubmit }: { onEmailSubmit?: (email: s
           )}
         </AnimatePresence>
       </form>
+      {feedback && (
+        <div
+          className={`${instrumentSans.className} absolute left-1/2 -translate-x-1/2 mt-4 text-center text-sm md:text-base`}
+          style={{
+            top: "100%",
+            color:
+              status === "error"
+                ? "#FCA5A5"
+                : status === "success"
+                ? "#BBF7D0"
+                : "rgba(255,255,255,0.75)",
+          }}
+          aria-live="polite"
+        >
+          {feedback}
+        </div>
+      )}
     </div>
   );
 };
